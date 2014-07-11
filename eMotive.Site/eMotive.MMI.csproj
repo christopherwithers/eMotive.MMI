@@ -825,6 +825,7 @@
     <Content Include="Scripts\angular-cookies.min.js.map" />
     <Content Include="Scripts\angular-animate.min.js.map" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Areas\Admin\Views\Signups\EditSignup.cshtml" />
     <None Include="Properties\PublishProfiles\MMI DEMO.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\Contensis\corefunctionsRevised.js" />

@@ -593,7 +593,11 @@ namespace eMotive.Managers.Objects
                 return false;
             }
 
+            //TODO: Check for null here?
             var user = userManager.Fetch(_username);
+            var profile = userManager.FetchProfile(_username);
+
+
             object bodyLock;
             lock (dictionaryLock)
             {
@@ -662,7 +666,22 @@ namespace eMotive.Managers.Objects
                         {"#siteurl#", configurationService.SiteURL()}
                     };
 
-                    string key = interestedSlot ? "InterestedSignup" : "UserSessionSignup";
+                   // string key = interestedSlot ? "InterestedSignup" : "UserSessionSignup";
+
+
+                    var key = string.Empty;
+
+                    if (user.Roles.Any(n => n.Name == "Applicant"))
+                        key = "ApplicantSessionSignup";
+
+                    if (user.Roles.Any(n => n.Name == "Interviewer"))
+                    {
+                        if (profile.Groups.Any(n => n.Name == "Observer"))
+                            key = "ObserverSessionSignup";
+                        else
+                            key = "InterviewerSessionSignup";
+                    }
+
 
                     if (emailService.SendMail(key, user.Email, replacements))
                     {
@@ -692,7 +711,10 @@ namespace eMotive.Managers.Objects
                 return false;
             }
 
+            //TODO: check for null here??
             var user = userManager.Fetch(_username);
+            var profile = userManager.FetchProfile(_username);
+
             object bodyLock;
             lock (dictionaryLock)
             {
@@ -730,7 +752,21 @@ namespace eMotive.Managers.Objects
                         {"#siteurl#", configurationService.SiteURL()}
                     };
 
-                    string key = "UserSessionCancel";
+                  //  string key = "UserSessionCancel";
+
+                    var key = string.Empty;
+
+                    if (user.Roles.Any(n => n.Name == "Applicant"))
+                        key = "ApplicantSessionCancel";
+
+                    if (user.Roles.Any(n => n.Name == "Interviewer"))
+                    {
+                        if (profile.Groups.Any(n => n.Name == "Observer"))
+                            key = "ObserverSessionCancel";
+                        else
+                            key = "InterviewerSessionCancel";
+                    }
+
 
                     if (emailService.SendMail(key, user.Email, replacements))
                     {

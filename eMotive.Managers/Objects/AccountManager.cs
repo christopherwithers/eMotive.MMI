@@ -106,6 +106,8 @@ namespace eMotive.Managers.Objects
                         {"#accounttype#", _user.Roles.HasContent() ? _user.Roles.First().Name : string.Empty},
                     };
 
+                var profile = userRepository.FetchProfile(_user.Username);
+
 
                 var key = string.Empty;
 
@@ -113,7 +115,12 @@ namespace eMotive.Managers.Objects
                     key = "CreateAdminAccount";
 
                 if (_user.Roles.Any(n => n.Name == "Interviewer"))
-                    key = "CreateInterviewerAccount";
+                {
+                    if (profile.Groups.Any(n => n.Name == "Observer"))
+                        key = "ObserverSessionSignup";
+                    else
+                        key = "InterviewerSessionSignup";
+                }
 
                 if (_user.Roles.Any(n => n.Name == "Applicant"))
                     key = "CreateApplicantAccount";
@@ -140,6 +147,8 @@ namespace eMotive.Managers.Objects
             if (user == null)
                 return false;
             
+            var profile = userRepository.FetchProfile(_username);
+
             string salt;
             string plainPassword;
             var password = GeneratePassword(out salt, out plainPassword);
@@ -164,11 +173,17 @@ namespace eMotive.Managers.Objects
                     key = "CreateAdminAccount";
 
                 if (user.Roles.Any(n => n.Name == "Interviewer"))
-                    key = "CreateInterviewerAccount";
+                {
+                    if (profile.Groups.Any(n => n.Name == "Observer"))
+                        key = "ObserverSessionSignup";
+                    else
+                        key = "InterviewerSessionSignup";
+                }
 
                 if (user.Roles.Any(n => n.Name == "Applicant"))
                     key = "CreateApplicantAccount";
 
+                
 
                 if (emailService.SendMail(key, user.Email, replacements))
                 {

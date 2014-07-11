@@ -59,6 +59,8 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             return View(signup);
         }
 
+
+
         [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult SignupDetails(int id)
         {
@@ -461,6 +463,12 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        public ActionResult EditSignup(int id)
+        {
+            return View();
+        }
+
+        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult OpenClose()
         {
             var signups = signupManager.FetchAllBrief();
@@ -472,6 +480,35 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                           m.Date.Month))).ToDictionary(k => k.Key, g => g.OrderBy(n => n.Date).ToList());
 
             return View(signupDict);
+        }
+
+
+        [AjaxOnly]
+        public CustomJsonResult FetchSignup(int idSignup)
+        {
+            var signup = signupManager.Fetch(idSignup);
+
+            var issues = NotificationService.FetchIssues();
+
+            return new CustomJsonResult
+            {
+                Data = new { success = signup != null, message = issues, result = signup }
+            };
+
+        }
+
+        [AjaxOnly]
+        public CustomJsonResult SaveSignup(Signup signup)
+        {
+          //  var signup = signupManager.sa
+
+            var issues = NotificationService.FetchIssues();
+
+            return new CustomJsonResult
+            {
+                Data = new { success = false, message = issues }
+            };
+
         }
 
 
