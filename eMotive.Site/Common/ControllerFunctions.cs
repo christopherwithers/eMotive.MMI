@@ -1,4 +1,4 @@
-﻿namespace eMotive.SCE.Common
+﻿namespace eMotive.MMI.Common
 {
     public static class ControllerFunctions
     {

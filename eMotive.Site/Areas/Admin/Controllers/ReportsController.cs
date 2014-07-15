@@ -15,7 +15,7 @@ using OfficeOpenXml.Style;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, UGC")]
+    [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, UGC")]
     public class ReportsController : Controller
     {
         private readonly IReportService reportService;

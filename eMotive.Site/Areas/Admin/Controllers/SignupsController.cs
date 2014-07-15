@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
+using eMotive.MMI.Common;
+using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Signups;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Uploads;
 using eMotive.Models.Objects.Users;
 using eMotive.SCE.Common;
-using eMotive.SCE.Common.ActionFilters;
 using eMotive.SCE.Infrastructure;
 using eMotive.Services.Interfaces;
 using Extensions;
@@ -41,7 +42,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         [Inject]
         public IeMotiveConfigurationService ConfigurationService { get; set; }
         
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Index()
         {
             var signupAdminView = new AdminSignupView
@@ -61,7 +62,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
 
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult SignupDetails(int id)
         {
             var signup = signupManager.Fetch(id);
@@ -113,7 +114,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult BoxiUpload()
         {
             var lastUpload = documentManager.FetchLastUploaded(UploadReference.BOXI);
@@ -143,7 +144,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public FineUploaderResult BoxiUpload(FineUpload upload)
         {
             // asp.net mvc will set extraParam1 and extraParam2 from the params object passed by Fine-Uploader
@@ -231,7 +232,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult A100ApplicantUpload()
         {
             var applicantUploadView = new ApplicantUploadView
@@ -245,7 +246,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public FineUploaderResult A100ApplicantUpload(FineUpload upload)
         {
             // asp.net mvc will set extraParam1 and extraParam2 from the params object passed by Fine-Uploader
@@ -320,7 +321,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult A101ApplicantUpload()
         {
             var applicantUploadView = new ApplicantUploadView
@@ -334,7 +335,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public FineUploaderResult A101ApplicantUpload(FineUpload upload)
         {
             // asp.net mvc will set extraParam1 and extraParam2 from the params object passed by Fine-Uploader
@@ -409,7 +410,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Groups()
         {
             var groups = groupManager.FetchGroups();
@@ -417,7 +418,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             return View(groups);
         }
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         [HttpGet]
         public ActionResult GroupEdit(int? id)
         {
@@ -426,7 +427,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             return View(group);
         }
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         [HttpPost]
         public ActionResult GroupEdit(Group group)
         {
@@ -462,13 +463,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             return View(group);
         }
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult EditSignup(int id)
         {
             return View();
         }
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult OpenClose()
         {
             var signups = signupManager.FetchAllBrief();

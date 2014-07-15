@@ -1,5 +1,4 @@
-﻿using eMotive.SCE.Services;
-using Funq;
+﻿/*using Funq;
 using Ninject;
 using Ninject.Web.Common;
 using ServiceStack;
@@ -12,7 +11,7 @@ namespace eMotive.MMI.App_Start
     public class AppHost : AppHostBase
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
-        public AppHost() : base("SCE Web Services", typeof(InterviewService).Assembly) { }
+      //  public AppHost() : base("SCE Web Services", typeof(InterviewService).Assembly) { }
 
         public override void Configure(Container container)
         {//Create Ninject IoC container
@@ -52,4 +51,4 @@ namespace eMotive.MMI.App_Start
             return this.kernel.TryGet<T>();
         }
     }
-}
+}*/

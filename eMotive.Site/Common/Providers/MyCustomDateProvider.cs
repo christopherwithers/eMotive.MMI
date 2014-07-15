@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace eMotive.SCE.Common.Providers
+namespace eMotive.MMI.Common.Providers
 {
     public class MyCustomDateProvider : IFormatProvider, ICustomFormatter
     {

@@ -283,6 +283,7 @@
   <ItemGroup>
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Content Include="AngularJs\Services\Signups.js" />
     <Content Include="App_Data\emotive.sql" />
     <Content Include="App_Readme\Elmah.MySql.sql" />
     <Content Include="App_Readme\Elmah.MySql.txt" />
@@ -1142,6 +1143,9 @@
     <Content Include="Views\Test\PDFView.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AngularJs\Apps\SignupManagement\" />
+    <Folder Include="AngularJs\Modules\" />
+    <Folder Include="AngularJs\Shared\Templates\" />
     <Folder Include="App_Data\Lucene\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="ImageCache\" />

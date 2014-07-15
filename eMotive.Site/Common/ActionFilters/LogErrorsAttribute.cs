@@ -1,8 +1,8 @@
 ﻿using System.Web.Mvc;
-using Ninject;
 using eMotive.Services.Interfaces;
+using Ninject;
 
-namespace eMotive.SCE.Common.ActionFilters
+namespace eMotive.MMI.Common.ActionFilters
 {
     public class LogErrorsAttribute : ActionFilterAttribute
     {

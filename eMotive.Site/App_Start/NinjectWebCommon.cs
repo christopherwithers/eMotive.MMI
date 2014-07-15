@@ -1,9 +1,9 @@
 using System.Web.Mvc;
 using System.Web.Security;
 using eMotive.IoCBindings.Ninject;
+using eMotive.MMI.Common.ActionFilters;
 using Ninject.Web.Common;
 using Ninject.Web.Mvc.FilterBindingSyntax;
-using eMotive.SCE.Common.ActionFilters;
 
 [assembly: WebActivator.PreApplicationStartMethod(typeof(eMotive.MMI.App_Start.NinjectWebCommon), "Start")]
 [assembly: WebActivator.PostApplicationStartMethod(typeof(eMotive.MMI.App_Start.NinjectWebCommon), "RegisterRoles")]

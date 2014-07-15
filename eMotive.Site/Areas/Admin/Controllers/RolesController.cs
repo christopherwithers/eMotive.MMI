@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
+using eMotive.MMI.Common;
+using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Roles;
 using eMotive.Models.Validation.Role;
-using eMotive.SCE.Common;
-using eMotive.SCE.Common.ActionFilters;
 using eMotive.Services.Interfaces;
 using Extensions;
 
@@ -22,19 +22,19 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             roleManager = _roleManager;
             notificationService = _notificationService;
         }
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin")]
         public ActionResult Index()
         {
             return View();
         }
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin")]
         public ActionResult List()
         {
             return View(roleManager.FetchAll());
         }
 
         [AjaxOnly]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public CustomJsonResult GetAllRoles()
         {
             var roles = roleManager.FetchAll();
@@ -46,7 +46,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [AjaxOnly]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin")]
         public CustomJsonResult CreateRole(Role role)
         {
             var validationErrors = Validate(role);
@@ -71,7 +71,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [AjaxOnly]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin")]
         public CustomJsonResult UpdateRole(Role role)
         {
             var validationErrors = Validate(role);
@@ -95,7 +95,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [AjaxOnly]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin")]
         public CustomJsonResult DeleteRole(Role role)
         {
             var success = roleManager.Delete(role);

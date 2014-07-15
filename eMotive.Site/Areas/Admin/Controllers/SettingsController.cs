@@ -1,8 +1,9 @@
 ﻿using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
+using eMotive.MMI.Common;
+using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Search;
 using eMotive.SCE.Common;
-using eMotive.SCE.Common.ActionFilters;
 using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
 
@@ -43,7 +44,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [AjaxOnly]
-        [SCE.Common.ActionFilters.Authorize(Roles="Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles="Super Admin, Admin")]
         public CustomJsonResult ReindexAllDocuments()
         {
             searchManager.DeleteAll();

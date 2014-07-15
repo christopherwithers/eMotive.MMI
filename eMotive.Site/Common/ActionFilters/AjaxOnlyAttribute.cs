@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace eMotive.SCE.Common.ActionFilters
+namespace eMotive.MMI.Common.ActionFilters
 {
     public class AjaxOnlyAttribute : ActionFilterAttribute
     {

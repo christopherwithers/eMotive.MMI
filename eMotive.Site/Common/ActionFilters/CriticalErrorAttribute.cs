@@ -1,10 +1,10 @@
 ﻿using System.Web.Mvc;
-using Extensions;
-using Ninject;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Services.Interfaces;
+using Extensions;
+using Ninject;
 
-namespace eMotive.SCE.Common.ActionFilters
+namespace eMotive.MMI.Common.ActionFilters
 {
     public class CriticalErrorAttribute : ActionFilterAttribute
     {

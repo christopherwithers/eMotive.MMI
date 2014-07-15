@@ -8,7 +8,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
     {
         //
         // GET: /Admin/Home/
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, UGC")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, UGC")]
         public ActionResult Index()
         {
 

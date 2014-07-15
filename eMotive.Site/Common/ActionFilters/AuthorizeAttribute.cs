@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace eMotive.SCE.Common.ActionFilters
+namespace eMotive.MMI.Common.ActionFilters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class AuthorizeAttribute : System.Web.Mvc.AuthorizeAttribute

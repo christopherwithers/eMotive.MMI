@@ -8,7 +8,7 @@ using Extensions;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, Moderator")]
+    [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, Moderator")]
     public class NewsController : Controller
     {
         private readonly INewsManager newsManager;

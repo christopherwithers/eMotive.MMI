@@ -3,15 +3,16 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
+using eMotive.MMI.Common;
+using eMotive.MMI.Common.ActionFilters;
 using eMotive.SCE.Common;
-using eMotive.SCE.Common.ActionFilters;
 using eMotive.Services.Interfaces;
 using Extensions;
 using Ninject;
 
 namespace eMotive.MMI.Controllers
 {
-    [SCE.Common.ActionFilters.Authorize(Roles = "Interviewer")]
+    [Common.ActionFilters.Authorize(Roles = "Interviewer")]
     public class InterviewsController : Controller
     {
         private readonly ISessionManager signupManager;

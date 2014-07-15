@@ -8,15 +8,16 @@ using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
+using eMotive.MMI.Common;
+using eMotive.MMI.Common.ActionFilters;
+using eMotive.MMI.Common.Providers;
 using eMotive.Models.Objects.Account;
 using eMotive.Models.Objects.Certificates;
 using eMotive.Models.Objects.Search;
 using eMotive.Models.Objects.Signups;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Users;
-using eMotive.SCE.Common;
-using eMotive.SCE.Common.ActionFilters;
-using eMotive.SCE.Common.Providers;
+
 using eMotive.Services.Interfaces;
 using Extensions;
 using Ninject;
@@ -55,7 +56,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         [Inject]
         public INotificationService NotificationService { get; set; }
 
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Index(UserSearch userSearch)
         {
             //    userSearch.PageSize = 15;
@@ -186,7 +187,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult CreateInterviewer()
         {
             var allGroups = groupManager.FetchGroups();
@@ -201,7 +202,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult CreateInterviewer(SCEData sce)
         {
             if (ModelState.IsValid)
@@ -245,7 +246,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Create()
         {
             var user = new UserWithRoles();
@@ -255,7 +256,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Create(UserWithRoles user)
         {
             var roles = roleManager.FetchAll();
@@ -298,7 +299,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult EditUser(string username)
         {
             var user = userManager.Fetch(username);
@@ -324,7 +325,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult EditUser(SCEData sce)
         {
             if (ModelState.IsValid)
@@ -366,7 +367,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Edit(string username)
         {
             var user = userManager.Fetch(username);
@@ -390,7 +391,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [SCE.Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Edit(UserWithRoles user)
         {
             var roles = roleManager.FetchAll();
