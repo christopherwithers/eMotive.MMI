@@ -49,7 +49,7 @@ else
                                     <th>Date</th>
                                     <th>Main</th>
                                     <th>Reserve</th>
-                                    <th>Interested</th>
+                                    <th style="display: none;">Interested</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -65,7 +65,7 @@ else
                                         @totalPlaces <!--(totalPlaces - signup.Slots.Sum(n => n.ApplicantsSignedUp != null ? (n.ApplicantsSignedUp.Count) : 0))  /-->
                                     </td>
                                     <td>@TotalReserve</td>
-                                    <td>@TotalInterested</td>
+                                    <td style="display: none;">@TotalInterested</td>
                                     <td><!--Html.ActionLink("Details", "SignupDetails", "Signups", new {area = "admin", id = signup.ID}, new {class="btn btn-default"}) Html.ActionLink("Edit", "Edit", "Signups", new { area = "admin", id = signup.ID }, new { class = "btn btn-default" })-->
                                          @Html.ActionLink("Edit", "EditSignup", "Signups", new {area = "admin", id = signup.ID}, new {@class="btn btn-default"})
                                     </td>

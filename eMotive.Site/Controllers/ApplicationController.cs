@@ -53,6 +53,9 @@ namespace eMotive.MMI.Controllers
                 new { key = "FetchSignup", url = Url.RouteUrl("default", new { action = "FetchSignup", controller = "Signups" }) },
                 new { key = "SaveSignup", url = Url.RouteUrl("default", new { action = "SaveSignup", controller = "Signups" }) },
 
+                new { key = "FetchAllGroups", url = Url.RouteUrl("Admin_default", new { action = "FetchAllGroups", controller = "Signups" }) },
+                new { key = "FetchSignupAng", url = Url.RouteUrl("Admin_default", new { action = "FetchSignup", controller = "Signups" }) },
+                
                 new { key = "FetchEmailSentLog", url = Url.RouteUrl("default", new { action = "FetchEmailSentLog", controller = "Account"}) },
                 new { key = "ResendAccountCreationEmail", url = Url.RouteUrl("default", new { action = "ResendAccountCreationEmail", controller = "Account"}) },
                 new { key = "DeleteUser", url = Url.RouteUrl("Admin_default", new { action = "DeleteUser", controller = "Users"}) },

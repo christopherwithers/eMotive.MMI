@@ -1,7 +1,13 @@
 ﻿angular.module('signupServices', []).factory('$signupServices', function ($http) {
     return {//https://github.com/mgonto/restangular <== look into this?
         getAllGroups: function () {
-            return $http.get("/api/Pages/Sections").then(function (result) {
+
+            return $http.get(window.Routes.URL("FetchAllGroups")).then(function (result) {
+                return result.data;
+            });
+        },
+        getSignup: function (id) {
+            return $http.get(window.Routes.URL("FetchSignupAng"), { params: { idSignup: id } }).then(function (result) {
                 return result.data;
             });
         }/*,

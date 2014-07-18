@@ -10,6 +10,7 @@ namespace eMotive.Models.Objects.Signups
         public string FooterText { get; set; }
         public bool SignedUp { get; set; }
         public int SignupID { get; set; }
+        
         public ICollection<SignupState> SignupInformation { get; set; }
 
 

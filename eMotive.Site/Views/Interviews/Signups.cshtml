@@ -1,6 +1,7 @@
 ﻿@using Extensions
 @using eMotive.SCE.Common.Helpers
 @using eMotive.Models.Objects.Signups
+@using ServiceStack
 
 @model UserSignupView
 @{
@@ -56,8 +57,8 @@
     }
 </script>
 
-<!--Html.Raw(Server.HtmlDecode((Model.HeaderText)))-->
-<h1>Examination and Training Sessions</h1>
+@Html.Raw(Server.HtmlDecode((Model.HeaderText)))
+
 
 @if (!Model.SignupInformation.HasContent())
 {
@@ -83,7 +84,9 @@ else
         @foreach (var item in Model.GetSignupsByGroup())
         {
             <div class="tab-pane" id="@item.Key.Replace(' ', '_')">
-                @Html.Raw(Server.HtmlDecode(Model.GetDescription(item.Key)))
+                <div class="alert-info alert">
+                    @Html.Raw(Server.HtmlDecode(Model.GetDescription(item.Key)))
+                </div>
                 <table class="table table-striped table-hover">
                     <tbody>
                         @foreach (var signup in item.Value)
@@ -94,6 +97,10 @@ else
                                     @if (signup.SignedUp)
                                     {
                                         <span class="label label-success">Signed Up</span>
+                                        foreach (var type in signup.SignupTypes)
+                                        {
+                                             <span class="label label-success">@type</span>
+                                        }
                                     }
                                     else
                                     {
@@ -102,7 +109,7 @@ else
                                     }
                                 </td>
                                 <td>@signup.Date.ToString("dddd d MMMM yyyy")</td>
-                                <td>@signup.Description</td>
+             
 
                                 <td id="signup_value_@signup.ID">@signup.SlotsAvailableString()</td>
                                 <td>

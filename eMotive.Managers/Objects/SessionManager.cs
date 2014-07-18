@@ -215,7 +215,13 @@ namespace eMotive.Managers.Objects
 
             return Mapper.Map<IEnumerable<Signup>, IEnumerable<SessionDay>>(signups);
         }
-        
+
+
+        public IEnumerable<Group> FetchAllGroups()
+        {
+            return Mapper.Map<IEnumerable<rep.Group>, IEnumerable<Group>>(signupRepository.FetchGroups());
+        }
+
         public UserHomeView FetchHomeView(string _username)
         {
             //todo: fetch user and group
@@ -276,6 +282,8 @@ namespace eMotive.Managers.Objects
             return signupRepository.RegisterAttendanceToSession(Mapper.Map<SessionAttendance, rep.SessionAttendance>(_session));
         }
 
+
+
         public UserSignupView FetchSignupInformation(string _username)
         {
             var signupCollection = new Collection<SignupState>();
@@ -292,7 +300,6 @@ namespace eMotive.Managers.Objects
 
             bool signedup = false;
             int signupId = 0;
-
             if (signups.HasContent())
             {
                 //signupCollection
@@ -320,13 +327,29 @@ namespace eMotive.Managers.Objects
                             DisabilitySignup = item.Group.DisabilitySignups,
                             Closed = item.Closed || item.CloseDate < DateTime.Now,
                             Description = item.Description,
+                     //       SignupType = item.
                             Group = new Group { AllowMultipleSignups = item.Group.AllowMultipleSignups, Description = item.Group.Description, ID = item.Group.ID, Name = item.Group.Name}
                         };
 
                         if (signup.SignedUp)
                         {
+                            signup.SignupTypes = new Collection<string>();
                             signedup = true;
                             signupId = signup.ID;
+                           // var usersSlots = item.Slots.Where(n => n.UsersSignedUp.HasContent()).Select(m => m.UsersSignedUp.Where(o => o.IdUser == user.ID));
+
+                            foreach (var userSignup in item.Slots)
+                            {
+                                if (userSignup.UsersSignedUp.HasContent() && userSignup.UsersSignedUp.Any(n => n.IdUser == user.ID))
+                                {
+                                    var usersIndex = userSignup.UsersSignedUp.FindIndex(n => n.IdUser == user.ID);
+
+                                    // if (usersIndex != null)
+                                    // {
+                                    signup.SignupTypes.Add(usersIndex.ToString());
+                                    // }
+                                }
+                            }
                         }
 
                         signupCollection.Add(signup);
@@ -338,7 +361,7 @@ namespace eMotive.Managers.Objects
             {
                 SignupInformation = signupCollection,
                 SignupID = signupId,
-                SignedUp = signedup
+                SignedUp = signedup,
             };
 
             return signupView;
@@ -676,7 +699,7 @@ namespace eMotive.Managers.Objects
 
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {
-                        if (profile.Groups.Any(n => n.Name == "Observer"))
+                        if (signup.Group.Name == "Observer")
                             key = "ObserverSessionSignup";
                         else
                             key = "InterviewerSessionSignup";
@@ -761,10 +784,10 @@ namespace eMotive.Managers.Objects
 
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {
-                        if (profile.Groups.Any(n => n.Name == "Observer"))
-                            key = "ObserverSessionCancel";
+                        if (signup.Group.Name == "Observer")
+                            key = "ObserverSessionSignup";
                         else
-                            key = "InterviewerSessionCancel";
+                            key = "InterviewerSessionSignup";
                     }
 
 

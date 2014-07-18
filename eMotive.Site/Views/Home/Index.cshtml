@@ -35,7 +35,7 @@ else
         <tbody>
             @foreach (var signup in Model.SignupDetails)
             {
-                <tr @Html.HomeViewRowStyle(signup.Type)><td>@Html.HomeViewRowBadge(signup.Type)</td><td>@signup.SignupGroup.Name</td><td>@signup.SignupDescription</td><td>@signup.SignUpDate.ToString("dddd d MMMM yyyy") at @signup.SignUpDetails</td> <td><a href="@Url.Action("Slots", "Interviews", new { id = signup.SignupID })" role="button" @Html.HomeViewRowButton(signup.Type) id="SlotCancel">Cancel</a></td></tr>
+                <tr @Html.HomeViewRowStyle(signup.Type)><td>@Html.HomeViewRowBadge(signup.Type)</td><td>@signup.SignupGroup.Name</td><td>@signup.SignUpDate.ToString("dddd d MMMM yyyy") at @signup.SignUpDetails</td> <td><a href="@Url.Action("Slots", "Interviews", new { id = signup.SignupID })" role="button" @Html.HomeViewRowButton(signup.Type) id="SlotCancel">Cancel</a></td></tr>
             }
         </tbody>
     </table>

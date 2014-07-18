@@ -3,4 +3,28 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h2>Edit Signup</h2>
+<div ng-app="signupManagementApp" ng-controller="myApp">
+    <h2>Edit Signup {{signup.ID}}</h2>
+
+    <div class="row span3 offset1">
+
+        <table class="table table-striped table-bordered table-responsive">
+            <tbody>
+                <tr><th>Academic Year</th><td>{{signup.AcademicYear}}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="control-group" style="clear:both;">
+        <div class="controls">
+            <button type="submit" class="btn btn-info">Save</button> <a href="@Url.Action("Index")" class="btn">Cancel</a>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+   
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/AngularJs/Services/SignupServices.js"></script> 
+<script src="~/AngularJs/Apps/SignupManagement/SignupManagementApp.js"></script>
+}

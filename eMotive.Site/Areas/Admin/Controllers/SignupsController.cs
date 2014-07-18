@@ -484,16 +484,31 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
 
-        [AjaxOnly]
-        public CustomJsonResult FetchSignup(int idSignup)
+    //    [AjaxOnly]
+        public string FetchSignup(int idSignup)
         {
             var signup = signupManager.Fetch(idSignup);
 
             var issues = NotificationService.FetchIssues();
 
+          //  return new CustomJsonResult
+          //  {
+            return new {success = signup != null, message = issues, result = signup}.ToJson();
+            // };
+
+        }
+
+      //  [AjaxOnly]
+        public CustomJsonResult FetchAllGroups()
+        {
+            //  var signup = signupManager.sa
+            var groups = signupManager.FetchAllGroups();
+
+            var issues = NotificationService.FetchIssues();
+
             return new CustomJsonResult
             {
-                Data = new { success = signup != null, message = issues, result = signup }
+                Data = new { success = false, message = issues, result = groups }
             };
 
         }

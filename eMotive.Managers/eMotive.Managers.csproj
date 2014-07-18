@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoMapperManagerConfiguration.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\IAccountManager.cs" />
     <Compile Include="Interfaces\IGroupManager.cs" />
     <Compile Include="Interfaces\INewsManager.cs" />

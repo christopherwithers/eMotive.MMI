@@ -24,21 +24,57 @@
 <table class="table table-striped table-hover table-bordered">
     <thead>
         <tr>
-            <th>Report</th>
+            <th>All Users</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>All SCEs</td>
-            <td>@Html.ActionLink("Download Report", "AllSCEs", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+            <td>All Interviewers</td>
+            <td>@Html.ActionLink("Download Report", "AllInterviewers", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
         </tr>
         <tr>
-            <td>SCEs not signed up to a session</td>
-            <td>@Html.ActionLink("Download Report", "NotSignedUp", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+            <td>All Observers</td>
+            <td>@Html.ActionLink("Download Report", "AllObservers", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
         </tr>
+        <tr>
+            <td>All Interviewers and Observers</td>
+            <td>@Html.ActionLink("Download Report", "AllInterviewersAndObservers", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+        </tr>
+       <!-- <tr>
+            <td>SCEs not signed up to a session</td>
+            <td>Html.ActionLink("Download Report", "NotSignedUp", "Reports", new { area = "admin" }, new { class = "btn btn-default" })</td>
+        </tr>-->
     </tbody>
 </table>
+
+<table class="table table-striped table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Not Signed Up</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Interviewers Not Signed Up</td>
+            <td>@Html.ActionLink("Download Report", "InterviewersNotSignedUp", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+        </tr>
+        <tr>
+            <td>Observers Not Signed Up</td>
+            <td>@Html.ActionLink("Download Report", "ObserversNotSignedUp", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+        </tr>
+        <tr>
+            <td>Interviewers and Observers Not Signed Up</td>
+            <td>@Html.ActionLink("Download Report", "InterviewersAndObserversNotSignedUp", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+        </tr>
+        <!-- <tr>
+             <td>SCEs not signed up to a session</td>
+             <td>Html.ActionLink("Download Report", "NotSignedUp", "Reports", new { area = "admin" }, new { class = "btn btn-default" })</td>
+         </tr>-->
+    </tbody>
+</table>
+
 
 <h4>Full Session Report</h4>
 <table class="table table-striped table-hover table-bordered">

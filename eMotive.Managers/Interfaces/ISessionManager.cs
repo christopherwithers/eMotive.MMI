@@ -26,5 +26,7 @@ namespace eMotive.Managers.Interfaces
         bool CancelSignupToSlot(int _signupID, int _slotId, string _username);
 
         int FetchRCPActivityCode(int _signupID);
+
+        IEnumerable<Group> FetchAllGroups();
     }
 }

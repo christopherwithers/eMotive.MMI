@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 
 namespace eMotive.Models.Objects.Signups
 {
@@ -15,6 +16,8 @@ namespace eMotive.Models.Objects.Signups
         public SlotType TypeAvailable { get; set; }
         public bool DisabilitySignup { get; set; }
         public bool Closed { get; set; }
+
+        public Collection<string> SignupTypes { get; set; } // public SlotType SignupType { get; set; }
 
         public Group Group { get; set; }
 
