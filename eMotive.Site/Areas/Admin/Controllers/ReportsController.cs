@@ -12,11 +12,12 @@ using eMotive.Services.Interfaces;
 using Extensions;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
     [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
-    public class ReportsController : Controller
+    public class ReportsController : ServiceStackController
     {
         private readonly IReportService reportService;
         private readonly IDocumentManagerService documentManager;

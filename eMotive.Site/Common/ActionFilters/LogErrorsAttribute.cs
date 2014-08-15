@@ -1,12 +1,12 @@
 ﻿using System.Web.Mvc;
 using eMotive.Services.Interfaces;
-using Ninject;
+//using Ninject;
 
 namespace eMotive.MMI.Common.ActionFilters
 {
     public class LogErrorsAttribute : ActionFilterAttribute
     {
-        [Inject]
+      //  [Inject]
         public INotificationService notifications { private get; set; }
 
         public override void OnResultExecuted(ResultExecutedContext filterContext)

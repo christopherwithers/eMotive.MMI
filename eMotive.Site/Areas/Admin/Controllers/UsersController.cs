@@ -17,18 +17,18 @@ using eMotive.Models.Objects.Search;
 using eMotive.Models.Objects.Signups;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Users;
-
 using eMotive.Services.Interfaces;
 using Extensions;
-using Ninject;
+//using Ninject;
 using Novacode;
 using Rotativa;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
     //http://stackoverflow.com/questions/11461142/parse-json-string-into-an-array
-    
-    public class UsersController : Controller
+
+    public class UsersController : ServiceStackController
     {
         private readonly IUserManager userManager;
         private readonly IRoleManager roleManager;
@@ -47,13 +47,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             searchType = new[] { "User" };
         }
 
-        [Inject]
+       // [Inject]
         public IEmailService EmailService { get; set; }
 
-        [Inject]
+       // [Inject]
         public IeMotiveConfigurationService configurationService { get; set; }
 
-        [Inject]
+       // [Inject]
         public INotificationService NotificationService { get; set; }
 
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]

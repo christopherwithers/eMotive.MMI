@@ -7,13 +7,15 @@ using System.Web.Mvc;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
 using eMotive.Managers.Interfaces;
+using eMotive.Models.Objects.Pages;
 using eMotive.Models.Objects.StatusPages;
 using Extensions;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {//TODO: Add extra partial pages to the work db version. Add group selection to user creation.
-    
-    public class HomeController : Controller
+
+    public class HomeController : ServiceStackController
     {
         private readonly ISessionManager signupManager;
         private readonly IPartialPageManager pageManager;
@@ -32,6 +34,7 @@ namespace eMotive.MMI.Controllers
         public ActionResult Index()
         {
             var user = userManager.Fetch(User.Identity.Name);
+            var profile = userManager.FetchProfile(user.Username);
 
             var replacements = new Dictionary<string, string>(4)
                     {
@@ -41,11 +44,28 @@ namespace eMotive.MMI.Controllers
 
             var homeView = signupManager.FetchHomeView(User.Identity.Name);
 
-            if (homeView.HasSignedUp)
-                homeView.PageSections = pageManager.FetchPartials(new[] { "Applicant-Home-Header-Signed", "Applicant-Home-Footer-Signed" }).ToDictionary(k => k.Key, v => v);
+            var PageSections = new Dictionary<string, PartialPage>();
+
+
+            if(profile.Groups.Any(n => n.Name == "Observer"))
+            {
+                if (homeView.HasSignedUp)
+                    PageSections = pageManager.FetchPartials(new[] { "Observer-Home-Header-Signed", "Observer-Home-Footer-Signed" }).ToDictionary(k => k.Key, v => v);
+                else
+                    PageSections = pageManager.FetchPartials(new[] { "Observer-Home-Header-Unsigned", "Observer-Home-Footer-Unsigned" }).ToDictionary(k => k.Key, v => v);
+            }
             else
-                homeView.PageSections = pageManager.FetchPartials(new[] { "Applicant-Home-Header-Unsigned", "Applicant-Home-Footer-Unsigned" }).ToDictionary(k => k.Key, v => v);
-            
+            {
+                if (homeView.HasSignedUp)
+                    PageSections = pageManager.FetchPartials(new[] { "Interviewer-Home-Header-Signed", "Interviewer-Home-Footer-Signed" }).ToDictionary(k => k.Key, v => v);
+                else
+                    PageSections = pageManager.FetchPartials(new[] { "Interviewer-Home-Header-Unsigned", "Interviewer-Home-Footer-Unsigned" }).ToDictionary(k => k.Key, v => v);
+            }
+
+            var modifiedSections = PageSections.ToDictionary(section => section.Key.Substring(section.Key.IndexOf('-') + 1), section => section.Value);
+
+
+            homeView.PageSections = modifiedSections;
 
             if (replacements.HasContent())
             {

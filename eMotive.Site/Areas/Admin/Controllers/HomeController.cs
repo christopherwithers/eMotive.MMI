@@ -1,10 +1,11 @@
 ﻿using System.Web.Mvc;
 using eMotive.Models.Objects.StatusPages;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    
-    public class HomeController : Controller
+
+    public class HomeController : ServiceStackController
     {
         //
         // GET: /Admin/Home/

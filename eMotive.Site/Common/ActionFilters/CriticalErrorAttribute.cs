@@ -2,13 +2,13 @@
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Services.Interfaces;
 using Extensions;
-using Ninject;
+//using Ninject;
 
 namespace eMotive.MMI.Common.ActionFilters
 {
     public class CriticalErrorAttribute : ActionFilterAttribute
     {
-        [Inject]
+      //  [Inject]
         public INotificationService NotificationService { get; set; }
 
         public override void OnActionExecuted(ActionExecutedContext filterContext)

@@ -117,9 +117,9 @@ namespace eMotive.Managers.Objects
                 if (_user.Roles.Any(n => n.Name == "Interviewer"))
                 {
                     if (profile.Groups.Any(n => n.Name == "Observer"))
-                        key = "ObserverSessionSignup";
+                        key = "CreateObserverAccount";
                     else
-                        key = "InterviewerSessionSignup";
+                        key = "CreateInterviewerAccount";
                 }
 
                 if (_user.Roles.Any(n => n.Name == "Applicant"))
@@ -175,9 +175,9 @@ namespace eMotive.Managers.Objects
                 if (user.Roles.Any(n => n.Name == "Interviewer"))
                 {
                     if (profile.Groups.Any(n => n.Name == "Observer"))
-                        key = "ObserverSessionSignup";
+                        key = "CreateObserverAccount";
                     else
-                        key = "InterviewerSessionSignup";
+                        key = "CreateInterviewerAccount";
                 }
 
                 if (user.Roles.Any(n => n.Name == "Applicant"))

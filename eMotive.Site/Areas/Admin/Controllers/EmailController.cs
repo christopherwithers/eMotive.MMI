@@ -5,11 +5,12 @@ using eMotive.Models.Objects.Email;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Services.Interfaces;
 using Extensions;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    
-    public class EmailController : Controller
+
+    public class EmailController : ServiceStackController
     {
         private readonly IEmailService emailService;
         private readonly INotificationService notificationService;

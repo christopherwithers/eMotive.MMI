@@ -2,11 +2,12 @@
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Services.Interfaces;
-using Ninject;
+//using Ninject;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    public class SessionsController : Controller
+    public class SessionsController : ServiceStackController
     {
         private readonly ISessionManager signupManager;
         private readonly IPartialPageManager pageManager;
@@ -17,9 +18,9 @@ namespace eMotive.MMI.Controllers
             pageManager = _pageManager;
         }
 
-        [Inject]
+       // [Inject]
         public IeMotiveConfigurationService ConfigurationService { get; set; }
-        [Inject]
+       // [Inject]
         public INotificationService NotificationService { get; set; }
 
         public ActionResult Index(int id)

@@ -2,10 +2,11 @@
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    public class ApplicationController : Controller
+    public class ApplicationController : ServiceStackController
     {
         /// <summary> 
         /// Renders out javascript 

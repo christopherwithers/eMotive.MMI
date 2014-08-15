@@ -10,16 +10,17 @@ using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Account;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Users;
-using eMotive.SCE.Common;
 using eMotive.Services.Interfaces;
 using Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using Ninject;
+//using Ninject;
+using ServiceStack.Mvc;
+using ServiceStack.ServiceInterface.Auth;
 
 namespace eMotive.MMI.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : ServiceStackController
     {
         private readonly IAccountManager accountManager;
         private readonly IEmailService emailService;
@@ -39,7 +40,7 @@ namespace eMotive.MMI.Controllers
             get { return HttpContext.GetOwinContext().Authentication; }
         }
 
-        [Inject]
+      //  [Inject]
         public INotificationService notificationService { get; set; }
 
         [HttpGet]
@@ -84,9 +85,11 @@ namespace eMotive.MMI.Controllers
                         IsPersistent = true
                     }, identity);
 
-
                     
+                    var auth = new AuthService();
 
+                    auth.Authenticate(new Auth {UserName = user.Username});
+                    
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {
                         return RedirectToAction("Index", "Home", new { area = "" });
@@ -241,7 +244,7 @@ namespace eMotive.MMI.Controllers
                         Message = "Your details were successfully updated.",
                         Links = new[]
                             {
-                                new SuccessView.Link {Text ="Edit My Details", URL = @Url.Action("SceDetails", "Account")},
+                                new SuccessView.Link {Text ="Edit My Details", URL = @Url.Action("InterviewerDetails", "Account")},
                                 new SuccessView.Link {Text = "Return to Home", URL = @Url.Action("Index", "Home")}
                             }
                     };
@@ -327,7 +330,7 @@ namespace eMotive.MMI.Controllers
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetNoStore();
 
-            Session.Abandon();
+          //  Session.();
 
             return RedirectToAction("Login");
         }

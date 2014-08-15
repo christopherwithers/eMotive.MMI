@@ -2,14 +2,21 @@
 using System.Linq;
 using System.Web.Security;
 using eMotive.Managers.Interfaces;
+using eMotive.Models.Objects.Users;
 using Extensions;
-using Ninject;
+//using Ninject;
+using ServiceStack.WebHost.Endpoints;
 
 namespace eMotive.MMI.Common.Providers
 {
     public class eMotiveRoleProvider : RoleProvider
     {
-        [Inject]
+
+        public eMotiveRoleProvider()
+        {
+            UserManager = AppHostBase.Instance.TryResolve<IUserManager>();
+        }
+       // [Inject]
         public IUserManager UserManager { get; set; }
 
         public override bool IsUserInRole(string _username, string _roleName)

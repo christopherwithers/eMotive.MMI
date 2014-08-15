@@ -3,10 +3,11 @@ using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Menu;
 using eMotive.Models.Objects.Users;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    public class NavigationController : Controller
+    public class NavigationController : ServiceStackController
     {
        // private readonly INavigationServices navigationService;
         private readonly IUserManager userManager;

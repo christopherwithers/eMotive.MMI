@@ -283,7 +283,112 @@ namespace eMotive.Managers.Objects
         }
 
 
+        public UserSignupView FetchSignupInformation(string _username)
+        {
+            var signupCollection = new Collection<SignupState>();
+            var user = userManager.Fetch(_username);
 
+            if (user == null)
+            {//TODO: ERROR MESSAGE HERE!!
+                return null;
+            }
+
+            var profile = userManager.FetchProfile(_username);
+            var userSignUp = FetchuserSignups(user.ID, profile.Groups.Select(n => n.ID));
+            var signups = FetchSignupsByGroup(profile.Groups.Select(n => n.ID));
+
+            bool signedup = false;
+            int signupId = 0;
+            if (signups.HasContent())
+            {
+                //signupCollection
+                foreach (var item in signups)
+                {
+                    //Logic to deal with applicants and closed signups
+                    //if a signup is closed, we hide it from applicants UNLESS they are signed up to a slot in that signup
+                    if (!item.Closed || userSignUp != null && userSignUp.Any(n => n.IdSignUp == item.id))
+                    {
+                        var signup = new SignupState
+                        {
+                            ID = item.id,
+                            Date = item.Date,
+                            SignedUp =
+                                item.Slots.Any(
+                                    n =>
+                                    n.UsersSignedUp.HasContent() &&
+                                    n.UsersSignedUp.Any(m => m != null && m.IdUser == user.ID)),
+                            TotalSlotsAvailable = item.Slots.Sum(n => n.PlacesAvailable),
+                            TotalReserveAvailable = item.Slots.Sum(n => n.ReservePlaces),
+                            TotalInterestedAvaiable = item.Slots.Sum(n => n.InterestedPlaces),
+                           
+                            NumberSignedUp = item.Slots.Sum(n => n.UsersSignedUp.HasContent() ? n.UsersSignedUp.Count() : 0),
+                            
+                            MergeReserve = item.MergeReserve,
+                            OverrideClose = item.OverrideClose,
+                            DisabilitySignup = item.Group.DisabilitySignups,
+                            Closed = item.Closed || item.CloseDate < DateTime.Now,
+                            Description = item.Description,
+                            //       SignupType = item.
+                            Group = new Group { AllowMultipleSignups = item.Group.AllowMultipleSignups, Description = item.Group.Description, ID = item.Group.ID, Name = item.Group.Name }
+                        };
+
+
+                        foreach (var slot in item.Slots ?? new rep.Slot[] {})
+                        {
+                            signup.SignupNumbers.Add(new SignupState.SignupSlotState
+                            {
+                                SlotID = slot.id,
+                                TotalSlotsAvailable = slot.PlacesAvailable, 
+                                TotalInterestedAvaiable = slot.InterestedPlaces, 
+                                TotalReserveAvailable = slot.ReservePlaces,
+                                NumberSignedUp = slot.UsersSignedUp.HasContent() ? slot.UsersSignedUp.Count : 0
+                            });
+                        }
+
+                        if (signup.SignedUp)
+                        {
+                            signup.SignupTypes = new Collection<SlotType>();
+                            signedup = true;
+                            signupId = signup.ID;
+                            // var usersSlots = item.Slots.Where(n => n.UsersSignedUp.HasContent()).Select(m => m.UsersSignedUp.Where(o => o.IdUser == user.ID));
+
+                            foreach (var userSignup in item.Slots)
+                            {
+                                if (userSignup.UsersSignedUp.HasContent() && userSignup.UsersSignedUp.Any(n => n.IdUser == user.ID))
+                                {
+                                    //   var usersIndex = userSignup.UsersSignedUp.FindIndex(n => n.IdUser == user.ID);
+
+                                    // if (usersIndex != null)
+                                    // {
+
+
+
+
+                                    signup.SignupTypes.Add(GenerateHomeViewSlotStatus(userSignup, user.ID));//usersIndex.ToString());
+                                    // }
+                                }
+                            }
+                        }
+
+                        signupCollection.Add(signup);
+                    }
+                }
+            }
+
+            var signupView = new UserSignupView
+            {
+                SignupInformation = signupCollection,
+                SignupID = signupId,
+                SignedUp = signedup,
+            };
+
+            return signupView;
+
+        }
+
+
+
+        /*
         public UserSignupView FetchSignupInformation(string _username)
         {
             var signupCollection = new Collection<SignupState>();
@@ -333,7 +438,7 @@ namespace eMotive.Managers.Objects
 
                         if (signup.SignedUp)
                         {
-                            signup.SignupTypes = new Collection<string>();
+                            signup.SignupTypes = new Collection<SlotType>();
                             signedup = true;
                             signupId = signup.ID;
                            // var usersSlots = item.Slots.Where(n => n.UsersSignedUp.HasContent()).Select(m => m.UsersSignedUp.Where(o => o.IdUser == user.ID));
@@ -342,11 +447,15 @@ namespace eMotive.Managers.Objects
                             {
                                 if (userSignup.UsersSignedUp.HasContent() && userSignup.UsersSignedUp.Any(n => n.IdUser == user.ID))
                                 {
-                                    var usersIndex = userSignup.UsersSignedUp.FindIndex(n => n.IdUser == user.ID);
+                                 //   var usersIndex = userSignup.UsersSignedUp.FindIndex(n => n.IdUser == user.ID);
 
                                     // if (usersIndex != null)
                                     // {
-                                    signup.SignupTypes.Add(usersIndex.ToString());
+
+
+
+
+                                    signup.SignupTypes.Add(GenerateHomeViewSlotStatus(userSignup, user.ID));//usersIndex.ToString());
                                     // }
                                 }
                             }
@@ -367,7 +476,7 @@ namespace eMotive.Managers.Objects
             return signupView;
 
         }
-
+*/
         public UserSignupView FetchSignupInformation(string _username, int _idGroup)
         {
             var signupCollection = new Collection<SignupState>();
@@ -584,6 +693,7 @@ namespace eMotive.Managers.Objects
                         SignupID = signup.ID,
                         SignupDate = signup.Date
                     }),
+                    SignupType = GenerateUserSignupType(item, user.ID),
                     Closed = signup.Closed || signup.CloseDate < DateTime.Now,
                     OverrideClose = signup.OverrideClose,
                     MergeReserve = signup.MergeReserve,
@@ -668,13 +778,16 @@ namespace eMotive.Managers.Objects
                 }
 
                 int id;
-                bool interestedSlot = false;
 
-                if (slot.ApplicantsSignedUp.HasContent())
-                    interestedSlot = slot.ApplicantsSignedUp.Count() >= slot.TotalPlacesAvailable + slot.ReservePlaces;
+             //   bool interestedSlot = false;
+
+               // if (slot.ApplicantsSignedUp.HasContent())
+                   // interestedSlot = slot.ApplicantsSignedUp.Count() >= slot.TotalPlacesAvailable + slot.ReservePlaces;
 
                 if (signupRepository.SignupToSlot(_slotId, user.ID, signupDate, out id))
                 {
+                    //+1 to account for the signup we are currently processing
+                    var reserveSignup = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.Count() + 1 > slot.TotalPlacesAvailable : false;
                     // slot.ApplicantsSignedUp.Single(n => n.ID == 0).ID = id;
                     var replacements = new Dictionary<string, string>(4)
                     {
@@ -700,9 +813,14 @@ namespace eMotive.Managers.Objects
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {
                         if (signup.Group.Name == "Observer")
+                        {
                             key = "ObserverSessionSignup";
+                        }
                         else
-                            key = "InterviewerSessionSignup";
+                        {
+                            
+                            key = reserveSignup ? "ReserveSessionSignup" : "InterviewerSessionSignup";
+                        }
                     }
 
 
@@ -736,7 +854,7 @@ namespace eMotive.Managers.Objects
 
             //TODO: check for null here??
             var user = userManager.Fetch(_username);
-            var profile = userManager.FetchProfile(_username);
+           // var profile = userManager.FetchProfile(_username);
 
             object bodyLock;
             lock (dictionaryLock)
@@ -749,11 +867,15 @@ namespace eMotive.Managers.Objects
             }
 
             lock (bodyLock)
-            {
-                var BumpUser = slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable + slot.ReservePlaces;
+            {//todo: NOTE that SCE bumps from interested to reserve. MMI bumps from reserve to main
+                var BumpUser = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) +1 <= slot.TotalPlacesAvailable && slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;//slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;// + slot.ReservePlaces;
 
                 if (signupRepository.CancelSignupToSlot(_slotId, user.ID))
                 {
+
+                    var userIndex = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) +1;
+
+                    var reserveCancel = userIndex > slot.TotalPlacesAvailable;
                     /*                    var userSignup = signup.Slots.SingleOrDefault(n => n.ID == _slotId).ApplicantsSignedUp.SingleOrDefault(n => n.Applicant.Username == _username);
 
                     signup.Slots.SingleOrDefault(n => n.ID == _slotId).ApplicantsSignedUp.Remove(userSignup);
@@ -785,33 +907,40 @@ namespace eMotive.Managers.Objects
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {
                         if (signup.Group.Name == "Observer")
-                            key = "ObserverSessionSignup";
+                            key = "ObserverSessionCancel";
                         else
-                            key = "InterviewerSessionSignup";
+                            key = reserveCancel ? "ReserveSessionCancel" : "InterviewerSessionCancel";
                     }
 
 
                     if (emailService.SendMail(key, user.Email, replacements))
                     {
                         emailService.SendEmailLog(key, user.Username);
+
+
+                        if (BumpUser)
+                        {
+                            var users = slot.ApplicantsSignedUp.Select(n => n).OrderBy(n => n.SignupDate).ToArray();
+
+                            var UserToBump = users[slot.TotalPlacesAvailable /*+ slot.ReservePlaces*/].User;
+
+
+                            key = "SlotUpgrade";
+
+                            if (emailService.SendMail(key, UserToBump.Email, replacements))
+                            {
+                                emailService.SendEmailLog(key, UserToBump.Username);
+                                return true;
+                            }
+                        }
+
+
+
+
                         return true;
                     }
 
-                    if (BumpUser)
-                    {
-                        var users = slot.ApplicantsSignedUp.Select(n => n).OrderBy(n => n.SignupDate).ToArray();
 
-                        var UserToBump = users[slot.TotalPlacesAvailable + slot.ReservePlaces + 1].User;
-
-
-                        key = "SlotUpgrade";
-
-                        if (emailService.SendMail(key, UserToBump.Email, replacements))
-                        {
-                            emailService.SendEmailLog(key, UserToBump.Username);
-                            return true;
-                        }
-                    }
 
                     notificationService.AddError("An error occured. ");
                     return true;
@@ -849,6 +978,36 @@ namespace eMotive.Managers.Objects
             //todo: error check incase userSignup is null??
 
             return (SlotType)userSignup.Type;
+        }
+
+        virtual public SlotType GenerateUserSignupType(Slot _slot, int _userId)
+        {
+            //   var userPosition = _slot.UsersSignedUp.ToList().FindIndex(n => n.Type ==)
+            // throw new NotImplementedException();
+
+            //    if(_slot)
+
+            if (_slot.ApplicantsSignedUp.HasContent())
+            {
+                var userSignup = _slot.ApplicantsSignedUp.SingleOrDefault(n => n.User.ID == _userId);
+
+                if (userSignup != null)
+                {
+                    var usersIndex = _slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == _userId) + 1;
+
+                    if (usersIndex <= _slot.TotalPlacesAvailable)
+                        return SlotType.Main;
+
+                    if (usersIndex <= _slot.TotalPlacesAvailable + _slot.ReservePlaces)
+                        return SlotType.Reserve;
+
+                    return SlotType.Interested;
+                }
+
+                //todo: error check incase userSignup is null??
+            }
+
+            return SlotType.Interested; //todo: need an error slot?
         }
 
         virtual public SlotStatus GenerateSlotStatus(Slot _slot, GenerateSlotStatusDTO _params)

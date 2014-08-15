@@ -8,11 +8,12 @@ using eMotive.Models.Objects.Roles;
 using eMotive.Models.Validation.Role;
 using eMotive.Services.Interfaces;
 using Extensions;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    
-    public class RolesController : Controller
+
+    public class RolesController : ServiceStackController
     {
         private readonly IRoleManager roleManager;
         private readonly INotificationService notificationService;

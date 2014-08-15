@@ -8,12 +8,13 @@ using eMotive.MMI.Common;
 using eMotive.MMI.Common.ActionFilters;
 using eMotive.Services.Interfaces;
 using Extensions;
-using Ninject;
+//using Ninject;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
     [Common.ActionFilters.Authorize(Roles = "Interviewer")]
-    public class InterviewsController : Controller
+    public class InterviewsController : ServiceStackController
     {
         private readonly ISessionManager signupManager;
         private readonly IPartialPageManager pageManager;
@@ -24,9 +25,9 @@ namespace eMotive.MMI.Controllers
             pageManager = _pageManager;
         }
 
-        [Inject]
+        //[Inject]
         public IeMotiveConfigurationService ConfigurationService { get; set; }
-        [Inject]
+       // [Inject]
         public INotificationService NotificationService { get; set; }
 
        /* public ActionResult Disability()
@@ -52,6 +53,17 @@ namespace eMotive.MMI.Controllers
             var signups = signupManager.FetchSignupInformation(User.Identity.Name);
 
             var pageText = pageManager.FetchPartials(new[] {"Session-List-header", "Session-List-Footer"}).ToDictionary(k => k.Key, v => v.Text);
+            signups.HeaderText = pageText["Session-List-header"];
+            signups.FooterText = pageText["Session-List-Footer"];
+
+            return View(signups);
+        }
+
+        public ActionResult TestPage()
+        {
+            var signups = signupManager.FetchSignupInformation(User.Identity.Name);
+
+            var pageText = pageManager.FetchPartials(new[] { "Session-List-header", "Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
             signups.HeaderText = pageText["Session-List-header"];
             signups.FooterText = pageText["Session-List-Footer"];
 

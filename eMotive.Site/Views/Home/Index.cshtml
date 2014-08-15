@@ -14,7 +14,7 @@
     }*/
 }
 
-@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Header-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Header-Unsigned"].Text)))
+@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Home-Header-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Home-Header-Unsigned"].Text)))
 
 @if (ViewBag.GroupDetails != null)
 {
@@ -35,10 +35,14 @@ else
         <tbody>
             @foreach (var signup in Model.SignupDetails)
             {
-                <tr @Html.HomeViewRowStyle(signup.Type)><td>@Html.HomeViewRowBadge(signup.Type)</td><td>@signup.SignupGroup.Name</td><td>@signup.SignUpDate.ToString("dddd d MMMM yyyy") at @signup.SignUpDetails</td> <td><a href="@Url.Action("Slots", "Interviews", new { id = signup.SignupID })" role="button" @Html.HomeViewRowButton(signup.Type) id="SlotCancel">Cancel</a></td></tr>
+                <tr @Html.HomeViewRowStyle(signup.Type)>
+                    <td>@Html.HomeViewRowBadge(signup.Type)</td>
+                    <td>@signup.SignupGroup.Name.ToUpperInvariant()</td>
+                    <td>@signup.SignUpDate.ToString("dddd d MMMM yyyy") at @signup.SignUpDetails</td>
+                    <td><a href="@Url.Action("Slots", "Interviews", new { id = signup.SignupID })" role="button" @Html.HomeViewRowButton(signup.Type) id="SlotCancel">Cancel</a></td>
+                </tr>
             }
         </tbody>
     </table>
 }
 
-@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Footer-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Footer-Unsigned"].Text)))

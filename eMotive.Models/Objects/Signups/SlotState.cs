@@ -16,6 +16,7 @@
         public bool Closed { get; set; }
 
         public SlotStatus Status { get; set; }
+        public SlotType SignupType { get; set; } 
 
         public int PlacesAvailable()
         {
@@ -33,10 +34,10 @@
             {
 
                 if (NumberSignedUp < TotalPlacesAvailable)
-                    return string.Format("{1} {0} Available", "Place".SingularOrPlural(TotalPlacesAvailable - NumberSignedUp), TotalPlacesAvailable - NumberSignedUp);
+                    return string.Format("{1} {0} Available", "PLACE".SingularOrPlural(TotalPlacesAvailable - NumberSignedUp), TotalPlacesAvailable - NumberSignedUp);
 
                 if (NumberSignedUp < TotalPlacesAvailable + TotalReserveAvailable)
-                    return string.Format("{1} {0} Available", "Reserve".SingularOrPlural(TotalPlacesAvailable - NumberSignedUp - TotalReserveAvailable), TotalPlacesAvailable + TotalReserveAvailable - NumberSignedUp);
+                    return string.Format("{1} {0} Available", "RESERVE".SingularOrPlural(TotalPlacesAvailable +TotalReserveAvailable - NumberSignedUp), TotalPlacesAvailable + TotalReserveAvailable - NumberSignedUp);
 
             }
             else
@@ -44,14 +45,14 @@
                 if (NumberSignedUp < TotalPlacesAvailable + TotalReserveAvailable)
                 {
                     placesAvailable = TotalPlacesAvailable + TotalReserveAvailable - NumberSignedUp;
-                    return string.Format("{1} {0} Available", "Place".SingularOrPlural(placesAvailable), placesAvailable);
+                    return string.Format("{1} {0} Available", "PLACE".SingularOrPlural(placesAvailable), placesAvailable);
                 }
             }
 
             if (NumberSignedUp < TotalPlacesAvailable + TotalReserveAvailable + TotalInterestedAvaiable)
             {
                 placesAvailable = TotalPlacesAvailable + TotalReserveAvailable + TotalInterestedAvaiable - NumberSignedUp;
-                return string.Format("{1} {0} Available", "Interested", placesAvailable);
+                return string.Format("{1} {0} Available", "INTERESTED", placesAvailable);
             }
 
             return "No Places Available";

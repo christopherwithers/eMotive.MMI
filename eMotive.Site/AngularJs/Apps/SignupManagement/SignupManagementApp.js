@@ -10,5 +10,5 @@ signupManagementApp.controller("myApp", function ($scope, $signupServices, $loca
 
     $scope.signup = $signupServices.getSignup(id);
 
-    alert($scope.signup.academicyear);
+    alert($scope.signup.AcademicYear);
 });

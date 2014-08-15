@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
-using FluentValidation.Attributes;
 using FluentValidation.Mvc;
 
 namespace eMotive.MMI
@@ -16,8 +15,10 @@ namespace eMotive.MMI
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
-            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new AttributedValidatorFactory()));
+          //  ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new AttributedValidatorFactory()));
+            FluentValidationModelValidatorProvider.Configure();
 
+            new AppHost().Init();
         }
     }
 }

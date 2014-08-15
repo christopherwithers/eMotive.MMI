@@ -2,10 +2,11 @@
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Menu;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {//keep this in mind: http://www.verious.com/qa/performance-bottleneck-url-action-can-i-workaround-it/ poss last answer as solution?
-    public class NavigationController : Controller
+    public class NavigationController : ServiceStackController
     {
         private readonly IUserManager userManager;
 

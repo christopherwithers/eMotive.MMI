@@ -5,11 +5,12 @@ using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Users;
 using eMotive.Services.Interfaces;
 using Extensions;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
     [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, Moderator")]
-    public class NewsController : Controller
+    public class NewsController : ServiceStackController
     {
         private readonly INewsManager newsManager;
         private readonly INotificationService notificationService;

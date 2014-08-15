@@ -1,8 +1,9 @@
 ﻿using System.Web.Mvc;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    public class PageController : Controller
+    public class PageController : ServiceStackController
     {
         //
         // GET: /Page/

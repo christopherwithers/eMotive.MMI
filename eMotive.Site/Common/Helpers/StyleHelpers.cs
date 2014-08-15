@@ -24,7 +24,7 @@ namespace eMotive.SCE.Common.Helpers
             } 
         }
 
-        public static MvcHtmlString HomeViewRowBadge(this HtmlHelper _helper, SlotType _type)
+       /* public static MvcHtmlString HomeViewRowBadge(this HtmlHelper _helper, SlotType _type)
         {
             switch (_type)
             {
@@ -33,6 +33,21 @@ namespace eMotive.SCE.Common.Helpers
                     return MvcHtmlString.Create("<span class='label label-success'>Signed Up</span>");
                 case SlotType.Interested:
                     return MvcHtmlString.Create("<span class='label label-info'>Interested</span>");
+                default:
+                    return MvcHtmlString.Create(string.Empty);
+            }
+        }*/
+
+        public static MvcHtmlString HomeViewRowBadge(this HtmlHelper _helper, SlotType _type)
+        {
+            switch (_type)
+            {
+                case SlotType.Main:
+                    return MvcHtmlString.Create("<span class='label label-success'>Signed Up</span> <span class='label label-success' style='clear: left;'>Main</span>");
+                case SlotType.Reserve:
+                    return MvcHtmlString.Create("<span class='label label-success'>Signed Up</span> <span class='label label-success' style='clear: left;'>Reserve</span>");
+                case SlotType.Interested:
+                    return MvcHtmlString.Create("<span class='label label-success'>Signed Up</span> <span class='label label-info' style='clear: left;'>Interested</span>");
                 default:
                     return MvcHtmlString.Create(string.Empty);
             }

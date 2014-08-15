@@ -6,10 +6,11 @@ using eMotive.Models.Objects.Search;
 using eMotive.SCE.Common;
 using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    public class SettingsController : Controller
+    public class SettingsController : ServiceStackController
     {
         private readonly INewsManager newsManager;
         private readonly IUserManager userManager;

@@ -41,6 +41,9 @@ namespace eMotive.Search.Objects
             catch (LockObtainFailedException ex)
             {
                 IndexWriter.Unlock(directory);
+              //  writer.Commit();
+
+             //   writer.Dispose();
                 writer = new IndexWriter(directory, new StandardAnalyzer(luceneVersion), false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
 

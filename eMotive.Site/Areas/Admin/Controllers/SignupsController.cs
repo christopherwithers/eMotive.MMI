@@ -15,12 +15,13 @@ using eMotive.SCE.Infrastructure;
 using eMotive.Services.Interfaces;
 using Extensions;
 using Newtonsoft.Json.Linq;
-using Ninject;
+//using Ninject;
 using OfficeOpenXml;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
-    public class SignupsController : Controller
+    public class SignupsController : ServiceStackController
     {
         private readonly ISessionManager signupManager;
         private readonly IGroupManager groupManager;
@@ -36,10 +37,10 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             userManager = _userManager;
         }
 
-        [Inject]
+       // [Inject]
         public INotificationService NotificationService { get; set; }
 
-        [Inject]
+      //  [Inject]
         public IeMotiveConfigurationService ConfigurationService { get; set; }
         
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
@@ -485,7 +486,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
 
     //    [AjaxOnly]
-        public string FetchSignup(int idSignup)
+        public JsonResult FetchSignup(int idSignup)
         {
             var signup = signupManager.Fetch(idSignup);
 
@@ -493,7 +494,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
           //  return new CustomJsonResult
           //  {
-            return new {success = signup != null, message = issues, result = signup}.ToJson();
+            return new JsonResult {Data =  new {success = signup != null, message = issues, result = signup}, JsonRequestBehavior = JsonRequestBehavior.AllowGet};
             // };
 
         }

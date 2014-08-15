@@ -4,11 +4,12 @@ using eMotive.Models.Objects.Pages;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Services.Interfaces;
 using Extensions;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
     [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin, Moderator")]
-    public class PagesController : Controller
+    public class PagesController : ServiceStackController
     {
         private readonly IPartialPageManager pageManager;
         private readonly INotificationService notificationService;

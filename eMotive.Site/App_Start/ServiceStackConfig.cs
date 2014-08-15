@@ -1,54 +1,63 @@
-﻿/*using Funq;
-using Ninject;
-using Ninject.Web.Common;
-using ServiceStack;
+﻿using System.Web.Mvc;
+using eMotive.MMI.Controllers;
+using eMotive.IoCBindings.Funq;
+using Funq;
+using ServiceStack.CacheAccess;
+using ServiceStack.CacheAccess.Providers;
+using ServiceStack.Common;
 using ServiceStack.Configuration;
+using ServiceStack.Mvc;
+using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface;
+using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.Text;
+using ServiceStack.WebHost.Endpoints;
 
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(eMotive.MMI.App_Start.AppHost), "Start")]
 
-namespace eMotive.MMI.App_Start
+namespace eMotive.MMI
 {
     public class AppHost : AppHostBase
     {
-        private static readonly Bootstrapper bootstrapper = new Bootstrapper();
-      //  public AppHost() : base("SCE Web Services", typeof(InterviewService).Assembly) { }
+        public AppHost() : base("MMI Web Services", typeof(AppHost).Assembly) { }
 
         public override void Configure(Container container)
-        {//Create Ninject IoC container
-          //  IKernel kernel = new StandardKernel(new eMotiveModule());
-            //Now register all depedencies to your custom IoC container
-            //...
-      //      Plugins.Add(new AuthFeature(() => new AuthUserSession(),
-  // new IAuthProvider[] {
-    //    new BasicAuthProvider()
-    //  }));
-            //Register Ninject IoC container, so ServiceStack can use it
-            container.Adapter = new NinjectIocAdapter(bootstrapper.Kernel);
-        }
-
-        public static void Start()
         {
-            new AppHost().Init();
+            FunqBindings.Configure(container);
+
+            container.Register<ICacheClient>(new MemoryCacheClient());
+            container.Register<ISessionFactory>(c => new SessionFactory(c.Resolve<ICacheClient>()));
+
+            ControllerBuilder.Current.SetControllerFactory(new FunqControllerFactory(container));
+            ServiceStackController.CatchAllController = reqCtx => container.TryResolve<AccountController>();
+            JsConfig.DateHandler = JsonDateHandler.ISO8601;
+
+            SetConfig(new EndpointHostConfig
+            {
+                EnableFeatures = Feature.All.Remove(Feature.Metadata)
+            });
+            AuthService.Init(() => new AuthUserSession(), new IAuthProvider[] {new CredentialsAuthProvider()});
+
+
+            /*Plugins.Add(new AuthFeature(() => new AuthUserSession(),
+                    new IAuthProvider[] { 
+                    new BasicAuthProvider(), //Sign-in with Basic Auth
+                    new CredentialsAuthProvider(), //HTML Form post of UserName/Password credentials
+                  }));*/
+            /*    var appSettings = new AppSettings();
+            Plugins.Add(new AuthFeature(this, new CustomUserSession(), 
+                new IAuthProvider[]
+                {
+                    new CredentialsAuthProvider(appSettings), 
+                }));*/
         }
     }
 
-    public class NinjectIocAdapter : IContainerAdapter
+    public class CustomCredentialsAuthProvider : CredentialsAuthProvider
     {
-        private readonly IKernel kernel;
-
-        public NinjectIocAdapter(IKernel kernel)
+        public override bool TryAuthenticate(IServiceBase authService,
+            string userName, string password)
         {
-            this.kernel = kernel;
-        }
-
-        public T Resolve<T>()
-        {
-            return this.kernel.Get<T>();
-        }
-
-        public T TryResolve<T>()
-        {
-            return this.kernel.TryGet<T>();
+            return userName == "john" && password == "test";
         }
     }
-}*/
+}

@@ -15,10 +15,11 @@ using Extensions;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using Rotativa;
+using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    public class TestController : Controller
+    public class TestController : ServiceStackController
     {
         private readonly IUserManager userManager;
         private readonly IRoleManager rolemanager;

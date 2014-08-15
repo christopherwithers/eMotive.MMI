@@ -8,5 +8,6 @@ namespace eMotive.Models.Objects.Signups
         public int ID { get; set; }
         public User User { get; set; }
         public DateTime SignupDate { get; set; }
+   //     public SlotType Type { get; set; }
     }
 }

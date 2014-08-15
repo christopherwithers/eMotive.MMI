@@ -8,7 +8,7 @@
         },
         getSignup: function (id) {
             return $http.get(window.Routes.URL("FetchSignupAng"), { params: { idSignup: id } }).then(function (result) {
-                return result.data;
+                return result;
             });
         }/*,
         getSections: function (ids) {
