@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿using ServiceStack.FluentValidation;
 using eMotive.Models.Objects.Account;
 
 namespace eMotive.Models.Validation.Account

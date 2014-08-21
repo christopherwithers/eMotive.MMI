@@ -1,5 +1,5 @@
 ﻿using eMotive.Models.Validation.Sessions;
-using FluentValidation.Attributes;
+using ServiceStack.FluentValidation.Attributes;
 
 namespace eMotive.Models.Objects.Signups
 {

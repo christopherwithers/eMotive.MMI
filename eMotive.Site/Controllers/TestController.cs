@@ -27,6 +27,7 @@ namespace eMotive.MMI.Controllers
         private readonly IGroupManager groupManager;
         private readonly IDocumentManagerService documentManager;
         private readonly INotificationService notificationManager;
+        
         //
         // GET: /Test/
         public TestController(IUserManager _userManager, IRoleManager _rolemanager, IAccountManager _accountManager, IDocumentManagerService _documentManager, IGroupManager _groupManager, INotificationService _notificationManager)
@@ -73,6 +74,11 @@ namespace eMotive.MMI.Controllers
         }
 
         public ActionResult UploadTest()
+        {
+            return View();
+        }
+
+        public ActionResult SignalRTest()
         {
             return View();
         }

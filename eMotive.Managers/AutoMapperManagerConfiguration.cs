@@ -14,6 +14,7 @@ using mRoles = eMotive.Models.Objects.Roles;
 using mNews = eMotive.Models.Objects.News;
 using mPages = eMotive.Models.Objects.Pages;
 using mSignups = eMotive.Models.Objects.Signups;
+using mod = eMotive.Models.Objects.SignupsMod;
 using emSearch = eMotive.Search.Objects.Search;
 
 namespace eMotive.Managers
@@ -34,6 +35,12 @@ namespace eMotive.Managers
 
         private static void ConfigureSignupMapping()
         {
+            Mapper.CreateMap<Signup, mod.Signup>();
+            Mapper.CreateMap<UserSignup, mod.UserSignup>();
+            Mapper.CreateMap<Slot, mod.Slot>();
+            Mapper.CreateMap<Group, mod.Group>();
+            Mapper.CreateMap<SessionAttendance, mod.SessionAttendance>();
+
             Mapper.CreateMap<Signup, mSignups.Signup>();
             Mapper.CreateMap<Slot, mSignups.Slot>().ForMember(m => m.TotalPlacesAvailable, o => o.MapFrom(m => m.PlacesAvailable));
             Mapper.CreateMap<UserSignup, mSignups.UserSignup>();

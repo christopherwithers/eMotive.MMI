@@ -3,12 +3,13 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
-using eMotive.Managers.Objects;
 using eMotive.MMI.Common;
 using eMotive.MMI.Common.ActionFilters;
+using eMotive.MMI.SignalR;
 using eMotive.Services.Interfaces;
 using Extensions;
-//using Ninject;
+
+using Microsoft.AspNet.SignalR;
 using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
@@ -155,28 +156,26 @@ namespace eMotive.MMI.Controllers
 
         private void ApplicantSignupPush(int _signupID, int _totalPlaces, int _remainingPlaces)
         {
-            var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
 
-            var result = pusher.Trigger("SignupSelection", "PlacesChanged",
-                                                    new
-                                                    {
-                                                        SignUpId = _signupID,
-                                                        TotalPlaces = _totalPlaces,
-                                                        PlacesAvailable = _remainingPlaces
-                                                    });
+            hubContext.Clients.Group("SignupSelection").placesChanged(new
+            {
+                SignUpId = _signupID,
+                TotalPlaces = _totalPlaces,
+                PlacesAvailable = _remainingPlaces
+            });
         }
 
         private void ApplicantSlotPush(int _slotID, int _totalPlaces, int _remainingPlaces)
         {
-            var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
 
-            var result = pusher.Trigger("SignupSelection", "SlotChanged",
-                                                    new
-                                                    {
-                                                        SlotId = _slotID,
-                                                        TotalPlaces = _totalPlaces,
-                                                        PlacesAvailable = _remainingPlaces
-                                                    });
+            hubContext.Clients.Group("SignupSelection").slotChanged(new
+            {
+                SlotId = _slotID,
+                TotalPlaces = _totalPlaces,
+                PlacesAvailable = _remainingPlaces
+            });
         }
 
     }

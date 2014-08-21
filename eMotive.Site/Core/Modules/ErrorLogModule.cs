@@ -5,7 +5,7 @@ using ServiceStack.WebHost.Endpoints;
 
 namespace eMotive.MMI.Core.Modules
 {
-    public class ErrorLogTest : IHttpModule
+    public class ErrorLogModule : IHttpModule
     {
         private INotificationService _logService;
 

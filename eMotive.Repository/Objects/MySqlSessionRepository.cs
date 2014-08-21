@@ -345,7 +345,7 @@ namespace eMotive.Repository.Objects
             }
         }
 
-        public Signup FetchSignup(int _id)
+        public Signup Fetch(int _id)
         {
             using (var connection = new MySqlConnection(connectionString))
             {

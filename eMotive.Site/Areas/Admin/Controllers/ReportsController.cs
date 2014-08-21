@@ -860,23 +860,23 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                             {
                                // PopulateWorksheetForSingleReport(ref worksheet, x, slot, userDict[users[slotCount].User.Username], slotType,
                                  //   users[slotCount]);
-                                i = 0;
+                                j = 0;
                                 var sceData = userDict[users[slotCount].User.Username];
-                                worksheet.Cells[x, ++i].Value = slot.Description;
-                                worksheet.Cells[x, ++i].Value = slotType;
-                                worksheet.Cells[x, ++i].Value = users[slotCount].SignupDate.ToString("f");
-                                worksheet.Cells[x, ++i].Value = sceData.Username;
-                                worksheet.Cells[x, ++i].Value = sceData.Title;
-                                worksheet.Cells[x, ++i].Value = sceData.Forename;
-                                worksheet.Cells[x, ++i].Value = sceData.Surname;
-                                worksheet.Cells[x, ++i].Value = sceData.Email;
-                                worksheet.Cells[x, ++i].Value = sceData.SecretaryEmail;
-                                worksheet.Cells[x, ++i].Value = sceData.OtherEmail;
-                                worksheet.Cells[x, ++i].Value = sceData.PhoneWork;
-                                worksheet.Cells[x, ++i].Value = sceData.PhoneMobile;
-                                worksheet.Cells[x, ++i].Value = sceData.PhoneOther;
-                                worksheet.Cells[x, ++i].Value = sceData.Trained ? "Yes" : "No";
-                                worksheet.Cells[x, ++i].Value = sceData.Enabled ? "Yes" : "No";
+                                worksheet.Cells[x, ++j].Value = slot.Description;
+                                worksheet.Cells[x, ++j].Value = slotType;
+                                worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
+                                worksheet.Cells[x, ++j].Value = sceData.Username;
+                                worksheet.Cells[x, ++j].Value = sceData.Title;
+                                worksheet.Cells[x, ++j].Value = sceData.Forename;
+                                worksheet.Cells[x, ++j].Value = sceData.Surname;
+                                worksheet.Cells[x, ++j].Value = sceData.Email;
+                                worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
+                                worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
+                                worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
+                                worksheet.Cells[x, ++j].Value = sceData.PhoneMobile;
+                                worksheet.Cells[x, ++j].Value = sceData.PhoneOther;
+                                worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
+                                worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
 
                                 if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
                                 {

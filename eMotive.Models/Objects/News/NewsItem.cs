@@ -1,5 +1,5 @@
 ﻿using System;
-using FluentValidation.Attributes;
+using ServiceStack.FluentValidation.Attributes;
 using eMotive.Models.Validation.News;
 
 namespace eMotive.Models.Objects.News

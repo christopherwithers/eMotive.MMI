@@ -1,6 +1,8 @@
 ﻿using System.Web.Mvc;
 using eMotive.MMI.Controllers;
 using eMotive.IoCBindings.Funq;
+using eMotive.Models.Validation.Account;
+using FluentValidation.Mvc;
 using Funq;
 using ServiceStack.CacheAccess;
 using ServiceStack.CacheAccess.Providers;
@@ -10,6 +12,7 @@ using ServiceStack.Mvc;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.ServiceInterface.Validation;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
 
@@ -27,17 +30,22 @@ namespace eMotive.MMI
             container.Register<ICacheClient>(new MemoryCacheClient());
             container.Register<ISessionFactory>(c => new SessionFactory(c.Resolve<ICacheClient>()));
 
-            ControllerBuilder.Current.SetControllerFactory(new FunqControllerFactory(container));
-            ServiceStackController.CatchAllController = reqCtx => container.TryResolve<AccountController>();
+            
             JsConfig.DateHandler = JsonDateHandler.ISO8601;
 
-            SetConfig(new EndpointHostConfig
-            {
-                EnableFeatures = Feature.All.Remove(Feature.Metadata)
-            });
-            AuthService.Init(() => new AuthUserSession(), new IAuthProvider[] {new CredentialsAuthProvider()});
+
+            
+          //  SetConfig(new EndpointHostConfig
+           // {
+             //   EnableFeatures = Feature.All.Remove(Feature.Metadata)
+           // });
+        //    AuthService.Init(() => new AuthUserSession(), new IAuthProvider[] {new CredentialsAuthProvider()});
 
 
+          //  Plugins.Add(new ValidationFeature());
+            FluentValidationModelValidatorProvider.Configure();
+        //    container.RegisterValidators(typeof(Models.Validation.User.UserValidator).Assembly);
+            //container.Register(new LoginValidator());
             /*Plugins.Add(new AuthFeature(() => new AuthUserSession(),
                     new IAuthProvider[] { 
                     new BasicAuthProvider(), //Sign-in with Basic Auth
@@ -49,6 +57,9 @@ namespace eMotive.MMI
                 {
                     new CredentialsAuthProvider(appSettings), 
                 }));*/
+
+            ControllerBuilder.Current.SetControllerFactory(new FunqControllerFactory(container));
+            ServiceStackController.CatchAllController = reqCtx => container.TryResolve<AccountController>();
         }
     }
 

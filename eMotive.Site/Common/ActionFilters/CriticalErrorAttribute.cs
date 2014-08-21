@@ -3,6 +3,7 @@ using eMotive.Models.Objects.StatusPages;
 using eMotive.Services.Interfaces;
 using Extensions;
 //using Ninject;
+using ServiceStack.WebHost.Endpoints;
 
 namespace eMotive.MMI.Common.ActionFilters
 {
@@ -18,30 +19,39 @@ namespace eMotive.MMI.Common.ActionFilters
             //errors and pass them back to the user for display
             if (!filterContext.HttpContext.Request.IsAjaxRequest())
             {
-                var criticalErrors = NotificationService.FetchErrors();
-
-                if (criticalErrors.HasContent())
+                NotificationService = AppHostBase.Instance.TryResolve<INotificationService>();
+                if (NotificationService != null)
                 {
-                    var helper = new UrlHelper(filterContext.RequestContext);
+                    var criticalErrors = NotificationService.FetchErrors();
 
-                    
-
-                    var controller = filterContext.RouteData.DataTokens["controller"] ?? string.Empty;
-                    var action = filterContext.RouteData.DataTokens["action"] ?? string.Empty;
-                    var area = filterContext.RouteData.DataTokens["area"] ?? string.Empty;
-
-                    var url = helper.Action("Error", "Home", new { area = (!string.IsNullOrEmpty(area.ToString()) && area.ToString() == "Admin") ? "Admin" : "" });
-
-                    var errorView = new ErrorView
+                    if (criticalErrors.HasContent())
                     {
-                        Referrer = string.Format("/{0}/{1}", area, controller),
-                        ControllerName = controller.ToString(),
-                        Errors = criticalErrors
-                    };
+                        var helper = new UrlHelper(filterContext.RequestContext);
 
-                    filterContext.Controller.TempData["CriticalErrors"] = errorView;
+                        var controller = filterContext.RouteData.DataTokens["controller"] ?? string.Empty;
+                        var action = filterContext.RouteData.DataTokens["action"] ?? string.Empty;
+                        var area = filterContext.RouteData.DataTokens["area"] ?? string.Empty;
 
-                    filterContext.Result = new RedirectResult(url);
+                        var url = helper.Action("Error", "Home",
+                            new
+                            {
+                                area =
+                                    (!string.IsNullOrEmpty(area.ToString()) && area.ToString() == "Admin")
+                                        ? "Admin"
+                                        : ""
+                            });
+
+                        var errorView = new ErrorView
+                        {
+                            Referrer = string.Format("/{0}/{1}", area, controller),
+                            ControllerName = controller.ToString(),
+                            Errors = criticalErrors
+                        };
+
+                        filterContext.Controller.TempData["CriticalErrors"] = errorView;
+
+                        filterContext.Result = new RedirectResult(url);
+                    }
                 }
             }
             base.OnActionExecuted(filterContext);

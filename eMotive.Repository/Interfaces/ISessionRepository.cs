@@ -13,6 +13,7 @@ namespace eMotive.Repository.Interfaces
 
         IEnumerable<Signup> FetchAllTraining();
         IEnumerable<Signup> FetchAll();
+        Signup Fetch(int _id);
 
         bool RegisterAttendanceToSession(SessionAttendance _session);
 
@@ -24,7 +25,7 @@ namespace eMotive.Repository.Interfaces
         bool SignupToSlot(int _idSlot, int _idUser, DateTime _signupDate, out int _id);
         bool CancelSignupToSlot(int _idSlot, int _idUser);
 
-        Signup FetchSignup(int _id);
+        
 
         int GetSignupIdFromSlot(int _id);
 

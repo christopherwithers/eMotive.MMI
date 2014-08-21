@@ -481,7 +481,7 @@ namespace eMotive.Managers.Objects
                 {
                     {"Username", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
                     {"Forename", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
-                    {"Surame", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"Surname", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
                     {"Email", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}}//,
                     //{"Archived", new emSearch.SearchTerm {Field = "False", Term = Occur.SHOULD}}
                 };

@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Extensions">
+      <HintPath>..\..\..\Dropbox\CommonUtilities\Extensions\bin\Release\Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack">
       <HintPath>..\packages\ServiceStack.3.9.71\lib\net35\ServiceStack.dll</HintPath>
     </Reference>
@@ -68,6 +71,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\eMotive.Managers\eMotive.Managers.csproj">
+      <Project>{D0F5F6DA-7B19-4DC7-968C-B386E7602708}</Project>
+      <Name>eMotive.Managers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eMotive.Models\eMotive.Models.csproj">
+      <Project>{4747A062-0720-4EA7-98CB-1B12EB4512FE}</Project>
+      <Name>eMotive.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eMotive.Services\eMotive.Services.csproj">
+      <Project>{8B8EFF5A-77DC-48D3-8A17-E10897DF74B9}</Project>
+      <Name>eMotive.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

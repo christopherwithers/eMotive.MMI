@@ -1,4 +1,4 @@
-﻿using FluentValidation.Attributes;
+﻿using ServiceStack.FluentValidation.Attributes;
 using eMotive.Models.Validation.User;
 
 namespace eMotive.Models.Objects.Users

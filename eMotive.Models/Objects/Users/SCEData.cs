@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using eMotive.Models.Objects.Signups;
 using eMotive.Models.Validation.User;
-using FluentValidation.Attributes;
+using ServiceStack.FluentValidation.Attributes;
 
 namespace eMotive.Models.Objects.Users
 {

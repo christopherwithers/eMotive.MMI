@@ -14,9 +14,7 @@ using eMotive.Services.Interfaces;
 using Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-//using Ninject;
 using ServiceStack.Mvc;
-using ServiceStack.ServiceInterface.Auth;
 
 namespace eMotive.MMI.Controllers
 {
@@ -86,9 +84,11 @@ namespace eMotive.MMI.Controllers
                     }, identity);
 
                     
-                    var auth = new AuthService();
+                   // var auth = new AuthService();
 
-                    auth.Authenticate(new Auth {UserName = user.Username});
+                  //  auth.Authenticate(new Auth {UserName = user.Username});
+
+                   // notificationService.AddError("some error");
                     
                     if (user.Roles.Any(n => n.Name == "Interviewer"))
                     {

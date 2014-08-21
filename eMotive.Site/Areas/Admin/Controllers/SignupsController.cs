@@ -587,7 +587,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
         private void ApplicantSignupPush(int _signupID, int _totalPlaces, int _remainingPlaces)
         {
-            var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
+         /*   var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
 
             var result = pusher.Trigger("SignupSelection", "PlacesChanged",
                                                     new
@@ -595,12 +595,12 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                         SignUpId = _signupID,
                                                         TotalPlaces = _totalPlaces,
                                                         PlacesAvailable = _remainingPlaces
-                                                    });
+                                                    });*/
         }
 
         private void ApplicantSlotPush(int _slotID, int _totalPlaces, int _remainingPlaces)
         {
-            var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
+            /*var pusher = new PusherServer.Pusher(ConfigurationService.PusherID(), ConfigurationService.PusherKey(), ConfigurationService.PusherSecret());
 
             var result = pusher.Trigger("SignupSelection", "SlotChanged",
                                                     new
@@ -608,7 +608,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                         SlotId = _slotID,
                                                         TotalPlaces = _totalPlaces,
                                                         PlacesAvailable = _remainingPlaces
-                                                    });
+                                                    });*/
         }
 
     }

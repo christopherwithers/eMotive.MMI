@@ -10,7 +10,7 @@ namespace eMotive
         {            // Enable the application to use a cookie to store information for the signed in user
             ConfigureAuth(app);
 
-        //    app.MapSignalR();
+            app.MapSignalR();
         }
     }
 }

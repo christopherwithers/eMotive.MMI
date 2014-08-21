@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace eMotive.Managers.Objects
             if (signup != null)
                 return signup;
 
-            var repSignup = signupRepository.FetchSignup(_id);
+            var repSignup = signupRepository.Fetch(_id);
 
 
             if (repSignup == null)
@@ -109,6 +110,60 @@ namespace eMotive.Managers.Objects
 
             return signup;
         }
+
+
+        public Signup Fetch(int[] _ids)
+        {
+            throw new NotImplementedException();
+         /*   var cacheId = string.Format("ModelSignup_{0}", string.Join("-", _ids));
+
+            var signup = cache.FetchItem<IEnumerable<Signup>>(cacheId);
+
+            if (signup != null)
+                return signup;
+
+            var repSignup = signupRepository.FetchSignups(_ids);
+
+
+            if (repSignup == null)
+            {
+                notificationService.AddError("The requested signup could not be found.");
+                return null;
+            }
+
+            signup = Mapper.Map<rep.Signup, Signup>(repSignup);
+
+            IDictionary<int, User> usersDict = null;
+
+            if (repSignup.Slots.Any(n => n.UsersSignedUp.HasContent()))
+            {
+                //  usersDict = new Dictionary<int, User>();
+                var UsersSignedUp = repSignup.Slots.Where(n => n.UsersSignedUp != null).SelectMany(m => m.UsersSignedUp);//.Select(u => u.IdUser);
+                var userIds = UsersSignedUp.Select(u => u.IdUser);
+                var users = userManager.Fetch(userIds);
+                usersDict = users.ToDictionary(k => k.ID, v => v);
+            }
+
+            foreach (var repSlot in repSignup.Slots)
+            {
+                foreach (var slot in signup.Slots)
+                {
+                    if (repSlot.id != slot.ID) continue;
+
+                    if (!repSlot.UsersSignedUp.HasContent()) continue;
+
+                    slot.ApplicantsSignedUp = new Collection<UserSignup>();
+                    foreach (var user in repSlot.UsersSignedUp)
+                    {
+                        slot.ApplicantsSignedUp.Add(new UserSignup { User = usersDict[user.IdUser], SignupDate = user.SignUpDate, ID = user.ID });
+                    }
+                }
+            }
+
+
+            return signup;*/
+        }
+
 
         //TODO: need a new signup admin obj which contains full user + signup date etc! Then map to it!
         public IEnumerable<Signup> FetchAll()
@@ -1081,5 +1136,46 @@ namespace eMotive.Managers.Objects
             return SlotStatus.Signup;//todo: need ERROR here?
 
         }
+
+
+
+
+        #region TESTING STRAIGHT SIGNUP PULLTHROUGH
+        public IEnumerable<Models.Objects.SignupsMod.Signup> FetchAllM()
+        {
+            var signups = Mapper.Map<IEnumerable<rep.Signup>, IEnumerable<Models.Objects.SignupsMod.Signup>>(signupRepository.FetchAll());
+
+            var users = userManager.Fetch(signups.SelectMany(n => n.Slots).SelectMany(m => m.UsersSignedUp).Select(o => o.IdUser)).ToDictionary(k => k.ID, v => v);
+
+            foreach (var signup in signups)
+            {
+                foreach (var slot in signup.Slots)
+                {
+                    foreach (var user in slot.UsersSignedUp)
+                    {
+                        user.User = users[user.IdUser];
+                       // break;
+                    }
+                }
+            }
+
+            return signups;
+        }
+
+        public Models.Objects.SignupsMod.Signup FetchM(int _id)
+        {
+            return Mapper.Map<rep.Signup, Models.Objects.SignupsMod.Signup>(signupRepository.Fetch(_id));
+        }
+
+        public Models.Objects.SignupsMod.UserSignup FetchUserSignup(int _userId, IEnumerable<int> _groupIds)
+        {
+            return Mapper.Map<rep.UserSignup, Models.Objects.SignupsMod.UserSignup>(signupRepository.FetchUserSignup(_userId, _groupIds));
+        }
+
+        public IEnumerable<Models.Objects.SignupsMod.UserSignup> FetchUserSignups(int _userId, IEnumerable<int> _groupIds)
+        {
+            return Mapper.Map<IEnumerable<rep.UserSignup>, IEnumerable<Models.Objects.SignupsMod.UserSignup>>(signupRepository.FetchUserSignups(_userId, _groupIds));
+        }
+        #endregion
     }
 }

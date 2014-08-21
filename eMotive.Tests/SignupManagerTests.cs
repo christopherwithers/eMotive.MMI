@@ -42,7 +42,7 @@ namespace eMotive.Tests
 
 
             #region Signup Repository Setup
-            signupRepository.Stub(n => n.FetchSignup(1)).Return(new Signup
+            signupRepository.Stub(n => n.Fetch(1)).Return(new Signup
             {
                 id = 1,
                 AcademicYear = "1314",

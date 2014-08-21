@@ -7,22 +7,26 @@
     ViewBag.Title = "Signups";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<!--
+    <script src="http://js.pusher.com/1.12/pusher.min.js" type="text/javascript"></script> -->
+<script src="~/Scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.signalR-2.1.1.min.js" type="text/javascript"></script>
+<script src="~/signalr/hubs" type="text/javascript"></script>
 
-<script src="http://js.pusher.com/1.12/pusher.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 
 
-    var pusher = new Pusher('16e704e82102cc97b901');
+   // var pusher = new Pusher('16e704e82102cc97b901');
+    /*
+    var mmiHub = $.connection.MMIHub;
 
-    /* pusher.connection.bind('error', function (err) {
-         if (err.data.code === 4004) {
-             log('>>> detected limit error');
-         }
-     });*/
 
-    var channel = pusher.subscribe('SignupSelection');
+    $.connection.hub.start().done(function () {
+        mmiHub.server.joinGroup("SignupSelection");
+    });
 
-    channel.bind('PlacesChanged', function (data) {
+
+    mmiHub.client.placesChanged = function (data) {
         var signup = data.SignUpId;
         var totalPlacesAvailable = data.TotalPlaces;
         var placesAvailable = data.PlacesAvailable;
@@ -32,8 +36,8 @@
         // if (signupID != undefined && signupID != signup) {
         $("#signup_class_" + signup).attr("class", SetStatusStyle(totalPlacesAvailable, placesAvailable, false));
         $("#signup_button_" + signup).attr("class", SetStatusStyle(totalPlacesAvailable, placesAvailable, true));
-        //  }
-    });
+    };
+
 
     function SetStatusStyle(totalplaces, remainingPlaces, button) {
         var placesLeft = (100 * remainingPlaces) / totalplaces;
@@ -53,9 +57,8 @@
         }
 
         return warningLevel;
-    }
+    }*/
 </script>
-
 @Html.Raw(Server.HtmlDecode((Model.HeaderText)))
 
 

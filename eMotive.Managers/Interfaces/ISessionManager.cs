@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using eMotive.Models.Objects.Signups;
+using mod = eMotive.Models.Objects.SignupsMod;
 
 namespace eMotive.Managers.Interfaces
 {
     public interface ISessionManager
     {
         Signup Fetch(int _id);
+        Signup Fetch(int[] _ids);
 
         IEnumerable<Signup> FetchAll();
 
@@ -28,5 +30,14 @@ namespace eMotive.Managers.Interfaces
         int FetchRCPActivityCode(int _signupID);
 
         IEnumerable<Group> FetchAllGroups();
+
+
+
+        #region TESTING PULLING OUT SIGNUPS STRAIGHT FROM REP
+        IEnumerable<mod.Signup> FetchAllM();
+        mod.Signup FetchM(int _id);
+        mod.UserSignup FetchUserSignup(int _userId, IEnumerable<int> _groupIds);
+        IEnumerable<mod.UserSignup> FetchUserSignups(int _userId, IEnumerable<int> _groupIds);
+        #endregion
     }
 }

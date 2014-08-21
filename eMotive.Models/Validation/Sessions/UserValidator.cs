@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿using ServiceStack.FluentValidation;
 
 namespace eMotive.Models.Validation.Sessions
 {

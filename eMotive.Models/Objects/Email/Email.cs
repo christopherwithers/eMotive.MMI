@@ -1,5 +1,5 @@
-﻿using FluentValidation.Attributes;
-using eMotive.Models.Validation.Email;
+﻿using eMotive.Models.Validation.Email;
+using ServiceStack.FluentValidation.Attributes;
 
 namespace eMotive.Models.Objects.Email
 {
