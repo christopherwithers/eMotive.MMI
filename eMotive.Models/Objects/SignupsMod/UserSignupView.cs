@@ -17,6 +17,8 @@ namespace eMotive.Models.Objects.SignupsMod
         
         public IEnumerable<Signup> Signups { get; set; }
 
+        public IDictionary<int,SlotType> SignedInUserSlotTypes { get; set; }
+
 
         public IDictionary<string, List<Signup>> GetSignupsByGroup()
         {
@@ -33,7 +35,7 @@ namespace eMotive.Models.Objects.SignupsMod
         {
             return Signups.First(n => n.Group.Name == key).Group.Description;
         }
-
+        /*
         public Collection<SlotType> UserSignupTypes()
         {
             if (_userSignupTypes.HasContent())
@@ -74,13 +76,23 @@ namespace eMotive.Models.Objects.SignupsMod
             }
 
             return _userSignupTypes;
-        }
+        }*/
 
-        public void Initialise()
+        public void Initialise(string username)
         {
+            SignedInUserSlotTypes = new Dictionary<int, SlotType>();
+
             foreach (var signup in Signups ?? new Signup[] {})
             {
                 signup.GenerateSlotsAvailableString();
+             
+                foreach (var slot in signup.Slots)
+                {
+                    if (slot.SignedUp(username))
+                    {
+                        SignedInUserSlotTypes.Add(signup.Id, slot.GetUserSignupType(username));
+                    }
+                }
             }
         }
 

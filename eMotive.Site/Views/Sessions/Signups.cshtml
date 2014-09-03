@@ -41,9 +41,9 @@ else
                                     @if (signup.SignedUp(Model.LoggedInUser))
                                     {
                                         <span class="label label-success">Signed Up</span>
-                                        foreach (var type in Model.UserSignupTypes())
+                                        foreach (var type in Model.SignedInUserSlotTypes)
                                         {
-                                            <span class="label label-success">@type</span>
+                                            <span class="label label-success">@type.Value</span>
                                         }
                                     }
                                     else
@@ -55,7 +55,7 @@ else
                                 <td>@signup.Date.ToString("dddd d MMMM yyyy")</td>
                                 <td id="signup_value_@signup.Id">@signup.SlotsAvailableString</td>
                                 <td>
-                                    <form action="@Url.Action("Slots", "Interviews", new {area = "", id = signup.Id})">
+                                    <form action="@Url.Action("Slots", "Sessions", new {area = "", id = signup.Id})">
                                         <button id="signup_button_@signup.Id" @Html.SetStatusButton(signup.Slots.Select(n => n.PlacesAvailable).Count(), 0 /*signup.SlotsAvailable*/, signup.SignedUp(Model.LoggedInUser)) type="submit">View</button>
                                     </form>
                                 </td>
@@ -63,7 +63,7 @@ else
                         }
                     </tbody>
                 </table>
-                }
+
             </div>
         }
             </div>

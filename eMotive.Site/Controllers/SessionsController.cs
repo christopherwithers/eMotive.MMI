@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.SignupsMod;
 using eMotive.Services.Interfaces;
 //using Ninject;
 using ServiceStack.Mvc;
+using UserSlotView = eMotive.Models.Objects.Signups.UserSlotView;
 
 namespace eMotive.MMI.Controllers
 {
@@ -51,9 +54,41 @@ namespace eMotive.MMI.Controllers
                 FooterText = pageText["Session-List-Footer"] ?? string.Empty
             };
 
-            userSignup.Initialise(); // Perhaps a bit messy, but will think how to tidy this up! Pre-optimising?
+            userSignup.Initialise(User.Identity.Name); // Perhaps a bit messy, but will think how to tidy this up! Pre-optimising?
 
             return View(userSignup);
+        }
+
+        public ActionResult Slots(int? id)
+        {
+           // var slots = signupManager.FetchSlotInformation(id.HasValue ? id.Value : -1, User.Identity.Name);
+            var slotsM = signupManager.FetchM(id.Value);
+            var userSlotView = new Models.Objects.SignupsMod.UserSlotView();
+            if (slotsM.Slots != null)
+            {
+                var replacements = new Dictionary<string, string>(4)
+                {
+                    {"#interviewdate#", slotsM.Date.ToString("dddd d MMMM yyyy")},
+                    {"#description#", slotsM.Description},
+                    {"#group#", slotsM.Group.Name}
+                };
+                //Disability-Interview-Date-Page
+                var sb = new StringBuilder(pageManager.Fetch("Interview-Date-Page").Text);
+
+                foreach (var replacment in replacements)
+                {
+                    sb.Replace(replacment.Key, replacment.Value);
+                }
+                userSlotView.LoggedInUser = User.Identity.Name ?? string.Empty;
+                userSlotView.Signup = slotsM;
+                userSlotView.HeaderText = sb.ToString();
+                userSlotView.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;
+
+
+                userSlotView.Initialise();
+            }
+
+            return View(userSlotView);
         }
 
     }

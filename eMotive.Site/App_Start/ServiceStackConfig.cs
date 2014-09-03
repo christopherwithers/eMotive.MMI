@@ -21,7 +21,7 @@ namespace eMotive.MMI
 {
     public class AppHost : AppHostBase
     {
-        public AppHost() : base("MMI Web Services", typeof(AppHost).Assembly) { }
+        public AppHost() : base("MMI Web Services", typeof(Api.SessionService).Assembly) { }
 
         public override void Configure(Container container)
         {
@@ -62,13 +62,13 @@ namespace eMotive.MMI
             ServiceStackController.CatchAllController = reqCtx => container.TryResolve<AccountController>();
         }
     }
-
+    /*
     public class CustomCredentialsAuthProvider : CredentialsAuthProvider
     {
         public override bool TryAuthenticate(IServiceBase authService,
             string userName, string password)
         {
-            return userName == "john" && password == "test";
+            return userName == "james" && password == "test";
         }
-    }
+    }*/
 }

@@ -115,53 +115,53 @@ namespace eMotive.Managers.Objects
         public Signup Fetch(int[] _ids)
         {
             throw new NotImplementedException();
-         /*   var cacheId = string.Format("ModelSignup_{0}", string.Join("-", _ids));
+            /*   var cacheId = string.Format("ModelSignup_{0}", string.Join("-", _ids));
 
-            var signup = cache.FetchItem<IEnumerable<Signup>>(cacheId);
+               var signup = cache.FetchItem<IEnumerable<Signup>>(cacheId);
 
-            if (signup != null)
-                return signup;
+               if (signup != null)
+                   return signup;
 
-            var repSignup = signupRepository.FetchSignups(_ids);
-
-
-            if (repSignup == null)
-            {
-                notificationService.AddError("The requested signup could not be found.");
-                return null;
-            }
-
-            signup = Mapper.Map<rep.Signup, Signup>(repSignup);
-
-            IDictionary<int, User> usersDict = null;
-
-            if (repSignup.Slots.Any(n => n.UsersSignedUp.HasContent()))
-            {
-                //  usersDict = new Dictionary<int, User>();
-                var UsersSignedUp = repSignup.Slots.Where(n => n.UsersSignedUp != null).SelectMany(m => m.UsersSignedUp);//.Select(u => u.IdUser);
-                var userIds = UsersSignedUp.Select(u => u.IdUser);
-                var users = userManager.Fetch(userIds);
-                usersDict = users.ToDictionary(k => k.ID, v => v);
-            }
-
-            foreach (var repSlot in repSignup.Slots)
-            {
-                foreach (var slot in signup.Slots)
-                {
-                    if (repSlot.id != slot.ID) continue;
-
-                    if (!repSlot.UsersSignedUp.HasContent()) continue;
-
-                    slot.ApplicantsSignedUp = new Collection<UserSignup>();
-                    foreach (var user in repSlot.UsersSignedUp)
-                    {
-                        slot.ApplicantsSignedUp.Add(new UserSignup { User = usersDict[user.IdUser], SignupDate = user.SignUpDate, ID = user.ID });
-                    }
-                }
-            }
+               var repSignup = signupRepository.FetchSignups(_ids);
 
 
-            return signup;*/
+               if (repSignup == null)
+               {
+                   notificationService.AddError("The requested signup could not be found.");
+                   return null;
+               }
+
+               signup = Mapper.Map<rep.Signup, Signup>(repSignup);
+
+               IDictionary<int, User> usersDict = null;
+
+               if (repSignup.Slots.Any(n => n.UsersSignedUp.HasContent()))
+               {
+                   //  usersDict = new Dictionary<int, User>();
+                   var UsersSignedUp = repSignup.Slots.Where(n => n.UsersSignedUp != null).SelectMany(m => m.UsersSignedUp);//.Select(u => u.IdUser);
+                   var userIds = UsersSignedUp.Select(u => u.IdUser);
+                   var users = userManager.Fetch(userIds);
+                   usersDict = users.ToDictionary(k => k.ID, v => v);
+               }
+
+               foreach (var repSlot in repSignup.Slots)
+               {
+                   foreach (var slot in signup.Slots)
+                   {
+                       if (repSlot.id != slot.ID) continue;
+
+                       if (!repSlot.UsersSignedUp.HasContent()) continue;
+
+                       slot.ApplicantsSignedUp = new Collection<UserSignup>();
+                       foreach (var user in repSlot.UsersSignedUp)
+                       {
+                           slot.ApplicantsSignedUp.Add(new UserSignup { User = usersDict[user.IdUser], SignupDate = user.SignUpDate, ID = user.ID });
+                       }
+                   }
+               }
+
+
+               return signup;*/
         }
 
 
@@ -375,9 +375,9 @@ namespace eMotive.Managers.Objects
                             TotalSlotsAvailable = item.Slots.Sum(n => n.PlacesAvailable),
                             TotalReserveAvailable = item.Slots.Sum(n => n.ReservePlaces),
                             TotalInterestedAvaiable = item.Slots.Sum(n => n.InterestedPlaces),
-                           
+
                             NumberSignedUp = item.Slots.Sum(n => n.UsersSignedUp.HasContent() ? n.UsersSignedUp.Count() : 0),
-                            
+
                             MergeReserve = item.MergeReserve,
                             OverrideClose = item.OverrideClose,
                             DisabilitySignup = item.Group.DisabilitySignups,
@@ -388,13 +388,13 @@ namespace eMotive.Managers.Objects
                         };
 
 
-                        foreach (var slot in item.Slots ?? new rep.Slot[] {})
+                        foreach (var slot in item.Slots ?? new rep.Slot[] { })
                         {
                             signup.SignupNumbers.Add(new SignupState.SignupSlotState
                             {
                                 SlotID = slot.id,
-                                TotalSlotsAvailable = slot.PlacesAvailable, 
-                                TotalInterestedAvaiable = slot.InterestedPlaces, 
+                                TotalSlotsAvailable = slot.PlacesAvailable,
+                                TotalInterestedAvaiable = slot.InterestedPlaces,
                                 TotalReserveAvailable = slot.ReservePlaces,
                                 NumberSignedUp = slot.UsersSignedUp.HasContent() ? slot.UsersSignedUp.Count : 0
                             });
@@ -677,7 +677,7 @@ namespace eMotive.Managers.Objects
             var signup = Fetch(_signup);
 
             var signupGroup = signupRepository.FetchSignupGroup(_signup);
-            
+
             var userProfile = userManager.FetchProfile(_username);
 
             if (signupGroup == null || userProfile == null || !userProfile.Groups.HasContent())
@@ -755,7 +755,7 @@ namespace eMotive.Managers.Objects
                     TotalInterestedAvaiable = item.InterestedPlaces,
                     TotalReserveAvailable = item.ReservePlaces
                 };
-               
+
 
                 slotCollection.Add(slot);
             }
@@ -834,10 +834,10 @@ namespace eMotive.Managers.Objects
 
                 int id;
 
-             //   bool interestedSlot = false;
+                //   bool interestedSlot = false;
 
-               // if (slot.ApplicantsSignedUp.HasContent())
-                   // interestedSlot = slot.ApplicantsSignedUp.Count() >= slot.TotalPlacesAvailable + slot.ReservePlaces;
+                // if (slot.ApplicantsSignedUp.HasContent())
+                // interestedSlot = slot.ApplicantsSignedUp.Count() >= slot.TotalPlacesAvailable + slot.ReservePlaces;
 
                 if (signupRepository.SignupToSlot(_slotId, user.ID, signupDate, out id))
                 {
@@ -857,7 +857,7 @@ namespace eMotive.Managers.Objects
                         {"#siteurl#", configurationService.SiteURL()}
                     };
 
-                   // string key = interestedSlot ? "InterestedSignup" : "UserSessionSignup";
+                    // string key = interestedSlot ? "InterestedSignup" : "UserSessionSignup";
 
 
                     var key = string.Empty;
@@ -873,7 +873,7 @@ namespace eMotive.Managers.Objects
                         }
                         else
                         {
-                            
+
                             key = reserveSignup ? "ReserveSessionSignup" : "InterviewerSessionSignup";
                         }
                     }
@@ -909,7 +909,7 @@ namespace eMotive.Managers.Objects
 
             //TODO: check for null here??
             var user = userManager.Fetch(_username);
-           // var profile = userManager.FetchProfile(_username);
+            // var profile = userManager.FetchProfile(_username);
 
             object bodyLock;
             lock (dictionaryLock)
@@ -923,12 +923,12 @@ namespace eMotive.Managers.Objects
 
             lock (bodyLock)
             {//todo: NOTE that SCE bumps from interested to reserve. MMI bumps from reserve to main
-                var BumpUser = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) +1 <= slot.TotalPlacesAvailable && slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;//slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;// + slot.ReservePlaces;
+                var BumpUser = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) + 1 <= slot.TotalPlacesAvailable && slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;//slot.ApplicantsSignedUp.Count() > slot.TotalPlacesAvailable;// + slot.ReservePlaces;
 
                 if (signupRepository.CancelSignupToSlot(_slotId, user.ID))
                 {
 
-                    var userIndex = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) +1;
+                    var userIndex = slot.ApplicantsSignedUp.FindIndex(n => n.User.ID == user.ID) + 1;
 
                     var reserveCancel = userIndex > slot.TotalPlacesAvailable;
                     /*                    var userSignup = signup.Slots.SingleOrDefault(n => n.ID == _slotId).ApplicantsSignedUp.SingleOrDefault(n => n.Applicant.Username == _username);
@@ -952,7 +952,7 @@ namespace eMotive.Managers.Objects
                         {"#siteurl#", configurationService.SiteURL()}
                     };
 
-                  //  string key = "UserSessionCancel";
+                    //  string key = "UserSessionCancel";
 
                     var key = string.Empty;
 
@@ -1023,10 +1023,10 @@ namespace eMotive.Managers.Objects
 
         virtual public SlotType GenerateHomeViewSlotStatus(rep.Slot _slot, int _userId)
         {
-         //   var userPosition = _slot.UsersSignedUp.ToList().FindIndex(n => n.Type ==)
-           // throw new NotImplementedException();
+            //   var userPosition = _slot.UsersSignedUp.ToList().FindIndex(n => n.Type ==)
+            // throw new NotImplementedException();
 
-        //    if(_slot)
+            //    if(_slot)
 
             var userSignup = _slot.UsersSignedUp.SingleOrDefault(n => n.IdUser == _userId);
 
@@ -1151,10 +1151,11 @@ namespace eMotive.Managers.Objects
             {
                 foreach (var slot in signup.Slots)
                 {
+                    slot.MergeReserve = signup.MergeReserve;
                     foreach (var user in slot.UsersSignedUp)
                     {
                         user.User = users[user.IdUser];
-                       // break;
+                        // break;
                     }
                 }
             }
@@ -1164,7 +1165,21 @@ namespace eMotive.Managers.Objects
 
         public Models.Objects.SignupsMod.Signup FetchM(int _id)
         {
-            return Mapper.Map<rep.Signup, Models.Objects.SignupsMod.Signup>(signupRepository.Fetch(_id));
+            var signup = Mapper.Map<rep.Signup, Models.Objects.SignupsMod.Signup>(signupRepository.Fetch(_id));
+
+            var users = userManager.Fetch(signup.Slots.SelectMany(m => m.UsersSignedUp).Select(o => o.IdUser)).ToDictionary(k => k.ID, v => v);
+
+            foreach (var slot in signup.Slots)
+            {
+                slot.MergeReserve = signup.MergeReserve;
+                foreach (var user in slot.UsersSignedUp)
+                {
+                    user.User = users[user.IdUser];
+                    // break;
+                }
+            }
+
+            return signup;
         }
 
         public Models.Objects.SignupsMod.UserSignup FetchUserSignup(int _userId, IEnumerable<int> _groupIds)

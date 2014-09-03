@@ -28,7 +28,16 @@ namespace eMotive.Api
         public int[] Ids { get; set; }
     }
 
-    [Authenticate] 
+    [Route("/Sessions/Signup/Add", "POST")]
+    [Route("/Sessions/Signup/Remove", "DELETE")]
+    public class SlotSignup
+    {
+        public int IdSignup { get; set; }
+        public int IdSlot { get; set; }
+        public string Username { get; set; }
+    }
+
+  //  [Authenticate] 
     public class SessionService : Service
     {
         private readonly ISessionManager _sessionManager;
@@ -56,7 +65,72 @@ namespace eMotive.Api
                 Result = result,
                 Errors = issues
             };
+        }
 
+        public object Post(SlotSignup request)
+        {
+            if (_sessionManager.SignupToSlot(request.IdSignup, request.IdSlot, request.Username))
+            {
+               // var signup = _sessionManager.Fetch(request.IdSignup);
+               // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
+
+               // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
+                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
+
+               // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
+                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
+
+                return new ServiceResult<bool>
+                {
+                  //  Data = new { success = true, message = "successfully signed up." }
+                    Success = true,
+                    Result = true,
+                    Errors = null
+                };
+            }
+
+            var issues = NotificationService.FetchIssues();
+
+            return new ServiceResult<bool>
+            {
+
+                Success = false,
+                Result = false,
+                Errors = issues
+            };
+        }
+
+        public object Delete(SlotSignup request)
+        {
+            if (_sessionManager.CancelSignupToSlot(request.IdSignup, request.IdSlot, request.Username))
+            {
+                // var signup = _sessionManager.Fetch(request.IdSignup);
+                // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
+
+                // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
+                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
+
+                // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
+                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
+
+                return new ServiceResult<bool>
+                {
+                    //  Data = new { success = true, message = "successfully signed up." }
+                    Success = true,
+                    Result = true,
+                    Errors = null
+                };
+            }
+
+            //var issues = NotificationService.FetchIssues();
+
+            return new ServiceResult<bool>
+            {
+
+                Success = false,
+                Result = false,
+                Errors = new[] {"An error occurred. The signup could not be cancelled."}
+            };
         }
 
         /*public object Get(NewCourse request)

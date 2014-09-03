@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Extensions;
 
@@ -8,7 +7,7 @@ namespace eMotive.Models.Objects.SignupsMod
 {
     public class Signup
     {
-        private bool _isSignedUp;
+        private bool? _isSignedUp;
         
         public Signup()
         {
@@ -39,13 +38,19 @@ namespace eMotive.Models.Objects.SignupsMod
 
         public bool SignedUp(string username)
         {//TODO: do we need this n.UsersSignedUp.HasContent() ??
+            /*if (_isSignedUp.HasValue)
+                return _isSignedUp.Value;
 
             if (string.IsNullOrEmpty(username))
+            {
+                _isSignedUp = false;
                 return false;
+            }*/
+                _isSignedUp = Slots.Any(n => /*n.UsersSignedUp.HasContent() &&*/ n.SignedUp(username));
 
-            _isSignedUp = Slots.Any(n => /*n.UsersSignedUp.HasContent() &&*/ n.UsersSignedUp.Any(m => m.User.Username == username));
+         //   _isSignedUp = Slots.Any(n => n.SignedUp(username));
 
-            return _isSignedUp;
+            return _isSignedUp.Value;
         }
 
 

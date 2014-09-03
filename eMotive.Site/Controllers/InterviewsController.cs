@@ -98,7 +98,7 @@ namespace eMotive.MMI.Controllers
             return View(slots);
         }
 
-        [AjaxOnly]
+       /* [AjaxOnly]
         public CustomJsonResult SignupToSlot(int idSignup, int idSlot)
         {
             if (signupManager.SignupToSlot(idSignup, idSlot, User.Identity.Name))
@@ -152,7 +152,7 @@ namespace eMotive.MMI.Controllers
             {
                 Data = new { success = false, message = "An error occurred. The signup could not be cancelled." }
             };
-        }
+        }*/
 
         private void ApplicantSignupPush(int _signupID, int _totalPlaces, int _remainingPlaces)
         {
