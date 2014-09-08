@@ -842,7 +842,7 @@ namespace eMotive.Managers.Objects
                 if (signupRepository.SignupToSlot(_slotId, user.ID, signupDate, out id))
                 {
                     //+1 to account for the signup we are currently processing
-                    var reserveSignup = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.Count() + 1 > slot.TotalPlacesAvailable : false;
+                    var reserveSignup = slot.ApplicantsSignedUp.HasContent() && slot.ApplicantsSignedUp.Count() + 1 > slot.TotalPlacesAvailable;
                     // slot.ApplicantsSignedUp.Single(n => n.ID == 0).ID = id;
                     var replacements = new Dictionary<string, string>(4)
                     {

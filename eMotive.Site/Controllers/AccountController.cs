@@ -24,13 +24,15 @@ namespace eMotive.MMI.Controllers
         private readonly IEmailService emailService;
         private readonly IUserManager userManager;
         private readonly IGroupManager groupManager;
+        private readonly IPartialPageManager pageManager;
 
-        public AccountController(IAccountManager _accountManager, IUserManager _userManager, IGroupManager _groupManager, IEmailService _emailService)
+        public AccountController(IAccountManager _accountManager, IUserManager _userManager, IGroupManager _groupManager, IEmailService _emailService, IPartialPageManager _pageManager)
         {
             accountManager = _accountManager;
             userManager = _userManager;
             emailService = _emailService;
             groupManager = _groupManager;
+            pageManager = _pageManager;
         }
 
         IAuthenticationManager Authentication
@@ -45,6 +47,33 @@ namespace eMotive.MMI.Controllers
         public ActionResult Login()
         {
             return View(new Login());
+        }
+
+        [System.Web.Mvc.Authorize(Roles = "Applicant")]
+        [HttpGet]
+        public ActionResult Withdraw()
+        {
+            var withdraw = new Withdraw();
+            
+            var pageText = pageManager.FetchPartials(new[] { "Withdraw-header" }).ToDictionary(k => k.Key, v => v.Text);
+
+            withdraw.PageText = pageText["Withdraw-header"];
+
+            return View(withdraw);
+        }
+
+        [HttpPost]
+        public ActionResult Withdraw(Withdraw withdraw)
+        {
+            var pageText = pageManager.FetchPartials(new[] { "Withdraw-header", "Withdrawn-header" }).ToDictionary(k => k.Key, v => v.Text);
+
+            if (withdraw.WithdrawalConfirmation)
+            {
+                var user = userManager.Fetch(User.Identity.Name);
+
+                
+            }
+            return View(withdraw);
         }
 
 

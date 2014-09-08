@@ -100,7 +100,14 @@ namespace eMotive.MMI.Controllers
                                         Name = "Change Password",
                                         URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
                                         Title = "Change Password"
-                                    },                                 
+                                    },   
+                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Withdraw",
+                                        URL = Url.Action("Withdraw","Account"),//"/SCE/Account/Details",
+                                        Title = "Withdraw from application process"
+                                    },   
                                  new MenuItem
                                     {
                                         ID = 2,

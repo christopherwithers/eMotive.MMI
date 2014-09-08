@@ -29,7 +29,7 @@
                 <td id="slot_value_slot.ID">@slot.SlotsAvailableString</td>
                 <td>
                     <!--Html.SetSlotStatusButton(slot.TotalPlacesAvailable, slot.PlacesAvailable(), slot.IsSignedUpToSlot()) Html.AssignStatusFunctionality(slot.Status, Model.ID, slot.ID)-->
-                    <button>Html.GetSignupStatusName(slot.Status)</button>
+                    <button @Html.SetSlotStatusButton(slot.PlacesAvailable, slot.PlacesAvailable(), slot.IsSignedUpToSlot()) @Html.AssignStatusFunctionality(slot.Status, Model.ID, slot.ID, "withersc (test)")>@Html.GetSignupStatusName(slot.Status)</button>
                 </td>
             </tr>
         }

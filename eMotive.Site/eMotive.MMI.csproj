@@ -1189,6 +1189,8 @@
     <Content Include="Views\Test\SignalRTest.cshtml" />
     <Content Include="Views\Sessions\Signups.cshtml" />
     <Content Include="Views\Sessions\Slots.cshtml" />
+    <Content Include="Views\Interviews\Withdraw.cshtml" />
+    <Content Include="Views\Account\Withdraw.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AngularJs\Modules\" />

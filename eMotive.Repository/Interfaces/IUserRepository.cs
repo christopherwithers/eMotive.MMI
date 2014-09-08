@@ -43,6 +43,7 @@ namespace eMotive.Repository.Interfaces
         bool Update(SCEData _sce);
         IEnumerable<SCEData> FetchAllSceData();
 
-
+        bool UserHasWithdrawn(int userId);
+        bool WithdrawUser(int userId);
     }
 }

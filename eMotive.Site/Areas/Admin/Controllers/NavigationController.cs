@@ -129,7 +129,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                 URL = Url.Action("Groups", "Signups", new {area="Admin"}),//"/MMIAdmin/Admin/Pages/",
                                                 Title = "Group Administration",
                                                 Icon = "<span class='icon-ok-circle'></span>",
-                                            }
+                                            },
                                        /*     new MenuItem
                                             {
                                                 ID = 1,
@@ -139,7 +139,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                 Icon = "<span class='icon-repeat'></span>",
 
                                             },*/
-                                           /* new MenuItem
+                                            new MenuItem
                                             {
                                                 ID = 1,
                                                 Name = "BOXI Report Upload",
@@ -165,7 +165,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                 Title = "A101 Applicant Spreadsheet Upload",
                                                 Icon = "<span class='icon-upload'></span>",
 
-                                            }*/
+                                            }
                                         }
                                 },
                                 new MenuItem

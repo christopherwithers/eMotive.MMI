@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using eMotive.Models.Objects.Users;
 
 namespace eMotive.Models.Objects.Signups
 {
@@ -30,5 +31,7 @@ namespace eMotive.Models.Objects.Signups
 
         public string HeaderText { get; set; }
         public string FooterText { get; set; }
+
+        public string LoggedInUser { get; set; }
     }
 }

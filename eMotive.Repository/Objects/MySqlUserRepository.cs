@@ -573,6 +573,30 @@ namespace eMotive.Repository.Objects
             }
         }
 
+        public bool UserHasWithdrawn(int userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                const string sql = "SELECT CAST(Count(`id`) AS UNSIGNED INTEGER) FROM `Withdrawals` WHERE `userId`=@userId;";
+
+                return connection.Query<ulong>(sql, new { userId = userId}).SingleOrDefault() > 0;
+            }
+        }
+
+        public bool WithdrawUser(int userId)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                const string sql = "INSERT INTO `Withdrawals` (`userId`, `DateWithdrawn`) VALUES (@userId, @dateWithdrawn);";
+
+                return connection.Execute(sql, new { userId = userId, dateWithdrawn = DateTime.Now}) > 0;
+            }
+        }
+
         public bool AddUserToGroup(int _userId, int _id)
         {
             using (var connection = new MySqlConnection(connectionString))

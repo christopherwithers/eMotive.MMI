@@ -73,6 +73,7 @@
     <Compile Include="Objects\Account\Login.cs" />
     <Compile Include="Objects\Account\AccountReminder.cs" />
     <Compile Include="Objects\Account\SCEFormData.cs" />
+    <Compile Include="Objects\Account\Withdraw.cs" />
     <Compile Include="Objects\Certificates\SCECertificate.cs" />
     <Compile Include="Objects\Email\EmailSearch.cs" />
     <Compile Include="Objects\Enums.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Objects\Email\Email.cs" />
     <Compile Include="Validation\Account\AccountReminderValidator.cs" />
     <Compile Include="Validation\Account\ChangePasswordValidator.cs" />
+    <Compile Include="Validation\Account\WithdrawValidator.cs" />
     <Compile Include="Validation\Account\LoginValidator.cs" />
     <Compile Include="Validation\Email\EmailValidator.cs" />
     <Compile Include="Validation\News\NewsValidator.cs" />

@@ -29,8 +29,15 @@ namespace eMotive.Api
     }
 
     [Route("/Sessions/Signup/Add", "POST")]
-    [Route("/Sessions/Signup/Remove", "DELETE")]
     public class SlotSignup
+    {
+        public int IdSignup { get; set; }
+        public int IdSlot { get; set; }
+        public string Username { get; set; }
+    }
+
+    [Route("/Sessions/Signup/Remove", "POST")]
+    public class SlotCancel
     {
         public int IdSignup { get; set; }
         public int IdSlot { get; set; }
@@ -100,7 +107,7 @@ namespace eMotive.Api
             };
         }
 
-        public object Delete(SlotSignup request)
+        public object Post(SlotCancel request)
         {
             if (_sessionManager.CancelSignupToSlot(request.IdSignup, request.IdSlot, request.Username))
             {

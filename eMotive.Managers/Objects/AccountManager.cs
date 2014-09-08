@@ -80,10 +80,20 @@ namespace eMotive.Managers.Objects
             if (success)
                 return true;
 
+            if (!userRepository.UserHasWithdrawn(user.ID))
+            {
+                return false;
+            }
+
             notificationService.AddIssue("The entered username and password were not recognised.");
             LoginAttempt(_username);
             notificationService.AddIssue(string.Format("Login attempt {0} of {1}.", LoginAttemptCount(_username), maxAttempts));
             return false;
+        }
+
+        public bool WithdrawUser(int userId)
+        {
+            return userRepository.WithdrawUser(userId);
         }
 
         public bool CreateNewAccountPassword(User _user)

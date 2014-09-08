@@ -60,6 +60,11 @@ namespace eMotive.MMI.Controllers
             return View(signups);
         }
 
+        public ActionResult Withdraw()
+        {
+            return View();
+        }
+
         public ActionResult TestPage()
         {
             var signups = signupManager.FetchSignupInformation(User.Identity.Name);
@@ -93,6 +98,7 @@ namespace eMotive.MMI.Controllers
 
                 slots.HeaderText = sb.ToString();
                 slots.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;
+                slots.LoggedInUser = User.Identity.Name ?? string.Empty;
             }
 
             return View(slots);

@@ -29,7 +29,7 @@
         <td id="slot_value_@slot.ID">@slot.PlacesAvailableString()</td>
         <td>
             <!--Html.SetSlotStatusButton(slot.TotalPlacesAvailable, slot.PlacesAvailable, slot.Status == SlotStatus.AlreadySignedUp)-->
-            <button @Html.SetSlotStatusButton(slot.TotalPlacesAvailable, slot.PlacesAvailable(), slot.IsSignedUpToSlot()) @Html.AssignStatusFunctionality(slot.Status, Model.ID, slot.ID, "withersc (test)")>@Html.GetSignupStatusName(slot.Status)</button>
+            <button @Html.SetSlotStatusButton(slot.TotalPlacesAvailable, slot.PlacesAvailable(), slot.IsSignedUpToSlot()) @Html.AssignStatusFunctionality(slot.Status, Model.ID, slot.ID, Model.LoggedInUser)>@Html.GetSignupStatusName(slot.Status)</button>
         </td>
     </tr>
         }
@@ -68,7 +68,7 @@
     <script src="http://js.pusher.com/1.12/pusher.min.js" type="text/javascript"></script>
     <script>
 
-        var pusher = new Pusher('16e704e82102cc97b901');
+    /*    var pusher = new Pusher('16e704e82102cc97b901');
 
         var channel = pusher.subscribe('SignupSelection');
 
@@ -84,7 +84,7 @@
             $("#slot_class_" + slot).attr("class", SetStatusStyle(totalPlacesAvailable, placesAvailable, false));
             $("#slot_button_" + slot).attr("class", SetStatusStyle(totalPlacesAvailable, placesAvailable, true));
             //  }
-        });
+        });*/
 
         function SetStatusStyle(totalplaces, remainingPlaces, button)
         {
@@ -141,7 +141,13 @@
                 data: SlotSignup,
                 url: "/services/Sessions/Signup/Add",
                 success: function (data) {
-                    alert(data.success);
+                    //alert(data.success);
+                    if (data.Success) {
+                        window.location.reload(false);
+
+                    } else {
+                        Ajax.DisplayError(data.message, "Error");
+                    }
                 },
                 error: function (request, status, error) {
                     Ajax.DisplayError(data.message, "Error");
@@ -151,10 +157,10 @@
 
         }
 
-        function DoCancelSignup(signupId, slotId)
+        function DoCancelSignup(signupId, slotId, username)
         {
 
-            var params = new Object();
+          /*  var params = new Object();
             params.idSignup = signupId;
             params.idSlot = slotId;
 
@@ -168,7 +174,43 @@
                 }
             }, params);
 
-            return false;
+            return false;*/
+
+
+            var SlotCancel = new Object();
+            SlotCancel.idSignup = signupId;
+            SlotCancel.idSlot = slotId;
+            SlotCancel.Username = username;
+
+            /*  Ajax.DoQuery(window.Routes.URL("SignupToSlot"), function (data)
+              {
+                  if (data.success) {
+                      window.location.reload(false);
+  
+                  } else {
+                      Ajax.DisplayError(data.message, "Error");
+                  }
+              }, params);*/
+
+
+            $.ajax({
+                type: "Post",
+                dataType: "json",
+                data: SlotCancel,
+                url: "/services/Sessions/Signup/Remove",
+                success: function (data) {
+                    if (data.Success) {
+                        window.location.reload(false);
+
+                    } else {
+                        Ajax.DisplayError(data.message, "Error");
+                    }
+                },
+                error: function (request, status, error) {
+                    Ajax.DisplayError(data.message, "Error");
+                }
+            });
+
         }
     </script>
 }
