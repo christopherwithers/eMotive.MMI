@@ -270,6 +270,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\ApplicantController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InterviewsController.cs" />
     <Compile Include="Controllers\NavigationController.cs" />
@@ -1191,6 +1192,10 @@
     <Content Include="Views\Sessions\Slots.cshtml" />
     <Content Include="Views\Interviews\Withdraw.cshtml" />
     <Content Include="Views\Account\Withdraw.cshtml" />
+    <Content Include="Views\Applicant\ContactUs.cshtml" />
+    <Content Include="Views\Applicant\Error.cshtml" />
+    <Content Include="Views\Applicant\Index.cshtml" />
+    <Content Include="Views\Applicant\Success.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AngularJs\Modules\" />

@@ -16,6 +16,8 @@ namespace eMotive.Search.Objects
         {
             CurrentPage = 1;
             PageSize = 10;
+
+            Filters = new Dictionary<string, SearchTerm>();
         }
 
         public int NumberOfResults { get; set; }
@@ -23,6 +25,8 @@ namespace eMotive.Search.Objects
         public int CurrentPage { get; set; }
 
         public string[] Type { get; set; }
+
+        public Dictionary<string, SearchTerm> Filters { get; set; }
 
         public string Query { get; set; }
 

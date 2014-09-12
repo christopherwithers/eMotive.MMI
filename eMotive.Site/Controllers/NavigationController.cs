@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Menu;
@@ -40,6 +41,13 @@ namespace eMotive.MMI.Controllers
             if (!_loggedIn)
                 return BuildLoggedOutMenu();
 
+            if (user == null)
+                user = userManager.Fetch(User.Identity.Name);
+
+            if (user.Roles.Any(n => n.Name == "Interviewer"))
+            {
+                return BuildInterviewerMenu();
+            }
             //applicant menu
             return BuildApplicantMenu();
         }
@@ -65,7 +73,7 @@ namespace eMotive.MMI.Controllers
             return menu;
         }
 
-        private Menu BuildApplicantMenu()
+        private Menu BuildInterviewerMenu()
         {
             var menu = new Menu
             {
@@ -100,6 +108,63 @@ namespace eMotive.MMI.Controllers
                                         Name = "Change Password",
                                         URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
                                         Title = "Change Password"
+                                    }, 
+                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Contact Us",
+                                        URL = Url.Action("ContactUs","Home"),//"/SCE/Home/ContactUs",
+                                        Title = "Our Contact Details"
+                                    },
+                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Logout",
+                                        URL = Url.Action("Logout","Account"),//"/SCE/Account/Logout",
+                                        Title = "Logout Of The SCE System"
+                                    }
+
+                            }
+            };
+
+            return menu;
+        }
+
+        private Menu BuildApplicantMenu()
+        {
+            var menu = new Menu
+            {
+                ID = 1,
+                Title = "ApplicantMenu",
+                MenuItems = new[]
+                            {
+                                 new MenuItem
+                                    {
+                                        ID = 1,
+                                        Name = "MMI Home",
+                                        URL = Url.Action("Index","Applicant"),//"/SCE/Home/",
+                                        Title = "MMI Home"
+                                    },
+                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Sessions",
+                                        URL = Url.Action("Signups","Interviews"),//"/SCE/Interviews/Signups",
+                                        Title = "View Session Slots"
+                                    },
+                                    /*new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "My Details",
+                                        URL = Url.Action("InterviewerDetails","Account"),//"/SCE/Account/Details",
+                                        Title = "My Details"
+                                    },*/
+                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Change Password",
+                                        URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
+                                        Title = "Change Password"
                                     },   
                                  new MenuItem
                                     {
@@ -112,7 +177,7 @@ namespace eMotive.MMI.Controllers
                                     {
                                         ID = 2,
                                         Name = "Contact Us",
-                                        URL = Url.Action("ContactUs","Home"),//"/SCE/Home/ContactUs",
+                                        URL = Url.Action("ContactUs","Applicant"),//"/SCE/Home/ContactUs",
                                         Title = "Our Contact Details"
                                     },
                                  new MenuItem

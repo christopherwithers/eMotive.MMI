@@ -46,8 +46,8 @@ namespace eMotive.MMI.Controllers
                 new { key = "UpdateUser", url = Url.RouteUrl("Admin_default", new { action = "UpdateUser", controller = "Users"}) },
                 new { key = "DeleteUser", url = Url.RouteUrl("Admin_default", new { action = "DeleteUser", controller = "Users"}) },*/
 
-                new { key = "SignupToSlot", url = Url.RouteUrl("default", new { action = "SignupToSlot", controller = "Interviews" }) },
-                new { key = "CancelSignup", url = Url.RouteUrl("default", new { action = "CancelSignupToSlot", controller = "Interviews" }) },
+               // new { key = "SignupToSlot", url = Url.RouteUrl("default", new { action = "SignupToSlot", controller = "Interviews" }) },
+               // new { key = "CancelSignup", url = Url.RouteUrl("default", new { action = "CancelSignupToSlot", controller = "Interviews" }) },
 
                 new { key = "SignupToSlotAdmin", url = Url.RouteUrl("Admin_default", new { action = "SignupToSlot", controller = "Signups" }) },
                 new { key = "CancelSignupAdmin", url = Url.RouteUrl("Admin_default", new { action = "CancelSignupToSlot", controller = "Signups" }) },

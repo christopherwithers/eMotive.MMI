@@ -44,6 +44,10 @@ namespace eMotive.Search.Objects
             //    writer.Commit();
 
            //     writer.Dispose();
+                var l = directory.MakeLock(resolvedServerLocation);
+                l.Obtain();
+                l.Release();
+
                 writer = new IndexWriter(directory, new StandardAnalyzer(luceneVersion), false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
 
@@ -99,24 +103,35 @@ namespace eMotive.Search.Objects
             //    var tfc = TopFieldCollector.Create(sort, 10000, true, true, true, false);
 
                 TopDocs docs;
-                if (_search.Type.HasContent())
+                QueryWrapperFilter wrapper = null;
+             /*   if (_search.Type.HasContent())
                 {
                     var filterBq = new BooleanQuery();
                     foreach (var type in _search.Type)
                     {
                         filterBq.Add(new BooleanClause(parser.Parse(string.Format("Type:{0}", type)), Occur.MUST));
                     }
-                    var test = new QueryWrapperFilter(filterBq);
-                    docs = sort != null ? searcher.Search(bq, test, 10000, sort) : searcher.Search(bq, test, 10000);
+                    wrapper = new QueryWrapperFilter(filterBq);
+                //    docs = sort != null ? searcher.Search(bq, test, 10000, sort) : searcher.Search(bq, test, 10000);
                 
                     
+                }*/
+
+                if (_search.Filters.HasContent())
+                {
+                    var filterBq = new BooleanQuery();
+                    foreach (var filter in _search.Filters)
+                    {
+                        filterBq.Add(new BooleanClause(parser.Parse(string.Format("{0}:{1}", filter.Key, filter.Value.Field)), filter.Value.Term));
+                    }
+                    wrapper = new QueryWrapperFilter(filterBq);
                 }
-                else
+            /*    else
                 {
                     docs = sort != null ? searcher.Search(bq, null, 10000, sort) : searcher.Search(bq, null, 10000);
-                }
+                }*/
 
-
+                docs = sort != null ? searcher.Search(bq, wrapper, 10000, sort) : searcher.Search(bq, wrapper, 10000);
 
                 if (docs.ScoreDocs.Length > 0)
                 {
@@ -126,6 +141,7 @@ namespace eMotive.Search.Objects
 
                     var first = page * _search.PageSize;
                     int last;
+                    var numPages = (int)Math.Ceiling((decimal)docs.ScoreDocs.Length / _search.PageSize);
 
                     if (_search.NumberOfResults > first + _search.PageSize)
                     {
@@ -133,7 +149,17 @@ namespace eMotive.Search.Objects
                     }
                     else
                     {
+                        //todo: need conditional on here for to check there are more than 1 result pages???
+                        //need to work out page number, then equiv max page number from search results!
+                        //first = 1;
+                        if (_search.CurrentPage > numPages)
+                        {
+                            _search.CurrentPage = numPages;
+                            first = 0;
+                        }
+
                         last = _search.NumberOfResults;
+                        //_search.CurrentPage = 1;
                     }
 
                     for (var i = first; i < last; i++)

@@ -124,6 +124,11 @@ namespace eMotive.MMI.Controllers
                         return RedirectToAction("Index", "Home", new { area = "" });
                     }
 
+                    if (user.Roles.Any(n => n.Name == "Applicant"))
+                    {
+                        return RedirectToAction("Index", "Applicant", new { area = "" });
+                    }
+
                     return RedirectToAction("Index", "Home", new { area = "Admin" });
                 }
 

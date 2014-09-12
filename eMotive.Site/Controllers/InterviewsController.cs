@@ -14,7 +14,7 @@ using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
 {
-    [Common.ActionFilters.Authorize(Roles = "Interviewer")]
+    [Common.ActionFilters.Authorize(Roles = "Interviewer,Applicant")]
     public class InterviewsController : ServiceStackController
     {
         private readonly ISessionManager signupManager;

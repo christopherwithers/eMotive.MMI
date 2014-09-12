@@ -38,6 +38,19 @@ namespace eMotive.SCE.Common.Helpers
                 start = (end - range) > 0 ? (end - range) : 1;
             }
 
+            if (totalPages > 1)
+            {
+                if (_paging.Page <= 1)
+                {
+                    sb.Append("first previous ");
+                }
+                else
+                {
+                    sb.Append("<a href='"); sb.Append(_pageUrl(1)); sb.Append(search); sb.Append("'>first</a> ");
+                    sb.Append("<a href='"); sb.Append(_pageUrl((int) (_paging.Page - 1))); sb.Append(search); sb.Append("'>previous</a> ");
+                }
+            }
+
             if (start > 1)
             {
               //  sb.Append("<a href='"); sb.Append(_pageUrl(1)); sb.Append(search); sb.Append("'>First</a>&nbsp;&nbsp;");
@@ -59,6 +72,20 @@ namespace eMotive.SCE.Common.Helpers
             if (end < totalPages)
             {
                 sb.Append("... <a href='"); sb.Append(_pageUrl(totalPages)); sb.Append(search); sb.Append("'>"); sb.Append(totalPages); sb.Append("</a>");
+            }
+
+            if (totalPages > 1)
+            {
+                if (_paging.Page >= totalPages)
+                {
+                    sb.Append(" next last");
+                }
+                else
+                {
+                    sb.Append(" <a href='"); sb.Append(_pageUrl((int)(_paging.Page +1))); sb.Append(search); sb.Append("'>next</a>");
+                    sb.Append(" <a href='"); sb.Append(_pageUrl(totalPages)); sb.Append(search); sb.Append("'>last</a>");
+                }
+                
             }
 
             sb.Append("<div>"); sb.Append(_paging.NumberOfResults); sb.Append(" "); sb.Append(_paging.ItemType); sb.Append(" found. Displaying page ");

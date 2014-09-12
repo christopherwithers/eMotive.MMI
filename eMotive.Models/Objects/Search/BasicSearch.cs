@@ -59,6 +59,10 @@ namespace eMotive.Models.Objects.Search
 
         public string ItemType { get; set; }
 
+        //public string Filter { get; set; }
+
+
+
         public int TotalPages
         {
             get { return (int)Math.Ceiling((decimal)NumberOfResults / PageSize); }

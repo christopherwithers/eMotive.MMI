@@ -74,11 +74,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             //  var user = new User();
 
             userSearch.Type = searchType;
+           // userSearch.Filters = 
 
             var searchItem = userManager.DoSearch(userSearch);
 
             if (searchItem.Items.HasContent())
             {
+                userSearch.Page = searchItem.CurrentPage;
                 userSearch.NumberOfResults = searchItem.NumberOfResults;
                 userSearch.Users = userManager.FetchRecordsFromSearch(searchItem);
 
