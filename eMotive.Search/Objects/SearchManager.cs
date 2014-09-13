@@ -20,7 +20,8 @@ namespace eMotive.Search.Objects
     {
         private readonly FSDirectory directory;
         private static IndexWriter writer;
-        private readonly Analyzer analyzer;
+
+        private readonly PerFieldAnalyzerWrapper analyzer;
         private IndexSearcher searcher;
         private readonly Version luceneVersion;
 
@@ -34,24 +35,27 @@ namespace eMotive.Search.Objects
 
             var resolvedServerLocation = HttpContext.Current.Server.MapPath(string.Format("~{0}", _indexLocation));
             directory = FSDirectory.Open(new DirectoryInfo(resolvedServerLocation));
+
+            analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(luceneVersion));
+            analyzer.AddAnalyzer("Role", new KeywordAnalyzer());
+
             try
             {
-                writer = new IndexWriter(directory, new StandardAnalyzer(luceneVersion), false, IndexWriter.MaxFieldLength.UNLIMITED);
+                writer = new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
             catch (LockObtainFailedException ex)
             {
                 IndexWriter.Unlock(directory);
-            //    writer.Commit();
 
-           //     writer.Dispose();
                 var l = directory.MakeLock(resolvedServerLocation);
                 l.Obtain();
                 l.Release();
 
-                writer = new IndexWriter(directory, new StandardAnalyzer(luceneVersion), false, IndexWriter.MaxFieldLength.UNLIMITED);
+                writer = new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
 
-            analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(luceneVersion));
+            
+
         }
 
         public SearchResult DoSearch(Search _search)
@@ -64,6 +68,9 @@ namespace eMotive.Search.Objects
             var items = new Collection<ResultItem>();
             try//todo: do i need to make title DocumentTITLE AND UNALAYZED AGAIN - thenadd an analyzed title in? YESSSSSSSSSSS
             {
+                TopDocs docs;
+                QueryWrapperFilter wrapper = null;
+
                 var bq = new BooleanQuery();
                 var parser = new QueryParser(luceneVersion, string.Empty, analyzer);
                 if (!string.IsNullOrEmpty(_search.Query) && !_search.CustomQuery.HasContent())
@@ -81,41 +88,16 @@ namespace eMotive.Search.Objects
                 }
                 else
                 {
-                    if (!_search.CustomQuery.HasContent())
-                        throw new ArgumentException("Neither Query or CustomQuery have been defined.");
-
-                    bq = new BooleanQuery();
-                    //TODO: need a way of passing in occur.must and occur.should
-                    foreach (var query in _search.CustomQuery.Where(n => !string.IsNullOrEmpty(n.Value.Field)))
+                    if (_search.CustomQuery.HasContent())
                     {
-                        bq.Add(new BooleanClause(parser.Parse(string.Format("{0}:{1}", query.Key, query.Value.Field)), query.Value.Term));
+                        bq = new BooleanQuery();
+                        //TODO: need a way of passing in occur.must and occur.should
+                        foreach (var query in _search.CustomQuery.Where(n => !string.IsNullOrEmpty(n.Value.Field)))
+                        {
+                            bq.Add(new BooleanClause(parser.Parse(string.Format("{0}:{1}", query.Key, query.Value.Field)), query.Value.Term));
+                        }
                     }
                 }
-
-                Sort sort = null;//new Sort(new SortField("Forename", SortField.STRING, true));
-
-                if (!string.IsNullOrEmpty(_search.SortBy))
-                {
-                    sort = new Sort(new SortField(_search.SortBy, SortField.STRING, _search.OrderBy != SortDirection.ASC)); 
-                }
-
-
-            //    var tfc = TopFieldCollector.Create(sort, 10000, true, true, true, false);
-
-                TopDocs docs;
-                QueryWrapperFilter wrapper = null;
-             /*   if (_search.Type.HasContent())
-                {
-                    var filterBq = new BooleanQuery();
-                    foreach (var type in _search.Type)
-                    {
-                        filterBq.Add(new BooleanClause(parser.Parse(string.Format("Type:{0}", type)), Occur.MUST));
-                    }
-                    wrapper = new QueryWrapperFilter(filterBq);
-                //    docs = sort != null ? searcher.Search(bq, test, 10000, sort) : searcher.Search(bq, test, 10000);
-                
-                    
-                }*/
 
                 if (_search.Filters.HasContent())
                 {
@@ -126,10 +108,26 @@ namespace eMotive.Search.Objects
                     }
                     wrapper = new QueryWrapperFilter(filterBq);
                 }
-            /*    else
+
+                if (_search.Filters.HasContent() && string.IsNullOrEmpty(_search.Query) &&
+                    !_search.CustomQuery.HasContent())
+                {//we can't search with filter alone, do we'll add filters as a custom query and search on them.
+                    bq = new BooleanQuery();
+                    foreach (var filter in _search.Filters)
+                    {
+                        bq.Add(new BooleanClause(parser.Parse(string.Format("{0}:{1}", filter.Key, filter.Value.Field)), filter.Value.Term));
+                    }
+                }
+
+                if (string.IsNullOrEmpty(_search.Query)  && !_search.CustomQuery.HasContent() && !_search.Filters.HasContent())
+                    throw new ArgumentException("Neither Query, CustomQuery nor a filter has been defined.");
+
+                Sort sort = null;//new Sort(new SortField("Forename", SortField.STRING, true));
+
+                if (!string.IsNullOrEmpty(_search.SortBy))
                 {
-                    docs = sort != null ? searcher.Search(bq, null, 10000, sort) : searcher.Search(bq, null, 10000);
-                }*/
+                    sort = new Sort(new SortField(_search.SortBy, SortField.STRING, _search.OrderBy != SortDirection.ASC)); 
+                }
 
                 docs = sort != null ? searcher.Search(bq, wrapper, 10000, sort) : searcher.Search(bq, wrapper, 10000);
 
@@ -151,7 +149,6 @@ namespace eMotive.Search.Objects
                     {
                         //todo: need conditional on here for to check there are more than 1 result pages???
                         //need to work out page number, then equiv max page number from search results!
-                        //first = 1;
                         if (_search.CurrentPage > numPages)
                         {
                             _search.CurrentPage = numPages;
@@ -159,7 +156,6 @@ namespace eMotive.Search.Objects
                         }
 
                         last = _search.NumberOfResults;
-                        //_search.CurrentPage = 1;
                     }
 
                     for (var i = first; i < last; i++)

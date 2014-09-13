@@ -469,23 +469,15 @@ namespace eMotive.Managers.Objects
         {
             var newSearch = Mapper.Map<BasicSearch, emSearch>(_search);
 
-            if (newSearch.Type.HasContent())
+            if (_search.Filter.HasContent())
             {
-                foreach (var type in _search.Type)
+                foreach (var filter in _search.Filter)
                 {
-                    newSearch.Filters.Add("Type", new emSearch.SearchTerm { Field = type, Term = Occur.MUST });
+                    newSearch.Filters.Add(filter.Key, new emSearch.SearchTerm { Field = filter.Value, Term = Occur.MUST });
                 }
-              //  newSearch.Filters.Add("Role", new emSearch.SearchTerm { Field = "Admin", Term = Occur.MUST });
             }
 
-            if (string.IsNullOrEmpty(newSearch.Query))
-            {
-                newSearch.CustomQuery = new Dictionary<string, emSearch.SearchTerm>
-                {
-                    {"Type", new emSearch.SearchTerm {Field = "User", Term = Occur.SHOULD}}
-                };
-            }
-            else
+            if (!string.IsNullOrEmpty(newSearch.Query))
             {
                 newSearch.CustomQuery = new Dictionary<string, emSearch.SearchTerm>
                 {
@@ -493,21 +485,12 @@ namespace eMotive.Managers.Objects
                     {"Forename", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
                     {"Surname", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
                     {"Email", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
-                    //         {"Type", new emSearch.SearchTerm {Field = "User", Term = Occur.}}//,
-                    //{"Archived", new emSearch.SearchTerm {Field = "False", Term = Occur.SHOULD}}
                 };
-                //  }
+         
             }
-            // newSearch.CustomQuery.Add("Role", new emSearch.SearchTerm {Field = "Admin", Term = Occur.SHOULD});
-            return searchManager.DoSearch(newSearch);
-          //  var result = _rawResults = searchManager.DoSearch(newSearch);
-/*
-            if (result.Items.HasContent())
-            {
-                return Mapper.Map <IEnumerable<repUsers.User>,IEnumerable<User>> (userRep.Fetch(result.Items.Select(n => n.ID).ToList()));
-            }*/
 
-            return null;
+            return searchManager.DoSearch(newSearch);
+
         }
 
         public void ReindexSearchRecords()

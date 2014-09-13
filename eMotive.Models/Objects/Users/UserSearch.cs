@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using eMotive.Models.Objects.Search;
 
 namespace eMotive.Models.Objects.Users
@@ -7,14 +8,14 @@ namespace eMotive.Models.Objects.Users
     {
         public UserSearch()
         {
-            ItemType = "Users";
+         //   ItemType = "User";
 
-            RoleFilter = new[] {"All", "Admin", "Interviewer", "Applicant"};
+          //  RoleFilter =  //new[] {"All", "Admin", "Interviewer", "Applicant"};
         }
 
         public IEnumerable<User> Users { get; set; }
 
-        public string[] RoleFilter { get; set; }
+        public Collection<KeyValuePair<string, string>> RoleFilter { get; set; }
         public string SelectedRoleFilter { get; set; }
        // public bool CanCreate { get; set; }
     }

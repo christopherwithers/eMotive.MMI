@@ -44,5 +44,10 @@
     $("#SaveNotes").click(function () {
         Ajax.DoQuery(window.Routes.URL("SaveUserNotes"), function (data) { $("#NotesModal").modal('toggle'); }, { username: $("#NotesUsername").val(), notes: $("#NotesText").val() });
     });
+
+    $("#SelectedRoleFilter").change(function () {
+        $('form#searchForm').submit();
+        return false;
+    });
 });
 

@@ -31,7 +31,7 @@
     <h2>User Administration</h2>
     <div class="row-fluid">
 
-        @using (Html.BeginForm("Index", "Users", new { area = "Admin" }, FormMethod.Get, new { @class = "form-search pull-right" }))
+        @using (Html.BeginForm("Index", "Users", new { area = "Admin" }, FormMethod.Get, new { @class = "form-search pull-right", @id="searchForm" }))
         {
             @Html.HiddenFor(m => m.Page)
             @Html.HiddenFor(m => m.PageSize)
@@ -45,6 +45,8 @@
                     Search <i class="icon-search icon-white"></i>
                 </button>
             </div>
+            <br/><br />
+            @Html.DropDownListFor(m => m.SelectedRoleFilter, new SelectList(Model.RoleFilter, "key", "value"))
             <a href="@Url.Action("Index")" class="btn btn-inverse">Clear <i class="icon-remove icon-white"></i></a>
         }
     </div>
@@ -137,7 +139,7 @@ else
         </tbody>
 
     </table>
-    @Html.PageLinks(Model, i => Url.Action("Index", new { page = i }))
+    @Html.PageLinks(Model, i => Url.Action("Index", new { page = i }), !string.IsNullOrEmpty(Model.SelectedRoleFilter) && Model.SelectedRoleFilter != "0" ? string.Format("SelectedRoleFilter={0}", Model.SelectedRoleFilter) : string.Empty)
 
     <div class="modal hide fade" id="EmailLog">
         <div class="modal-header">

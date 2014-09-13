@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Extensions;
 
@@ -57,7 +58,9 @@ namespace eMotive.Models.Objects.Search
 
         public string Error { get; set; }
 
-        public string ItemType { get; set; }
+        public string ItemType { get; set; } //todo: get rid of this!
+
+        public Dictionary<string, string> Filter { get; set; } 
 
         //public string Filter { get; set; }
 
@@ -71,7 +74,7 @@ namespace eMotive.Models.Objects.Search
         public string SortBy { get; set; }
         public SortDirection OrderBy { get; set; }
 
-        public string BuildSearchQueryString(bool _append, HashSet<string> _omitParams = null)
+        public virtual string BuildSearchQueryString(bool _append, HashSet<string> _omitParams = null)
         {
             var sb = new StringBuilder();
             var isFirst = true;
@@ -135,7 +138,7 @@ namespace eMotive.Models.Objects.Search
             return sb.ToString();
         }
 
-        public string BuildSearchQueryString(string _field, SortDirection _direction, HashSet<string> _omitParams = null)
+        public string BuildSearchQueryString(string _field, SortDirection _direction, HashSet<string> _omitParams = null)//todo: how to inject params into this??
         {
             var sb = new StringBuilder();
             var isFirst = true;

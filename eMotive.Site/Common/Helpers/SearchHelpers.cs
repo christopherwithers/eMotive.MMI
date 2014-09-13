@@ -4,12 +4,13 @@ using System.Text;
 using System.Web.Mvc;
 using Extensions;
 using eMotive.Models.Objects.Search;
+using ServiceStack.Common;
 
 namespace eMotive.SCE.Common.Helpers
 {
     public static class SearchHelpers
     {
-        public static MvcHtmlString PageLinks(this HtmlHelper _helper, BasicSearch _paging, Func<int, string> _pageUrl)
+        public static MvcHtmlString PageLinks(this HtmlHelper _helper, BasicSearch _paging, Func<int, string> _pageUrl, params string[] _params)
         {
             var sb = new System.Text.StringBuilder();
             //   TagBuilder tag;
@@ -31,6 +32,32 @@ namespace eMotive.SCE.Common.Helpers
 
             //if (!string.IsNullOrEmpty(_paging.Query))
             search = _paging.BuildSearchQueryString(true, new HashSet<string> {"page"});//string.Concat("&Query=", _paging.Query);
+
+            if (_params.HasContent())
+            {
+                if (!search.IsNullOrEmpty())
+                {
+                    sb.Append(search);
+                    sb.Append("&");
+                }
+                else
+                {
+                    sb.Append("?");
+                }
+
+                foreach (var param in _params)
+                {
+                    sb.Append(param);
+                    sb.Append("&");
+                }
+
+                //remove trailing &
+                sb.Remove(sb.Length - 1, 1);
+
+                search = sb.ToString();
+
+                sb.Length = 0;
+            }
 
             if (end > totalPages)
             {
@@ -94,7 +121,7 @@ namespace eMotive.SCE.Common.Helpers
             return MvcHtmlString.Create(sb.ToString());
         }
 
-        public static MvcHtmlString SearchString(this HtmlHelper _helper, string _query, string _page, string _sortby, string _orderby)
+        public static MvcHtmlString SearchString(this HtmlHelper _helper, string _query, string _page, string _sortby, string _orderby, params string[] _params)
         {
             var sb = new StringBuilder();
             var isFirst = true;
@@ -139,6 +166,21 @@ namespace eMotive.SCE.Common.Helpers
                 sb.Append("orderby=");
                 sb.Append(_orderby);
                 isFirst = false;
+            }
+
+            if (_params.HasContent())
+            {
+                if (!isFirst)
+                    sb.Append("&");
+
+                foreach (var param in _params)
+                {
+                    sb.Append(param);
+                    sb.Append("&");
+                }
+
+                //remove trailing &
+                sb.Remove(sb.Length - 1, 1);
             }
 
             return MvcHtmlString.Create(string.Empty);

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
+using DDay.iCal;
 using eMotive.Managers.Interfaces;
 using eMotive.MMI.Common;
 using eMotive.MMI.Common.ActionFilters;
@@ -35,7 +36,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         private readonly ISessionManager signupManager;
         private readonly IGroupManager groupManager;
 
-        private readonly string[] searchType;
+        private readonly Dictionary<string,string> searchType;
         public UsersController(IUserManager _userManager, IRoleManager _roleManager, ISessionManager _signupManager, IGroupManager _groupManager)
         {
             userManager = _userManager;
@@ -44,7 +45,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
             groupManager = _groupManager;
 
-            searchType = new[] { "User" };
+            searchType = new Dictionary<string, string> {{"Type", "User"}};
         }
 
        // [Inject]
@@ -59,11 +60,6 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Index(UserSearch userSearch)
         {
-            //    userSearch.PageSize = 15;
-            // userSearch.SortField = "Email";
-            // userSearch.SortDirection = SortDirection.ASC;
-           // var blah = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             if (string.IsNullOrEmpty(userSearch.SortBy))
             {
                 userSearch.SortBy = "Surname";
@@ -71,10 +67,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             }
 
             ViewBag.LoggedInUser = userManager.Fetch(User.Identity.Name);
-            //  var user = new User();
 
-            userSearch.Type = searchType;
-           // userSearch.Filters = 
+            if (!string.IsNullOrEmpty(userSearch.SelectedRoleFilter) && userSearch.SelectedRoleFilter != "0")
+                searchType.Add("RoleID", userSearch.SelectedRoleFilter);
+
+            userSearch.Filter = searchType;
+
+            //todo: PAGING BREAKS WITH FILTER, FIX THIS!!!
 
             var searchItem = userManager.DoSearch(userSearch);
 
@@ -82,11 +81,26 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             {
                 userSearch.Page = searchItem.CurrentPage;
                 userSearch.NumberOfResults = searchItem.NumberOfResults;
-                userSearch.Users = userManager.FetchRecordsFromSearch(searchItem);
-
-                return View(userSearch);
+                userSearch.Users = userManager.FetchRecordsFromSearch(searchItem); 
             }
-            return View(new UserSearch());
+            else
+            {
+                userSearch = new UserSearch();
+            }
+            var roles = roleManager.FetchAll();
+
+            if (roles.HasContent())
+            {
+                var roleFilter = new Collection<KeyValuePair<string, string>> { new KeyValuePair<string, string>("0", string.Empty)};
+
+                roleFilter.AddRange(roles.Select(n => new KeyValuePair<string, string>(n.ID.ToString(CultureInfo.InvariantCulture), n.Name)));
+                userSearch.RoleFilter = roleFilter;
+
+                //roles.Select(n => new KeyValuePair<string, string>(n.ID.ToString(CultureInfo.InvariantCulture), n.Name));
+                //   userSearch.SelectedRoleFilter = "2";
+            }
+
+            return View(userSearch);
         }
 
         //                        
