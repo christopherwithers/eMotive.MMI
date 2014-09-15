@@ -826,6 +826,7 @@
     <Content Include="Scripts\eMotive\Closures\UserActions.js" />
     <Content Include="Scripts\eMotive\UserActionsFunctions.js" />
     <Content Include="Areas\Admin\Views\Signups\EditSignup.cshtml" />
+    <Content Include="Areas\Admin\Views\Signups\SignupSearch.cshtml" />
     <None Include="Properties\PublishProfiles\MMI DEMO.pubxml" />
     <Content Include="Scripts\errors.json" />
     <Content Include="Scripts\angular-touch.min.js.map" />

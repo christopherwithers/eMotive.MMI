@@ -36,7 +36,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         private readonly ISessionManager signupManager;
         private readonly IGroupManager groupManager;
 
-        private readonly Dictionary<string,string> searchType;
+        private readonly Dictionary<string,string> searchFilter;
         public UsersController(IUserManager _userManager, IRoleManager _roleManager, ISessionManager _signupManager, IGroupManager _groupManager)
         {
             userManager = _userManager;
@@ -45,7 +45,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
             groupManager = _groupManager;
 
-            searchType = new Dictionary<string, string> {{"Type", "User"}};
+            searchFilter = new Dictionary<string, string> { { "Type", "User" } };
         }
 
        // [Inject]
@@ -69,9 +69,9 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             ViewBag.LoggedInUser = userManager.Fetch(User.Identity.Name);
 
             if (!string.IsNullOrEmpty(userSearch.SelectedRoleFilter) && userSearch.SelectedRoleFilter != "0")
-                searchType.Add("RoleID", userSearch.SelectedRoleFilter);
+                searchFilter.Add("RoleID", userSearch.SelectedRoleFilter);
 
-            userSearch.Filter = searchType;
+            userSearch.Filter = searchFilter;
 
             //todo: PAGING BREAKS WITH FILTER, FIX THIS!!!
 

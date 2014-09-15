@@ -81,6 +81,10 @@
       <Project>{4747A062-0720-4EA7-98CB-1B12EB4512FE}</Project>
       <Name>eMotive.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\eMotive.Search\eMotive.Search.csproj">
+      <Project>{3185EB88-28B3-4997-AD51-023422F2E972}</Project>
+      <Name>eMotive.Search</Name>
+    </ProjectReference>
     <ProjectReference Include="..\eMotive.Services\eMotive.Services.csproj">
       <Project>{8B8EFF5A-77DC-48D3-8A17-E10897DF74B9}</Project>
       <Name>eMotive.Services</Name>

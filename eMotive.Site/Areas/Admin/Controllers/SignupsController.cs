@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using DDay.iCal;
 using eMotive.Managers.Interfaces;
 using eMotive.MMI.Common;
 using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Signups;
+using eMotive.Models.Objects.SignupsMod;
 using eMotive.Models.Objects.StatusPages;
 using eMotive.Models.Objects.Uploads;
 using eMotive.Models.Objects.Users;
 using eMotive.SCE.Common;
 using eMotive.SCE.Infrastructure;
+using eMotive.Search.Objects;
 using eMotive.Services.Interfaces;
 using Extensions;
 using Newtonsoft.Json.Linq;
 //using Ninject;
 using OfficeOpenXml;
 using ServiceStack.Mvc;
+using Group = eMotive.Models.Objects.Signups.Group;
+using Signup = eMotive.Models.Objects.Signups.Signup;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
 {
@@ -27,7 +34,8 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         private readonly IGroupManager groupManager;
         private readonly IDocumentManagerService documentManager;
         private readonly IUserManager userManager;
-        
+
+        private readonly Dictionary<string, string> searchFilter;
 
         public SignupsController(ISessionManager _signupManager, IGroupManager _groupManager, IDocumentManagerService _documentManager, IUserManager _userManager)
         {
@@ -35,6 +43,8 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             groupManager = _groupManager;
             documentManager = _documentManager;
             userManager = _userManager;
+
+            searchFilter = new Dictionary<string, string> { { "Type", "Signup" } };
         }
 
        // [Inject]
@@ -44,14 +54,48 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         public IeMotiveConfigurationService ConfigurationService { get; set; }
         
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
-        public ActionResult Index()
+        public ActionResult Index(SignupSearch signupSearch)
         {
-            var signupAdminView = new AdminSignupView
+           /* var signupAdminView = new AdminSignupView
                 {
-                    Signups = signupManager.FetchAll()
-                };
+                    Signups = signupManager.FetchAllM()
+                };*/
 
-            return View(signupAdminView);
+            if (!string.IsNullOrEmpty(signupSearch.SelectedGroupFilter) && signupSearch.SelectedGroupFilter != "0")
+                searchFilter.Add("GroupID", signupSearch.SelectedGroupFilter);
+
+            signupSearch.Filter = searchFilter;
+        //    signupSearch.PageSize = 20;
+            var searchItem = signupManager.DoSearch(signupSearch);
+
+            if (searchItem.Items.HasContent())
+            {
+                signupSearch.Page = searchItem.CurrentPage;
+                signupSearch.NumberOfResults = searchItem.NumberOfResults;
+                signupSearch.Signups = signupManager.FetchRecordsFromSearch(searchItem); 
+            }
+            else
+            {
+              //  signupSearch.Signups = signupManager.FetchAllM();
+                signupSearch = new SignupSearch();
+            }
+
+            var groups = groupManager.FetchGroups();
+
+            if (groups.HasContent())
+            {
+                var groupFilter = new Collection<KeyValuePair<string, string>> { new KeyValuePair<string, string>("0", string.Empty) };
+
+                groupFilter.AddRange(groups.Select(n => new KeyValuePair<string, string>(n.ID.ToString(CultureInfo.InvariantCulture), n.Name)));
+                signupSearch.GroupFilter = groupFilter;
+            }
+
+            return View(signupSearch);
+        }
+
+        public ActionResult SignupSearch()
+        {
+            return View();
         }
 
         public ActionResult Edit(int id)

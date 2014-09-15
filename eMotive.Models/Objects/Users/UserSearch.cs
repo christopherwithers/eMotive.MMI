@@ -8,7 +8,7 @@ namespace eMotive.Models.Objects.Users
     {
         public UserSearch()
         {
-         //   ItemType = "User";
+            ItemType = "User";
 
           //  RoleFilter =  //new[] {"All", "Admin", "Interviewer", "Applicant"};
         }

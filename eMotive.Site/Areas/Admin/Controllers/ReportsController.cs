@@ -44,7 +44,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         {
             var signupAdminView = new AdminSignupView
             {
-                Signups = signupManager.FetchAll()
+                Signups = signupManager.FetchAllM()
             };
 
             return View(signupAdminView);

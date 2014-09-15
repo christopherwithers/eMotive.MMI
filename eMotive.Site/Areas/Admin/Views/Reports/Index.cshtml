@@ -124,14 +124,15 @@ else
                             </thead>
                             @foreach (var signup in item.Value)
                             {
-                                var totalPlaces = signup.Slots.Sum(n => n.TotalPlacesAvailable + n.InterestedPlaces + n.ReservePlaces);
+                                var totalPlaces = signup.Slots.Sum(n => n.PlacesAvailable + n.InterestedPlaces + n.ReservePlaces);
+                                var totalReserve = signup.Slots.Sum(n => n.ReservePlaces);
                                 <tr>
                                     <td>@signup.Description</td>
                                     <td>@signup.Date.ToString("dddd d MMMM yyyy")</td>
                                     <td>
-                                        @(totalPlaces - signup.Slots.Sum(n => n.ApplicantsSignedUp != null ? (n.ApplicantsSignedUp.Count) : 0))  / @totalPlaces
+                                        @((totalPlaces + totalReserve) - signup.Slots.Sum(n => n.NumberSignedUp()))  / @(totalPlaces + totalReserve)
                                     </td>
-                                    <td>@Html.ActionLink("Download Report", "InterviewReport", "Reports", new { area = "admin", id = @signup.ID }, new { @class = "btn btn-default" })</td>
+                                    <td>@Html.ActionLink("Download Report", "InterviewReport", "Reports", new { area = "admin", id = @signup.Id }, new { @class = "btn btn-default" })</td>
                                 </tr>
                             }
                         </table>

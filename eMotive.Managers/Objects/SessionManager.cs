@@ -5,16 +5,22 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using AutoMapper;
 using Cache.Interfaces;
+using eMotive.Managers.Objects.Search;
 using eMotive.Managers.Objects.Signups;
 using eMotive.Models.Objects;
+using eMotive.Models.Objects.Search;
 using eMotive.Models.Objects.Users;
+using eMotive.Search.Interfaces;
+using eMotive.Search.Objects;
 using Extensions;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Signups;
 using eMotive.Repository.Interfaces;
 using eMotive.Services.Interfaces;
+using Lucene.Net.Search;
 using Ninject;
 using rep = eMotive.Repository.Objects.Signups;
+using emSearch = eMotive.Search.Objects.Search;
 
 namespace eMotive.Managers.Objects
 {
@@ -22,11 +28,13 @@ namespace eMotive.Managers.Objects
     {
         private readonly ISessionRepository signupRepository;
         private readonly IUserManager userManager;
+        private readonly ISearchManager searchManager;
 
-        public SessionManager(ISessionRepository _signupRepository, IUserManager _userManager)
+        public SessionManager(ISessionRepository _signupRepository, IUserManager _userManager, ISearchManager _searchManager)
         {
             signupRepository = _signupRepository;
             userManager = _userManager;
+            searchManager = _searchManager;
 
             AutoMapperManagerConfiguration.Configure();
         }
@@ -45,7 +53,7 @@ namespace eMotive.Managers.Objects
 
         private IEnumerable<Repository.Objects.Signups.Signup> FetchSignupsByGroup(IEnumerable<int> _groups)
         {
-            var cacheId = string.Format("RepSignups", string.Join("_", _groups));
+            var cacheId = string.Format("RepSignups_{0}", string.Join("_", _groups));
 
             var signups = cache.FetchCollection<Repository.Objects.Signups.Signup>(cacheId, n => n.id, null);
 
@@ -275,6 +283,11 @@ namespace eMotive.Managers.Objects
         public IEnumerable<Group> FetchAllGroups()
         {
             return Mapper.Map<IEnumerable<rep.Group>, IEnumerable<Group>>(signupRepository.FetchGroups());
+        }
+
+        public IEnumerable<Models.Objects.SignupsMod.Signup> FetchRecordsFromSearch(SearchResult _searchResult)
+        {
+            return FetchM(_searchResult.Items.Select(n => n.ID).ToList());
         }
 
         public UserHomeView FetchHomeView(string _username)
@@ -768,7 +781,7 @@ namespace eMotive.Managers.Objects
             return slotView;
         }
 
-
+        //todo: reindex signup
         public bool SignupToSlot(int _signupID, int _slotId, string _username)
         {
             var signup = Fetch(_signupID);
@@ -894,7 +907,7 @@ namespace eMotive.Managers.Objects
 
 
         }
-
+        //todo: reindex signup
         public bool CancelSignupToSlot(int _signupID, int _slotId, string _username)
         {
             var signup = Fetch(_signupID);
@@ -1182,6 +1195,28 @@ namespace eMotive.Managers.Objects
             return signup;
         }
 
+        public IEnumerable<Models.Objects.SignupsMod.Signup> FetchM(IEnumerable<int> _ids)
+        {
+            var signups = Mapper.Map<IEnumerable<rep.Signup>, IEnumerable<Models.Objects.SignupsMod.Signup>>(signupRepository.FetchSignups(_ids));
+
+            var users = userManager.Fetch(signups.SelectMany(n => n.Slots).SelectMany(m => m.UsersSignedUp).Select(o => o.IdUser)).ToDictionary(k => k.ID, v => v);
+
+            foreach (var signup in signups)
+            {
+                foreach (var slot in signup.Slots)
+                {
+                    slot.MergeReserve = signup.MergeReserve;
+                    foreach (var user in slot.UsersSignedUp)
+                    {
+                        user.User = users[user.IdUser];
+                        // break;
+                    }
+                }
+            }
+
+            return signups;
+        }
+
         public Models.Objects.SignupsMod.UserSignup FetchUserSignup(int _userId, IEnumerable<int> _groupIds)
         {
             return Mapper.Map<rep.UserSignup, Models.Objects.SignupsMod.UserSignup>(signupRepository.FetchUserSignup(_userId, _groupIds));
@@ -1192,5 +1227,51 @@ namespace eMotive.Managers.Objects
             return Mapper.Map<IEnumerable<rep.UserSignup>, IEnumerable<Models.Objects.SignupsMod.UserSignup>>(signupRepository.FetchUserSignups(_userId, _groupIds));
         }
         #endregion
+
+        public SearchResult DoSearch(BasicSearch _search)
+        {
+            var newSearch = Mapper.Map<BasicSearch, emSearch>(_search);
+
+            if (_search.Filter.HasContent())
+            {
+                foreach (var filter in _search.Filter)
+                {
+                    newSearch.Filters.Add(filter.Key, new emSearch.SearchTerm { Field = filter.Value, Term = Occur.MUST });
+                }
+            }
+
+            if (!string.IsNullOrEmpty(newSearch.Query))
+            {
+                newSearch.CustomQuery = new Dictionary<string, emSearch.SearchTerm>
+                {
+                    {"Username", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"Forename", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"Surname", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"Email", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"SignupDescription", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"SlotDescription", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                    {"Group", new emSearch.SearchTerm {Field = _search.Query, Term = Occur.SHOULD}},
+                };
+
+            }
+
+            return searchManager.DoSearch(newSearch);
+        }
+
+        public void ReindexSearchRecords()
+        {
+            var records = FetchAllM();
+
+            if (!records.HasContent())
+            {
+                //todo: send an error message here
+                return;
+            }
+
+            foreach (var item in records)
+            {
+                searchManager.Add(new SignupSearchDocument(item));
+            }
+        }
     }
 }

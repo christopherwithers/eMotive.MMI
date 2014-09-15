@@ -19,9 +19,9 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         private readonly IEmailService emailService;
         private readonly IPageManager pageManager;
         private readonly IPartialPageManager partialPageManager;
-
+        private readonly ISessionManager sessionManager;
         public SettingsController(ISearchManager _searchManager, IUserManager _userManager, IRoleManager _rolemanager, 
-                                  IPageManager _pageManager, IPartialPageManager _partialPageManager, INewsManager _newsManager, IEmailService _emailService)
+                                  IPageManager _pageManager, IPartialPageManager _partialPageManager, INewsManager _newsManager, IEmailService _emailService, ISessionManager _sessionManager)
         {
             newsManager = _newsManager;
             userManager = _userManager;
@@ -30,6 +30,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             emailService = _emailService;
             pageManager = _pageManager;
             partialPageManager = _partialPageManager;
+            sessionManager = _sessionManager;
         }
 
         public ActionResult Index()
@@ -54,6 +55,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             userManager.ReindexSearchRecords();
             emailService.ReindexSearchRecords();
             pageManager.ReindexSearchRecords();
+            sessionManager.ReindexSearchRecords();
             partialPageManager.ReindexSearchRecords();
 
             return new CustomJsonResult

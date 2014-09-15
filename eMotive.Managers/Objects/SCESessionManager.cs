@@ -2,6 +2,7 @@
 using System.Linq;
 using eMotive.Managers.Objects.Signups;
 using eMotive.Models.Objects;
+using eMotive.Search.Interfaces;
 using Extensions;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Signups;
@@ -15,7 +16,8 @@ namespace eMotive.Managers.Objects
     {
 
         //todo: before htting this, we need to know if the user has signed up ANYWHERE - another query? ########################
-        public SCESessionManager(ISessionRepository _signupRepository, IUserManager _userManager) : base(_signupRepository, _userManager)
+        public SCESessionManager(ISessionRepository _signupRepository, IUserManager _userManager, ISearchManager _searchManager)
+            : base(_signupRepository, _userManager, _searchManager)
         {
         }
 

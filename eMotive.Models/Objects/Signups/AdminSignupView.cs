@@ -6,9 +6,9 @@ namespace eMotive.Models.Objects.Signups
 {
     public class AdminSignupView
     {
-        public IEnumerable<Signup> Signups { get; set; }
- 
-        public IDictionary<string, List<Signup>> GetSignupsGroupedByGroup()
+        public IEnumerable<SignupsMod.Signup> Signups { get; set; }
+
+        public IDictionary<string, List<SignupsMod.Signup>> GetSignupsGroupedByGroup()
         {
             if (!Signups.HasContent())
                 return null;
