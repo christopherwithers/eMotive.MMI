@@ -7,7 +7,8 @@ namespace eMotive.MMI
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
-            //  routes.IgnoreRoute("services/{*pathInfo}");
+           // routes.IgnoreRoute("api/{*pathInfo}");
+            routes.IgnoreRoute("api/{*pathInfo}");
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
          //   routes.IgnoreRoute("elmah.axd");

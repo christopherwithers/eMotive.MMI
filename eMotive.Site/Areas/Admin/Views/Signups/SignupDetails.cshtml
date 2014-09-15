@@ -1,5 +1,5 @@
 ﻿@using Extensions
-@using eMotive.Models.Objects.Signups
+@using eMotive.Models.Objects.SignupsMod
 @model Signup
 @{
     ViewBag.Title = "SignupDetails";
@@ -72,16 +72,16 @@ else
                                     </tr>
                                     <tr>
                                         <td><strong>Places Available</strong></td>
-                                        <td>@slot.TotalPlacesAvailable</td>
+                                        <td>@slot.PlacesAvailable</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Remaining Places</strong></td>
-                                        <td>@(slot.TotalPlacesAvailable - (slot.ApplicantsSignedUp != null ? (slot.ApplicantsSignedUp.Count) : 0))</td>
+                                        <td>@(slot.PlacesAvailable - slot.NumberSignedUp())</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Applicants Signedup</strong></td>
                                         <td>
-                                            @if (!slot.ApplicantsSignedUp.HasContent())
+                                            @if (!slot.UsersSignedUp.HasContent())
                                             {
                                                 <text>No applicants have signed up to this session.</text>
                                             }
@@ -95,11 +95,11 @@ else
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach (var applicant in slot.ApplicantsSignedUp)
+                                                        @foreach (var applicant in slot.UsersSignedUp)
                                                         {
                                                             <tr>
                                                                 <td>@applicant.User.Forename @applicant.User.Surname</td>
-                                                                <td>@applicant.SignupDate.ToString("dddd d MMMM yyyy hh:mm:ss")</td>
+                                                                <td>@applicant.SignUpDate.ToString("dddd d MMMM yyyy hh:mm:ss")</td>
                                                             </tr>
                                                         }
                                                     </tbody>

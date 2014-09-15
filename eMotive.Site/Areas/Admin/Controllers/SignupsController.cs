@@ -92,11 +92,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
             return View(signupSearch);
         }
-
-        public ActionResult SignupSearch()
+        /*
+        public ActionResult Details(int id)
         {
-            return View();
-        }
+            var signup = signupManager.FetchM(id);
+
+            return View(signup);
+        }*/
 
         public ActionResult Edit(int id)
         {
@@ -108,9 +110,9 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
 
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
-        public ActionResult SignupDetails(int id)
+        public ActionResult SignupDetails(int? id)
         {
-            var signup = signupManager.Fetch(id);
+            var signup = signupManager.FetchM(id.Value);
 
             return View(signup);
         }

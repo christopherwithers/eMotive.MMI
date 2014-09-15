@@ -34,10 +34,14 @@ namespace eMotive.MMI
             JsConfig.DateHandler = JsonDateHandler.ISO8601;
 
 
-            
+       //     SetConfig(new EndpointHostConfig
+           // {
+              //  ServiceStackHandlerFactoryPath = "services",
+              //  EnableFeatures = Feature.All.Remove(Feature.Metadata)
+          //  });
           //  SetConfig(new EndpointHostConfig
            // {
-             //   EnableFeatures = Feature.All.Remove(Feature.Metadata)
+             //   
            // });
         //    AuthService.Init(() => new AuthUserSession(), new IAuthProvider[] {new CredentialsAuthProvider()});
 

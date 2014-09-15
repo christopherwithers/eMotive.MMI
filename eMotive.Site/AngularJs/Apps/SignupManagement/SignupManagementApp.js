@@ -5,10 +5,20 @@ signupManagementApp.controller("myApp", function ($scope, $signupServices, $loca
 
    var id = url.substring(url.lastIndexOf("/") + 1);
 
-    $scope.groups = $signupServices.getAllGroups();
+   // $scope.groups = $signupServices.getAllGroups();
 
 
-    $scope.signup = $signupServices.getSignup(id);
+    $signupServices.getSignup(url.substring(url.lastIndexOf("/") + 1)).then(function(data) {
 
-    alert($scope.signup.AcademicYear);
+        if (data.Success) {
+            $scope.signup = data.Result[0];
+            alert($scope.signup.AcademicYear);
+        } else {
+            alert("error!");
+
+        }
+    });
+
+ //   alert($scope.signup.AcademicYear);
+
 });

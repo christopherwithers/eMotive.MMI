@@ -60,13 +60,13 @@ namespace eMotive.Api
         {
             var result = request.Ids.IsEmpty()
                 ? null
-                : _sessionManager.FetchM(request.Ids[0]);
+                : _sessionManager.FetchM(request.Ids);
 
             var success = result != null;
 
             var issues = NotificationService.FetchIssues(); //TODO: how to deal with errors when going directly into the api?? perhaps organise messages better?
 
-            return new ServiceResult<Signup>
+            return new ServiceResult<IEnumerable<Signup>>
             {
                 Success = success,
                 Result = result,

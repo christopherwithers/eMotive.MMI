@@ -139,7 +139,7 @@
                 type: "POST",
                 dataType: "json",
                 data: SlotSignup,
-                url: "/services/Sessions/Signup/Add",
+                url: "/api/Sessions/Signup/Add",
                 success: function (data) {
                     //alert(data.success);
                     if (data.Success) {
@@ -197,7 +197,7 @@
                 type: "Post",
                 dataType: "json",
                 data: SlotCancel,
-                url: "/services/Sessions/Signup/Remove",
+                url: "/api/Sessions/Signup/Remove",
                 success: function (data) {
                     if (data.Success) {
                         window.location.reload(false);
