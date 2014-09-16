@@ -2,15 +2,58 @@
     ViewBag.Title = "EditSignup";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
+@section Crumbs
+{
+    <ul class="breadcrumb">
+        <li>
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Home</a> <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="@Url.Action("Index", "Signups", new { area = "Admin" })">Signups</a> <span class="divider">/</span>
+        </li>
+        <li class="active">
+            Edit Signup
+        </li>
+    </ul>
+}
 <div ng-app="signupManagementApp" ng-controller="myApp">
-    <h2>Edit Signup {{signup.ID}}</h2>
+    <div class="page-header">
+        <h2>Signup {{signup.Id}} Details</h2>
+    </div>
 
     <div class="row span3 offset1">
 
         <table class="table table-striped table-bordered table-responsive">
             <tbody>
                 <tr><th>Academic Year</th><td>{{signup.AcademicYear}}</td></tr>
+                <tr><th>Date</th><td>{{signup.Date}}</td></tr>
+                <tr><th>Close Date</th><td>{{signup.CloseDate}}</td></tr>
+                <tr><th>Closed</th><td>{{signup.CloseDate}}</td></tr>
+                <tr><th>Merge Reserve</th><td>{{signup.MergeReserve}}</td></tr>
+                <tr><th>Allow Multiple Signups</th><td>{{signup.AllowMultipleSignups}}</td></tr>
+                <tr><th>Description</th><td>{{signup.Description}}</td></tr>
+                <tr><th>Group</th>
+                    <td>
+                        <select class="form-control" ng-model="selectedGroup" ng-options="signup.Group.ID as signup.Group.Name for application in applications" style="width: 200px; float: left; margin-right: 10px;">
+                            <option value="">Select an Application</option>
+                        </select>        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-striped table-bordered table-responsive" ng-repeat="slot in signup.Slots">
+            <tbody>
+                <tr><th>Description</th><th>Main Places</th><th>Reserve Places</th><th>Interested Places</th><th>Enabled</th><th>Time</th><th>Merge Reserve</th></tr>
+                <tr>
+                    <td>{{slot.Description}}</td>
+                    <td>{{slot.PlacesAvailable}}</td>
+                    <td>{{slot.ReservePlaces}}</td>
+                    <td>{{slot.InterestedPlaces}}</td>
+                    <td>{{slot.Enabled}}</td>
+                    <td>{{slot.Time}}</td>
+                    <td>{{slot.MergeReserve}}</td>
+                </tr>
             </tbody>
         </table>
     </div>
