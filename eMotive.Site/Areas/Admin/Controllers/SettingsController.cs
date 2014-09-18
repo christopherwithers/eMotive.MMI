@@ -33,17 +33,26 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             sessionManager = _sessionManager;
         }
 
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Index()
         {
             return View();
         }
 
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
         public ActionResult Search()
         {
             var stats = new SearchStatistics {NumberOfDocuments = searchManager.NumberOfDocuments()};
 
             return View(stats);
         }
+
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        public ActionResult Site()
+        {
+            return View();
+        }
+
 
         [AjaxOnly]
         [Common.ActionFilters.Authorize(Roles="Super Admin, Admin")]

@@ -46,14 +46,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 Title = "Administration Menu",
                 MenuItems = new[]
                         {
-                            new MenuItem
+                           /* new MenuItem
                                 {
                                     ID = 1,
                                     Name = "Home",
                                     URL = Url.Action("Index", "Home", new {area="Admin"}),//"/MMIAdmin/Admin/Home",
                                     Title = "Administration Homepage",
                                     Icon = "<span class='icon-home'></span>"
-                                },
+                                },*/
                                 new MenuItem
                                 {
                                     ID = 1,
@@ -169,6 +169,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                         }
                                 },
                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Password",
+                                        URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
+                                        Title = "Change Password",
+                                        Icon = "<span class='icon-cog'></span>"
+                                    }, 
+                                new MenuItem
                                 {
                                     ID = 1,
                                     Name = "Reports",
@@ -196,14 +204,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 Title = "Administration Menu",
                 MenuItems = new[]
                         {
-                            new MenuItem
+                            /*new MenuItem
                                 {
                                     ID = 1,
                                     Name = "Home",
                                     URL = Url.Action("Index", "Home", new {area="Admin"}),//"Admin/Home",
                                     Title = "Administration Homepage",
                                     Icon = "<span class='icon-home'></span>"
-                                },
+                                },*/
                             new MenuItem
                                 {
                                     ID = 1,
@@ -313,6 +321,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                         }
                                 },
                                 new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Password",
+                                        URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
+                                        Title = "Change Password",
+                                        Icon = "<span class='icon-cog'></span>"
+                                    }, 
+                                new MenuItem
                                 {
                                     ID = 1,
                                     Name = "Reports",
@@ -320,6 +336,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                     Title = "Reports",
                                     Icon = "<span class='icon-file'></span>"
                                 },
+                                new MenuItem
+                                {
+                                    ID = 1,
+                                    Name = "Settings",
+                                    URL = Url.Action("Index", "Settings", new {area="Admin"}),//"/MMIAdmin/Admin/Settings/",
+                                    Title = "eMotive Settings",
+                                    Icon = "<span class='icon-cog'></span>"
+                                }
                         }
             };
         }
@@ -332,14 +356,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 Title = "UGC Menu",
                 MenuItems = new[]
                         {
-                            new MenuItem
+                            /*new MenuItem
                                 {
                                     ID = 1,
                                     Name = "Home",
                                     URL = Url.Action("Index", "Home", new {area="Admin"}),//"Admin/Home",
                                     Title = "Administration Homepage",
                                     Icon = "<span class='icon-home'></span>"
-                                },
+                                },*/
                             new MenuItem
                                 {
                                     ID = 1,
@@ -359,6 +383,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                         }
                                     }
                                 },
+                                new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "Password",
+                                        URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
+                                        Title = "Change Password",
+                                        Icon = "<span class='icon-cog'></span>"
+                                    }, 
                                 new MenuItem
                                 {
                                     ID = 1,

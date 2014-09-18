@@ -6,7 +6,6 @@ using Extensions;
 using MySql.Data.MySqlClient;
 using eMotive.Models.Objects.Uploads;
 using eMotive.Services.Interfaces;
-using Ninject;
 
 namespace eMotive.Services.Objects
 {
@@ -19,7 +18,7 @@ namespace eMotive.Services.Objects
             connectionString = _connectionString;
         }
 
-        [Inject]
+      //  [Inject]
         public INotificationService notificationService { get; set; }
 
         //todo: pull this from dict! perhaps cache dict too.

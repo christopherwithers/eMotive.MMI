@@ -20,9 +20,17 @@
                     Ajax.DisplayError(data.message, "Error");
                 } else {
                     if (data.results.HasSignedUp == false) {
-                        $("#SessionlogInformation").text(_forename + " " + _surname + " (" + _username + ") has not signed up to any interview dates.");
+                        $("#SessionlogInformation").text("<div class=\"alert alert-info\">" + _forename + " " + _surname + " (" + _username + ") has not signed up to any interview dates.</div>");
                     } else {
-                        $("#SessionlogInformation").text(moment(data.results.SignUpDate).format("dddd, MMMM Do YYYY") + " at " + data.results.SignUpDetails);
+                        var signups = "<div class=\"alert alert-info\">Session information for " + _forename + " " + _surname + " (" + _username + ")</div>";
+                        signups += "<table class=\"table table-bordered table-striped table-condensed\"><thead><tr><th>Type</th><th>Date</th><th>Slot</th><th></th></tr></thead><tbody>";
+                        $.each(data.results.SignupDetails, function() {
+                            //moment(this.SignUpDate).format("dddd, MMMM Do YYYY") + " at " + this.SignUpDetails);
+                            signups += "<tr><td>" + this.SignupGroup.Name + "</td><td>" + this.SignupDescription + "</td><td>" + this.SignUpDetails + "</td><td><a class=\"btn btn-sm btn-info\" href=\"/Admin/Signups/SignupDetails/" + this.SignupID + "\">View</button></td></tr>";
+                        });
+                        //  $("#SessionlogInformation").text(moment(data.results.SignUpDate).format("dddd, MMMM Do YYYY") + " at " + data.results.SignUpDetails);
+                        signups += "</tbody></table>";
+                        $("#SessionlogInformation").html(signups);
                     }
                 }
             }, { username: _username });

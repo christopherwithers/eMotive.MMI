@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using eMotive.Managers.Interfaces;
+using eMotive.Managers.Objects.Search;
 using eMotive.Models.Objects.SignupsMod;
+using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
 using ServiceStack.Common.Extensions;
 using ServiceStack.ServiceHost;
@@ -48,10 +50,12 @@ namespace eMotive.Api
     public class SessionService : Service
     {
         private readonly ISessionManager _sessionManager;
+        private readonly ISearchManager _searchManager;
 
-        public SessionService(ISessionManager sessionManager)
+        public SessionService(ISessionManager sessionManager, ISearchManager searchManager)
         {
             _sessionManager = sessionManager;
+            _searchManager = searchManager;
         }
 
         public INotificationService NotificationService { get; set; }
@@ -78,7 +82,10 @@ namespace eMotive.Api
         {
             if (_sessionManager.SignupToSlot(request.IdSignup, request.IdSlot, request.Username))
             {
-               // var signup = _sessionManager.Fetch(request.IdSignup);
+                var signup = _sessionManager.FetchM(request.IdSignup);
+                if (signup != null)
+                    _searchManager.Update(new SignupSearchDocument(signup));
+              
                // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
 
                // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
@@ -111,6 +118,9 @@ namespace eMotive.Api
         {
             if (_sessionManager.CancelSignupToSlot(request.IdSignup, request.IdSlot, request.Username))
             {
+                var signup = _sessionManager.FetchM(request.IdSignup);
+                if (signup != null)
+                    _searchManager.Delete(new SignupSearchDocument(signup));
                 // var signup = _sessionManager.Fetch(request.IdSignup);
                 // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
 

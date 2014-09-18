@@ -76,7 +76,8 @@ namespace eMotive.IoCBindings.Funq
 
 
 
-            container.Register<IeMotiveConfigurationService>(c => new eMotiveConfigurationServiceWebConfig()).ReusedWithin(ReuseScope.Request);
+            //container.Register<IeMotiveConfigurationService>(c => new eMotiveConfigurationServiceWebConfig()).ReusedWithin(ReuseScope.Request);
+            container.Register<IeMotiveConfigurationService>(c => new eMotiveConfigurationServiceMySQL(connectionString/*, c.Resolve<ICacheClient>()*/)).ReusedWithin(ReuseScope.Container);
             container.Register<INotificationService>(c => new NotificationService(connectionString, enableLogging)).ReusedWithin(ReuseScope.Request);
             container.Register<IEmailService>(c => new EmailService(c.Resolve<IeMotiveConfigurationService>(), c.Resolve<INotificationService>(), c.Resolve<IDocumentManagerService>(), c.Resolve<ISearchManager>(), connectionString)).ReusedWithin(ReuseScope.Request);
             container.Register<IReportService>(c => new ReportService(connectionString)).ReusedWithin(ReuseScope.Request);

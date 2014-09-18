@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Site";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section Crumbs
+{
+    <ul class="breadcrumb">
+        <li>
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Home</a> <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="@Url.Action("Index", "Settings", new { area = "Admin" })">Settings</a> <span class="divider">/</span>
+        </li>
+        <li class="active">
+            Site Administration
+        </li>
+    </ul>
+}
+<div class="page-header">
+    <h2>Site Administration</h2>
+</div>

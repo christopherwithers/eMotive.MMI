@@ -118,10 +118,14 @@ else
                                 {
                                     <li><a href="#" onclick="UserActions.FetchNotes('@user.Username')">Notes</a></li>
                                 }
-                                @if (user.Roles.Any(n => n.Name == "SCE"))
+                                @if (user.Roles.Any(n => n.Name == "Interviewer"))
                                 {
                                     <!-- <li>Html.ActionLink("Create Applicant Letter", "GenerateApplicantLetter", "Users", new {area = "admin", username = user.Username}, null)</li> -->
                                     <li>@Html.ActionLink("Third Party Signup", "UserSessions", "Signups", new { area = "admin", username = user.Username }, null)</li>
+                                }
+                                @if (user.Roles.Any(n => n.Name == "Applicant"))
+                                {
+                                    <!-- <li>Html.ActionLink("Create Applicant Letter", "GenerateApplicantLetter", "Users", new {area = "admin", username = user.Username}, null)</li> -->
                                     <li><a href="#" onclick="UserActions.FetchApplicantData('@user.Username')">View Applicant Details</a></li>
                                 }
                                 @if (((User) ViewBag.LoggedInUser).Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
@@ -177,7 +181,7 @@ else
             <h3>Session Log</h3>
         </div>
         <div class="modal-body">
-            <div class="alert alert-info" id="SessionlogInformation"></div>
+            <div id="SessionlogInformation"></div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn" data-dismiss="modal">Close</button>
