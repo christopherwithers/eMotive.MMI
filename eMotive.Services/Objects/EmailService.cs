@@ -37,7 +37,7 @@ namespace eMotive.Services.Objects
             searchManager = _searchManager;
             documentManagerService = _documentManagerService;
             connectionString = _connectionString;
-            emailEnabled = !config.EmailsEnabled();
+            emailEnabled = config.EmailsEnabled();
 
             AutoMapperServicesConfiguration.Configure();
         }

@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoMapperServicesConfiguration.cs" />
-    <Compile Include="eMotiveConfigurationServiceWebConfig - Copy.cs" />
+    <Compile Include="eMotiveConfigurationServiceWebConfig.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Interfaces\EmailAttachment.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
@@ -102,6 +102,7 @@
     <Compile Include="Objects\Message.cs" />
     <Compile Include="NotificationService.cs" />
     <Compile Include="Objects\ReportService.cs" />
+    <Compile Include="Objects\Settings\Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

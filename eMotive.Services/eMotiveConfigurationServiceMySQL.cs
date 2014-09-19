@@ -4,13 +4,10 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Web;
-using System.Web.UI.WebControls;
 using Dapper;
 using eMotive.Services.Interfaces;
-using Extensions;
+using eMotive.Services.Objects.Settings;
 using MySql.Data.MySqlClient;
-using ServiceStack.CacheAccess;
-using ServiceStack.Common;
 
 
 namespace eMotive.Services
@@ -19,47 +16,31 @@ namespace eMotive.Services
     {
         private readonly string _connectionString;
         private IDbConnection _connection;
-     //   private ICacheClient _cache;
-        private readonly string _key;
+        private Settings _settings;
 
-        private readonly ConcurrentDictionary<string, string> _settings; 
 
-        public eMotiveConfigurationServiceMySQL(string connectionString/*, ICacheClient cache*/)
+        public eMotiveConfigurationServiceMySQL(string connectionString)
         {
             _connectionString = connectionString;
-          //  _cache = cache;
-            _settings = new ConcurrentDictionary<string, string>();
 
-            _key = "jsdkfnsdlkfjdsfdsjkofijskfel";
-
-            if(!getSettings())
+            if(!GetSettings())
                 throw new Exception("Could not fetch site settings.");
-
         }
 
-        private class Settings
-        {
-            
-        }
-
-        private bool getSettings()
+        
+        private bool GetSettings()
         {
             using (var cn = Connection)
             {
-                var success = true;
 
                 var results = cn.Query<Settings>("SELECT * FROM `settings`;").SingleOrDefault();
 
-                if (results != null)
-                {
-                   // //foreach (var result in results)
-                   // {
-                      //  _settings.AddOrUpdate(result.)
-                   // }
+                if (results == null)
+                    return false;
+                
+                _settings = results;
 
-                }
-
-                return success;
+                return true;
             }
         }
 
@@ -71,72 +52,71 @@ namespace eMotive.Services
             }
         }
 
-
-
-        public string PusherID()
+        internal Settings Settings()
         {
-            return ConfigurationManager.AppSettings["PusherID"] ?? string.Empty;
-        }
+            if (_settings != null)
+                return _settings;
 
-        public string PusherKey()
-        {
-            return ConfigurationManager.AppSettings["PusherKey"] ?? string.Empty;
-        }
+            if (GetSettings())
+                return _settings;
 
-        public string PusherSecret()
-        {
-            return ConfigurationManager.AppSettings["PusherSecret"] ?? string.Empty;
+            throw new Exception("Could not fetch site settings.");
         }
 
         public string EmailFromAddress()
         {
-            return ConfigurationManager.AppSettings["MailFromAddress"] ?? string.Empty;
+            return Settings().MailFromAddress;
         }
 
         public bool EmailsEnabled()
         {
-            var emailEnabledString = ConfigurationManager.AppSettings["DisableEmails"] ?? "True";
-            bool emailEnabled;
-            if (!bool.TryParse(emailEnabledString, out emailEnabled))
-                emailEnabled = true;
-
-            return emailEnabled;
+            return !Settings().DisableEmails;
         }
 
         public int MaxLoginAttempts()
         {
-            const int defaultValue = 5;
-            var attemptString = ConfigurationManager.AppSettings["MaxLoginAttempts"] ?? string.Empty;
-
-            if (string.IsNullOrEmpty(attemptString))
-                return defaultValue;
-
-            int attempts;
-
-            return int.TryParse(attemptString, out attempts) ? attempts : defaultValue;
+            return Settings().MaxLoginAttempts;
         }
 
         public int LockoutTimeInMinutes()
         {
-            const int defaultValue = 15;
-            var lockoutTimeString = ConfigurationManager.AppSettings["LockoutTimeMinutes"] ?? string.Empty;
-
-            if (string.IsNullOrEmpty(lockoutTimeString))
-                return 15;
-
-            int lockoutTime;
-
-            return int.TryParse(lockoutTimeString, out lockoutTime) ? lockoutTime : defaultValue;
+            return Settings().LockoutTimeMinutes;
         }
 
         public string SiteName()
         {
-            return ConfigurationManager.AppSettings["SiteName"] ?? string.Empty;
+            return Settings().SiteName;
         }
 
         public string SiteURL()
         {
-            return ConfigurationManager.AppSettings["SiteURL"] ?? string.Empty;
+            return Settings().SiteURL;
+        }
+
+        public string GoogleAnalytics()
+        {
+            return Settings().GoogleAnalytics;
+        }
+
+        public string MetaTags()
+        {
+            return Settings().MetaTags;
+        }
+
+        public bool SaveSettings(Settings settings)
+        {
+            using (var cn = Connection)
+            {
+
+                var success = cn.Execute("INSERT INTO `settings` VALUES @settings;", settings) > 0;
+
+                if (success)
+                {//TODO: need to lock this?
+                    _settings = settings;
+                }
+
+                return success;
+            }
         }
 
         public string GetClientIpAddress()

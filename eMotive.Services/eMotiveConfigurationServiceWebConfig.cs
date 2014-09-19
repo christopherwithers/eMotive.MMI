@@ -1,28 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Web;
 using eMotive.Services.Interfaces;
-using eMotive.Services.Objects.ConfiguarionService;
+using eMotive.Services.Objects.Settings;
 
 namespace eMotive.Services
 {
     public class eMotiveConfigurationServiceWebConfig : IeMotiveConfigurationService
     {
-        public string PusherID()
-        {
-            return ConfigurationManager.AppSettings["PusherID"] ?? string.Empty;
-        }
-
-        public string PusherKey()
-        {
-            return ConfigurationManager.AppSettings["PusherKey"] ?? string.Empty;
-        }
-
-        public string PusherSecret()
-        {
-            return ConfigurationManager.AppSettings["PusherSecret"] ?? string.Empty;
-        }
-
         public string EmailFromAddress()
         {
             return ConfigurationManager.AppSettings["MailFromAddress"] ?? string.Empty;
@@ -72,6 +56,25 @@ namespace eMotive.Services
         public string SiteURL()
         {
             return ConfigurationManager.AppSettings["SiteURL"] ?? string.Empty;
+        }
+
+        public string GoogleAnalytics()
+        {
+           // throw new System.NotImplementedException();
+            return string.Empty;
+        }
+
+        public string MetaTags()
+        {
+           // throw new System.NotImplementedException();
+            return string.Empty;
+        }
+
+        public bool SaveSettings(Settings settings)
+        {
+            //throw new System.NotImplementedException();
+            //add message to notification service here?
+            return false;
         }
 
         public string GetClientIpAddress()

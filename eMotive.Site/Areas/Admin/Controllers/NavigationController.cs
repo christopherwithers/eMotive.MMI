@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Menu;
+using eMotive.Services.Interfaces;
 using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
@@ -9,15 +10,20 @@ namespace eMotive.MMI.Areas.Admin.Controllers
     public class NavigationController : ServiceStackController
     {
         private readonly IUserManager userManager;
+        private readonly IeMotiveConfigurationService config;
 
-        public NavigationController(IUserManager _userManager)
+        public NavigationController(IUserManager _userManager, IeMotiveConfigurationService _config)
         {
             userManager = _userManager;
+            config = _config;
         }
 
 
         public PartialViewResult Menu()
         {
+
+            ViewBag.SiteName = config.SiteName();
+
             if (!User.Identity.IsAuthenticated)
                 return PartialView("_AdminNav", null);
 
@@ -461,5 +467,22 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                         }
             };
         }
+
+        [OutputCache(Duration = 10, VaryByParam = "none")]
+        public ActionResult MetaTags()
+        {
+            var tags = config.MetaTags();
+
+            return Content(string.Format("<meta name=\"keywords\" content=\"{0}\">", tags));
+        }
+
+        [OutputCache(Duration = 10, VaryByParam = "none")]
+        public ActionResult GoogleAnalyticsObject()
+        {
+            var code = config.GoogleAnalytics();
+
+            return Content(string.Format("<script>{0}</script>", code));
+        }
+
     }
 }

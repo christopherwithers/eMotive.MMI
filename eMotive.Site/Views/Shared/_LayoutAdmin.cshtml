@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     <meta charset="UTF-8" />
+    @{ Html.RenderAction("MetaTags", "Navigation", new { Area = "" }); }
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     @Styles.Render("~/Content/bootstrap")
 
@@ -21,5 +22,6 @@
             </div>
         </div>
     </div>
+    @{ Html.RenderAction("GoogleAnalyticsObject", "Navigation", new { Area = "" }); }
 </body>
 </html>

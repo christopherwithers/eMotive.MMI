@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Menu;
 using eMotive.Models.Objects.Users;
+using eMotive.Services.Interfaces;
 using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
@@ -12,13 +13,15 @@ namespace eMotive.MMI.Controllers
     {
        // private readonly INavigationServices navigationService;
         private readonly IUserManager userManager;
+        private readonly IeMotiveConfigurationService config;
 
         private User user;
 
 
-        public NavigationController(IUserManager _userManager)
+        public NavigationController(IUserManager _userManager, IeMotiveConfigurationService _config)
         {
             userManager = _userManager;
+            config = _config;
 
         }
 
@@ -63,9 +66,9 @@ namespace eMotive.MMI.Controllers
                                  new MenuItem
                                     {
                                         ID = 1,
-                                        Name = "MMI",
+                                        Name = config.SiteName(),
                                         URL = Url.Action("Login", "Account"),//"/SCE/Account/Login",
-                                        Title = "MMI Public Homepage"
+                                        Title = string.Format("{0} Public Homepage", config.SiteName()),
                                     }
                             }
             };
@@ -84,9 +87,9 @@ namespace eMotive.MMI.Controllers
                                  new MenuItem
                                     {
                                         ID = 1,
-                                        Name = "MMI Home",
+                                        Name = string.Format("{0} Home", config.SiteName()),
                                         URL = Url.Action("Index","Home"),//"/SCE/Home/",
-                                        Title = "MMI Home"
+                                        Title = string.Format("{0} Home", config.SiteName()),
                                     },
                                  new MenuItem
                                     {
@@ -121,7 +124,7 @@ namespace eMotive.MMI.Controllers
                                         ID = 2,
                                         Name = "Logout",
                                         URL = Url.Action("Logout","Account"),//"/SCE/Account/Logout",
-                                        Title = "Logout Of The SCE System"
+                                        Title = "Logout"
                                     }
 
                             }
@@ -141,9 +144,9 @@ namespace eMotive.MMI.Controllers
                                  new MenuItem
                                     {
                                         ID = 1,
-                                        Name = "MMI Home",
+                                        Name = string.Format("{0} Home", config.SiteName()),
                                         URL = Url.Action("Index","Applicant"),//"/SCE/Home/",
-                                        Title = "MMI Home"
+                                        Title = string.Format("{0} Home", config.SiteName()),
                                     },
                                  new MenuItem
                                     {
@@ -185,13 +188,29 @@ namespace eMotive.MMI.Controllers
                                         ID = 2,
                                         Name = "Logout",
                                         URL = Url.Action("Logout","Account"),//"/SCE/Account/Logout",
-                                        Title = "Logout Of The SCE System"
+                                        Title = "Logout"
                                     }
 
                             }
             };
 
             return menu;
+        }
+
+        [OutputCache(Duration = 10, VaryByParam = "none")]
+        public ActionResult MetaTags()
+        {
+            var tags = config.MetaTags();
+
+            return Content(string.Format("<meta name=\"keywords\" content=\"{0}\">", tags));
+        }
+
+        [OutputCache(Duration = 10, VaryByParam = "none")]
+        public ActionResult GoogleAnalyticsObject()
+        {
+            var code = config.GoogleAnalytics();
+
+            return Content(string.Format("<script>{0}</script>", code));
         }
 
     }

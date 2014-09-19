@@ -1,12 +1,12 @@
-﻿using eMotive.Services.Objects.ConfiguarionService;
+﻿using eMotive.Services.Objects.Settings;
 
 namespace eMotive.Services.Interfaces
 {
     public interface IeMotiveConfigurationService
     {
-        string PusherID();
+      /*  string PusherID();
         string PusherKey();
-        string PusherSecret();
+        string PusherSecret();*/
 
         string EmailFromAddress();
         bool EmailsEnabled();
@@ -16,6 +16,11 @@ namespace eMotive.Services.Interfaces
 
         string SiteName();
         string SiteURL();
+
+        string GoogleAnalytics();
+        string MetaTags();
+
+        bool SaveSettings(Settings settings);
 
         string GetClientIpAddress();
     }
