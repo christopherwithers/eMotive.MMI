@@ -1,4 +1,11 @@
-﻿var signupManagementApp = angular.module('signupManagementApp', ['signupServices']);
+﻿var signupManagementApp = angular.module('signupManagementApp', ['signupServices', 'mgcrea.ngStrap']);
+
+signupManagementApp.config(function ($datepickerProvider) {
+    angular.extend($datepickerProvider.defaults, {
+        dateFormat: 'dd/MM/yyyy',
+        startWeek: 1
+    });
+});
 
 signupManagementApp.controller("myApp", function ($scope, $signupServices, $location) {
     var url = $location.absUrl();
@@ -12,7 +19,7 @@ signupManagementApp.controller("myApp", function ($scope, $signupServices, $loca
 
         if (data.Success) {
             $scope.signup = data.Result[0];
-            alert($scope.signup.AcademicYear);
+           // alert($scope.signup.AcademicYear);
         } else {
             alert("error!");
 
