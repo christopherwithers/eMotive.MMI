@@ -481,7 +481,7 @@ namespace eMotive.Repository.Objects
         {
             using (var connection = new MySqlConnection(connectionString))
             {
-                connection.Open();
+             //   connection.Open();
 
                 var sql = "SELECT `id`, `idUser`, `ExaminationNumber`, `Title`, `SecretaryEmail`, `OtherEmail` AS 'EmailOther', `MainSpecialty`, `Trust`, `Grade`, `Address1`, `Address2`, `City`, `Region`, `Postcode`, `PhoneWork`, `PhoneMobile`, `PhoneOther`, `Trained`, `GMCNumber`  FROM `scereference` WHERE `idUser`=@id;";
 

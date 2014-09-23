@@ -1,5 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using eMotive.Search.Interfaces;
+using ServiceStack.WebHost.Endpoints;
 
 namespace eMotive.MMI
 {
@@ -19,5 +21,17 @@ namespace eMotive.MMI
 
             new AppHost().Init();
         }
+        /*
+        public override void Dispose()
+        {
+            var searchManager = AppHostBase.Resolve<ISearchManager>();
+
+            if (searchManager != null)
+            {
+                searchManager.Dispose();
+            }
+
+            base.Dispose();
+        }*/
     }
 }

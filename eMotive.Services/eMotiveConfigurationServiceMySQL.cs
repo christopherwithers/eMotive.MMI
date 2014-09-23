@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 using Dapper;
 using eMotive.Services.Interfaces;
@@ -18,26 +19,28 @@ namespace eMotive.Services
         private IDbConnection _connection;
         private Settings _settings;
 
+        private object objLock = new object();
+
 
         public eMotiveConfigurationServiceMySQL(string connectionString)
         {
             _connectionString = connectionString;
 
-            if(!GetSettings())
+            if (!GetSettings())
                 throw new Exception("Could not fetch site settings.");
         }
 
-        
+
         private bool GetSettings()
         {
             using (var cn = Connection)
             {
-
-                var results = cn.Query<Settings>("SELECT * FROM `settings`;").SingleOrDefault();
+                //check exists, else create!
+                var results = cn.Query<Settings>("SELECT * FROM `settings` LIMIT 1;").SingleOrDefault();
 
                 if (results == null)
                     return false;
-                
+
                 _settings = results;
 
                 return true;
@@ -102,21 +105,74 @@ namespace eMotive.Services
         {
             return Settings().MetaTags;
         }
-
-        public bool SaveSettings(Settings settings)
+        /*        private bool GetSettings()
         {
             using (var cn = Connection)
             {
+                using (var transactionScope = new TransactionScope())
+                {
+                    string sql = "SELECT CAST(Count(FOUND_ROWS()) AS UNSIGNED INTEGER) FROM `settings`;";
 
-                var success = cn.Execute("INSERT INTO `settings` VALUES @settings;", settings) > 0;
+                    if (cn.Query<ulong>(sql).SingleOrDefault() > 0)
+                    {
+                        //check exists, else create!
+                        var results = cn.Query<Settings>("SELECT * FROM `settings`;").SingleOrDefault();
 
-                if (success)
-                {//TODO: need to lock this?
-                    _settings = settings;
+                        if (results == null)
+                            return false;
+
+                    }
+                    else
+                    {
+                        {
+                        }
+
+                        _settings = results;
+
+                        transactionScope.Complete();
+
+                        return true;
+                    }
                 }
-
-                return success;
             }
+        }*/
+        public bool SaveSettings(Settings settings)
+        {
+            lock (objLock)
+            {
+                using (var cn = Connection)
+                {
+                    var success = false;
+
+                    using (var transactionScope = new TransactionScope())
+                    {
+                        string sql = "SELECT CAST(Count(FOUND_ROWS()) AS UNSIGNED INTEGER) FROM `settings`;";
+
+                        if (cn.Query<ulong>(sql).SingleOrDefault() > 0)
+                        {//todo: check more than 1, if so, delete and reinsert?
+                            success = cn.Execute("UPDATE `settings` SET `SiteName`=@SiteName,`SiteURL`=@SiteURL,`DisableEmails`=@DisableEmails,`MaxLoginAttempts`=@MaxLoginAttempts,`LockoutTimeMinutes`=@LockoutTimeMinutes,`MailFromAddress`=@MailFromAddress,`GoogleAnalytics`=@GoogleAnalytics,`MetaTags`=@MetaTags LIMIT 1;", settings) > 0;
+
+                        }
+                        else
+                        {
+                            success = cn.Execute( "INSERT INTO `settings` (`SiteName`,`SiteURL`,`DisableEmails`,`MaxLoginAttempts`,`LockoutTimeMinutes`,`MailFromAddress`,`GoogleAnalytics`,`MetaTags`) VALUES (@SiteName, @SiteURL, @DisableEmails, @MaxLoginAttempts, @LockoutTimeMinutes, @MailFromAddress, @GoogleAnalytics, @MetaTags);", settings) > 0;
+                        }
+
+                        if (success)
+                        {
+                            _settings = settings;
+                        }
+
+                        transactionScope.Complete();
+                        return success;
+                    }
+                }
+            }
+        }
+
+        public Settings FetchSettings()
+        {
+            return Settings();
         }
 
         public string GetClientIpAddress()

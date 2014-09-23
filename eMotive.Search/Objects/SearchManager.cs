@@ -16,7 +16,7 @@ using Version = Lucene.Net.Util.Version;
 
 namespace eMotive.Search.Objects
 {
-    public class SearchManager : ISearchManager, IDisposable
+    public class SearchManager : ISearchManager
     {
         private readonly FSDirectory directory;
         private static IndexWriter writer;
@@ -285,10 +285,17 @@ namespace eMotive.Search.Objects
 
         public void Dispose()
         {
-            writer.Commit();
+            if (writer != null)
+            {
+                writer.Commit();
 
-            writer.Dispose();
-            directory.Dispose();
+                writer.Dispose();
+            }
+
+            if (directory != null)
+            {
+                directory.Dispose();
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ namespace eMotive.Services.Interfaces
         string MetaTags();
 
         bool SaveSettings(Settings settings);
+        Settings FetchSettings();
 
         string GetClientIpAddress();
     }

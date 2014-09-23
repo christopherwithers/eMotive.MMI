@@ -72,9 +72,13 @@ namespace eMotive.Services
 
         public bool SaveSettings(Settings settings)
         {
-            //throw new System.NotImplementedException();
+            throw new System.NotImplementedException();
             //add message to notification service here?
-            return false;
+        }
+
+        public Settings FetchSettings()
+        {
+            throw new System.NotImplementedException();
         }
 
         public string GetClientIpAddress()

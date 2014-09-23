@@ -1,5 +1,9 @@
-﻿namespace eMotive.Services.Objects.Settings
+﻿using eMotive.Services.Objects.Validation;
+using ServiceStack.FluentValidation.Attributes;
+
+namespace eMotive.Services.Objects.Settings
 {
+    [Validator(typeof(SettingsValidator))]
     public class Settings
     {
         public string SiteName { get; set; }

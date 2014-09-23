@@ -3,9 +3,11 @@ using eMotive.Managers.Interfaces;
 using eMotive.MMI.Common;
 using eMotive.MMI.Common.ActionFilters;
 using eMotive.Models.Objects.Search;
-using eMotive.SCE.Common;
+using eMotive.Models.Objects.StatusPages;
 using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
+using eMotive.Services.Objects.Settings;
+using ServiceStack;
 using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Areas.Admin.Controllers
@@ -20,8 +22,11 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         private readonly IPageManager pageManager;
         private readonly IPartialPageManager partialPageManager;
         private readonly ISessionManager sessionManager;
+        private readonly IeMotiveConfigurationService configurationService;
+
         public SettingsController(ISearchManager _searchManager, IUserManager _userManager, IRoleManager _rolemanager, 
-                                  IPageManager _pageManager, IPartialPageManager _partialPageManager, INewsManager _newsManager, IEmailService _emailService, ISessionManager _sessionManager)
+                                  IPageManager _pageManager, IPartialPageManager _partialPageManager, INewsManager _newsManager, IEmailService _emailService, ISessionManager _sessionManager,
+            IeMotiveConfigurationService _configurationService)
         {
             newsManager = _newsManager;
             userManager = _userManager;
@@ -31,6 +36,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             pageManager = _pageManager;
             partialPageManager = _partialPageManager;
             sessionManager = _sessionManager;
+            configurationService = _configurationService;
         }
 
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
@@ -48,9 +54,41 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
         [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [HttpGet]
         public ActionResult Site()
         {
-            return View();
+            var settings = configurationService.FetchSettings();
+            return View(settings);
+        }
+
+        [Common.ActionFilters.Authorize(Roles = "Super Admin, Admin")]
+        [HttpPost]
+        public ActionResult Site(Settings settings)
+        {
+            if (ModelState.IsValid)
+            {
+                if (configurationService.SaveSettings(settings))
+                {
+                    var successView = new SuccessView
+                    {
+                        Message = "Settings were saved.",
+                        Links = new[]
+                            {
+                                new SuccessView.Link {Text = "Return to Settings Home", URL = @Url.Action("Index", "Settings")},
+                                new SuccessView.Link {Text = "Return to Site Settings", URL = @Url.Action("Site", "Settings")}
+
+                            }
+                    };
+
+                    TempData["SuccessView"] = successView;
+
+                    return RedirectToAction("Success", "Home", new { area = "Admin" });
+                }
+
+                
+            }
+
+            return View(settings);
         }
 
 

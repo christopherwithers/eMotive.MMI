@@ -212,7 +212,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             ViewBag.TrustsDropDown = dropDowns.Trusts;
             ViewBag.GroupDropDown = allGroups;
 
-            var sce = new SCEData { AllGroups = allGroups };
+            var sce = new SCEData { AllGroups = allGroups, Enabled = true};
 
             return View(sce);
         }
@@ -323,7 +323,6 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             var sce = userManager.FetchSCEData(user.ID);
 
             sce.BelongsToGroups = profile.Groups.Select(n => n.ID.ToString(CultureInfo.InvariantCulture)).ToArray();
-
             sce.Username = user.Username;
             sce.Forename = user.Forename;
             sce.Surname = user.Surname;

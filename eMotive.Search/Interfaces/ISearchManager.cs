@@ -1,8 +1,9 @@
-﻿using eMotive.Search.Objects;
+﻿using System;
+using eMotive.Search.Objects;
 
 namespace eMotive.Search.Interfaces
 {
-    public interface ISearchManager
+    public interface ISearchManager : IDisposable
     {
         SearchResult DoSearch(Objects.Search _search);
 

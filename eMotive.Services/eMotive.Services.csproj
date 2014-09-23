@@ -103,6 +103,7 @@
     <Compile Include="NotificationService.cs" />
     <Compile Include="Objects\ReportService.cs" />
     <Compile Include="Objects\Settings\Settings.cs" />
+    <Compile Include="Objects\Validation\LoginValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
