@@ -85,11 +85,14 @@
     <Compile Include="eMotiveConfigurationServiceWebConfig.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Interfaces\EmailAttachment.cs" />
+    <Compile Include="Interfaces\IAuditable.cs" />
+    <Compile Include="Interfaces\IAuditService.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IeMotiveConfigurationService.cs" />
     <Compile Include="Interfaces\IDocumentManagerService.cs" />
     <Compile Include="Interfaces\INotificationService.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
+    <Compile Include="Objects\Audit\AuditRecord.cs" />
     <Compile Include="Objects\ConfiguarionService\SignupOptions.cs" />
     <Compile Include="Objects\MimeType.cs" />
     <Compile Include="Objects\DocumentManagerService.cs" />
