@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Transactions;
 using Dapper;
 using Extensions;
@@ -414,6 +415,37 @@ namespace eMotive.Repository.Objects
 
                 return signUp;
 
+            }
+        }
+
+        public bool Save(Signup _signup)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var success = false;
+                using (var transactionScope = new TransactionScope())
+                {
+                    connection.Open();
+
+                    var query = "UPDATE `signup` SET `Date`=@Date, `idGroup`=@idGroup,`AcademicYear`=@AcademicYear,`CloseDate`=@CloseDate,`Closed`=@Closed,`OverrideClose`=@OverrideClose,`MergeReserve`=@MergeReserve,`AllowMultipleSignups`=@AllowMultipleSignups,`Description`=@Description,`IsTraining`=@IsTraining WHERE `id`=@id;";
+
+                    if (connection.Execute(query, _signup) > 0)
+                    {
+                        if (!_signup.Slots.HasContent())
+                        {
+                            success = true;
+                        }
+                        else
+                        {//todo: time! perhaps add duration?
+                            query = "UPDATE `slot` SET `Description`=@Description,`PlacesAvailable`=@PlacesAvailable,`Enabled`=@Enabled,`ReservePlaces`=@ReservePlaces,`InterestedPlaces`=@InterestedPlaces WHERE `id`=@id;";
+
+                            success = connection.Execute(query, _signup.Slots) > 0;
+                        }
+                    }
+
+                    transactionScope.Complete();
+                    return success;
+                }
             }
         }
 

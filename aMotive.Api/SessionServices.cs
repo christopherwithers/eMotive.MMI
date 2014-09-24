@@ -30,12 +30,25 @@ namespace eMotive.Api
         public int[] Ids { get; set; }
     }
 
+    [Route("/Sessions/Groups")]
+    [Route("/Sessions/Groups/{Ids}")]
+    public class GetGroups
+    {
+        public int[] Ids { get; set; }
+    }
+
     [Route("/Sessions/Signup/Add", "POST")]
     public class SlotSignup
     {
         public int IdSignup { get; set; }
         public int IdSlot { get; set; }
         public string Username { get; set; }
+    }
+
+    [Route("/Sessions/Save", "POST")]
+    public class SaveSignup
+    {
+        public Signup Signup { get; set; }
     }
 
     [Route("/Sessions/Signup/Remove", "POST")]
@@ -74,6 +87,58 @@ namespace eMotive.Api
             {
                 Success = success,
                 Result = result,
+                Errors = issues
+            };
+        }
+
+        public object Get(GetGroups request)
+        {
+            var result = request.Ids.IsEmpty()
+                ? _sessionManager.FetchAllGroups()
+                : null;//todo: nned a fetch group on ids in sessionManager
+
+            var success = result != null;
+
+            var issues = NotificationService.FetchIssues(); //TODO: how to deal with errors when going directly into the api?? perhaps organise messages better?
+
+            return new ServiceResult<IEnumerable<Models.Objects.Signups.Group>>
+            {
+                Success = success,
+                Result = result,
+                Errors = issues
+            };
+        }
+
+        public object Post(SaveSignup sessionSignup)
+        {
+            if (_sessionManager.Save(sessionSignup.Signup))
+            {
+                _searchManager.Update(new SignupSearchDocument(sessionSignup.Signup));
+
+                // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
+
+                // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
+                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
+
+                // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
+                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
+
+                return new ServiceResult<bool>
+                {
+                    //  Data = new { success = true, message = "successfully signed up." }
+                    Success = true,
+                    Result = true,
+                    Errors = null
+                };
+            }
+
+            var issues = NotificationService.FetchIssues();
+
+            return new ServiceResult<bool>
+            {
+
+                Success = false,
+                Result = false,
                 Errors = issues
             };
         }

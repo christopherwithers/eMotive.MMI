@@ -12,6 +12,9 @@
         @{ Html.RenderAction("MetaTags", "Navigation", new { Area = "" }); }
          @Styles.Render("~/Content/Frameworks")
         @Styles.Render("~/Content/ContensisCss/Styles")
+        
+        <script> var siteRoot = "@Url.Content("~")";</script>
+        
     </head>
 <body>
     

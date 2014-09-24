@@ -14,6 +14,15 @@ signupManagementApp.controller("myApp", function ($scope, $signupServices, $loca
 
    // $scope.groups = $signupServices.getAllGroups();
 
+    $signupServices.getGroup().then(function(data) {
+        if (data.Success) {
+            $scope.groups = data.Result;
+            // alert($scope.signup.AcademicYear);
+        } else {
+            alert("error!");
+
+        }
+    });
 
     $signupServices.getSignup(url.substring(url.lastIndexOf("/") + 1)).then(function(data) {
 
@@ -25,6 +34,14 @@ signupManagementApp.controller("myApp", function ($scope, $signupServices, $loca
 
         }
     });
+
+    $scope.saveSignup = function() {
+        $signupServices.saveSignup($scope.signup).then(function(data) {
+            if (!data.Success) {
+                alert(data.Errors[0]);
+            }
+        });
+    }
 
  //   alert($scope.signup.AcademicYear);
 

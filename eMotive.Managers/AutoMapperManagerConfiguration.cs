@@ -35,6 +35,12 @@ namespace eMotive.Managers
 
         private static void ConfigureSignupMapping()
         {
+            Mapper.CreateMap<mod.Signup, Signup>().ForMember(m => m.IdGroup, o => o.MapFrom(n => n.Group.ID));
+            Mapper.CreateMap<mod.Slot, Slot>();
+            Mapper.CreateMap<mod.Group, Group>();
+            Mapper.CreateMap<mod.UserSignup, UserSignup>();
+            Mapper.CreateMap<mod.SessionAttendance, SessionAttendance>();
+
             Mapper.CreateMap<Signup, mod.Signup>();
             Mapper.CreateMap<UserSignup, mod.UserSignup>();
             Mapper.CreateMap<Slot, mod.Slot>();
@@ -42,6 +48,7 @@ namespace eMotive.Managers
             Mapper.CreateMap<SessionAttendance, mod.SessionAttendance>();
 
             Mapper.CreateMap<Signup, mSignups.Signup>();
+
             Mapper.CreateMap<Slot, mSignups.Slot>().ForMember(m => m.TotalPlacesAvailable, o => o.MapFrom(m => m.PlacesAvailable));
             Mapper.CreateMap<UserSignup, mSignups.UserSignup>();
             Mapper.CreateMap<Group, mSignups.Group>();

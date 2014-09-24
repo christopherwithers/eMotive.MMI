@@ -65,24 +65,25 @@
                 <tr><th>Description</th><td><input type="text" ng-model="signup.Description" /></td></tr>
                 <tr><th>Group</th>
                     <td>
-                        <select class="form-control" ng-model="selectedGroup" ng-options="signup.Group.ID as signup.Group.Name for application in applications" style="width: 200px; float: left; margin-right: 10px;">
-                            <option value="">Select an Application</option>
+                        <select class="form-control" ng-model="signup.Group.ID" ng-options="group.ID as group.Name for group in groups" style="width: 200px; float: left; margin-right: 10px;" disabled>
+                            <option value="">Select a Group</option>
                         </select>        
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <table class="table table-striped table-bordered table-responsive" ng-repeat="slot in signup.Slots">
+        <table class="table table-striped table-bordered table-responsive">
             <tbody>
-                <tr><th>Description</th><th>Main Places</th><th>Reserve Places</th><th>Interested Places</th><th>Enabled</th><th>Merge Reserve</th></tr>
-                <tr>
+                <tr><th>Description</th><th>Main Places</th><th>Reserve Places</th><th>Interested Places</th><th>Enabled</th><th>Merge Reserve</th><th></th></tr>
+                <tr ng-repeat="slot in signup.Slots">
                     <td><input type="text" ng-model="slot.Description" /></td>
                     <td><input type="text" ng-model="slot.PlacesAvailable" /></td>
                     <td><input type="text" ng-model="slot.ReservePlaces" /></td>
                     <td><input type="text" ng-model="slot.InterestedPlaces" /></td>
                     <td><input type="checkbox" ng-model="slot.Enabled" /></td>
                     <td><input type="checkbox" ng-model="slot.MergeReserve" /></td>
+                    <th>{{slot.UsersSignedUp != null ? 'yes' : 'no'}}</th>
                 </tr>
             </tbody>
         </table>
@@ -90,7 +91,7 @@
 
     <div class="control-group" style="clear:both;">
         <div class="controls">
-            <button type="submit" class="btn btn-info">Save</button> <a href="@Url.Action("Index")" class="btn">Cancel</a>
+            <button type="submit" class="btn btn-info" ng-click="saveSignup()">Save</button> <a href="@Url.Action("Index")" class="btn">Cancel</a>
         </div>
     </div>
 </div>

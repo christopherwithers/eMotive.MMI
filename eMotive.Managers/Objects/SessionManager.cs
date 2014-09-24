@@ -219,6 +219,16 @@ namespace eMotive.Managers.Objects
             return signupModels;
         }
 
+        public bool Save(Models.Objects.SignupsMod.Signup signup)
+        {
+            var success = signupRepository.Save(Mapper.Map<Models.Objects.SignupsMod.Signup, rep.Signup>(signup));
+
+            if(!success)
+                notificationService.AddIssue("The session changes could not be saved.");
+
+            return success;
+        }
+
         public IEnumerable<Signup> FetchAllTraining()
         {
             var cacheId = "ModelSignupCollectionTraining";

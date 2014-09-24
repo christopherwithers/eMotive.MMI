@@ -25,7 +25,7 @@ namespace eMotive.Repository.Interfaces
         bool SignupToSlot(int _idSlot, int _idUser, DateTime _signupDate, out int _id);
         bool CancelSignupToSlot(int _idSlot, int _idUser);
 
-        
+        bool Save(Signup _signup);
 
         int GetSignupIdFromSlot(int _id);
 

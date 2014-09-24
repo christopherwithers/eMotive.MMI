@@ -285,17 +285,6 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                 URL = Url.Action("Groups", "Signups", new {area="Admin"}),//"/MMIAdmin/Admin/Pages/",
                                                 Title = "Group Administration",
                                                 Icon = "<span class='icon-ok-circle'></span>",
-                                            }
-                                  //  MenuItems = new []
-                                      //  {
-                                          /*  new MenuItem
-                                            {
-                                                ID = 1,
-                                                Name = "Open / Close",
-                                                URL = Url.Action("OpenClose", "Signups", new {area="Admin"}),//"/MMIAdmin/Admin/Roles",
-                                                Title = "Open / Close View",
-                                                Icon = "<span class='icon-repeat'></span>",
-
                                             },
                                             new MenuItem
                                             {
@@ -323,7 +312,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                                 Title = "A101 Applicant Spreadsheet Upload",
                                                 Icon = "<span class='icon-upload'></span>",
 
-                                            }*/
+                                            }
                                         }
                                 },
                                 new MenuItem

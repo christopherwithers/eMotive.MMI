@@ -43,13 +43,22 @@ namespace eMotive.Search.Objects
             {
                 writer = new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
-            catch (LockObtainFailedException ex)
+            catch (LockObtainFailedException loEx)
             {
-                IndexWriter.Unlock(directory);
+             /*   IndexWriter.Unlock(directory);
 
                 var l = directory.MakeLock(resolvedServerLocation);
                 l.Obtain();
-                l.Release();
+                l.Release();*/
+                try
+                {
+                    directory.DeleteFile("write.lock");
+                }
+                catch(IOException ioEx)
+                {
+                    //todo: error log this??
+                }
+                
 
                 writer = new IndexWriter(directory, analyzer, false, IndexWriter.MaxFieldLength.UNLIMITED);
             }
