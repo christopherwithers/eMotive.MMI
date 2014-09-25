@@ -70,6 +70,11 @@ namespace eMotive.Services
             return string.Empty;
         }
 
+        public bool AllowWithdrawals()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public bool SaveSettings(Settings settings)
         {
             throw new System.NotImplementedException();

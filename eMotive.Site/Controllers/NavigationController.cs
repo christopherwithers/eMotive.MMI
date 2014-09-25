@@ -52,7 +52,7 @@ namespace eMotive.MMI.Controllers
                 return BuildInterviewerMenu();
             }
             //applicant menu
-            return BuildApplicantMenu();
+            return BuildApplicantMenu(config.AllowWithdrawals());
         }
 
         private Menu BuildLoggedOutMenu()
@@ -81,7 +81,7 @@ namespace eMotive.MMI.Controllers
             var menu = new Menu
             {
                 ID = 1,
-                Title = "ApplicantMenu",
+                Title = "Interviewer Menu",
                 MenuItems = new[]
                             {
                                  new MenuItem
@@ -133,13 +133,78 @@ namespace eMotive.MMI.Controllers
             return menu;
         }
 
-        private Menu BuildApplicantMenu()
+        private Menu BuildApplicantMenu(bool allowWithdrawal)
         {
-            var menu = new Menu
+            Menu menu = null;
+
+            if (allowWithdrawal)
             {
-                ID = 1,
-                Title = "ApplicantMenu",
-                MenuItems = new[]
+                menu = new Menu
+                {
+                    ID = 1,
+                    Title = "ApplicantMenu",
+                    MenuItems = new[]
+                    {
+                        new MenuItem
+                        {
+                            ID = 1,
+                            Name = string.Format("{0} Home", config.SiteName()),
+                            URL = Url.Action("Index", "Applicant"), //"/SCE/Home/",
+                            Title = string.Format("{0} Home", config.SiteName()),
+                        },
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Sessions",
+                            URL = Url.Action("Signups", "Interviews"), //"/SCE/Interviews/Signups",
+                            Title = "View Session Slots"
+                        },
+                        /*new MenuItem
+                                    {
+                                        ID = 2,
+                                        Name = "My Details",
+                                        URL = Url.Action("InterviewerDetails","Account"),//"/SCE/Account/Details",
+                                        Title = "My Details"
+                                    },*/
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Change Password",
+                            URL = Url.Action("Details", "Account"), //"/SCE/Account/Details",
+                            Title = "Change Password"
+                        },
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Withdraw",
+                            URL = Url.Action("Withdraw", "Account"), //"/SCE/Account/Details",
+                            Title = "Withdraw from application process"
+                        },
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Contact Us",
+                            URL = Url.Action("ContactUs", "Applicant"), //"/SCE/Home/ContactUs",
+                            Title = "Our Contact Details"
+                        },
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Logout",
+                            URL = Url.Action("Logout", "Account"), //"/SCE/Account/Logout",
+                            Title = "Logout"
+                        }
+
+                    }
+                };
+            }
+            else
+            {
+                menu = new Menu
+                {
+                    ID = 1,
+                    Title = "ApplicantMenu",
+                    MenuItems = new[]
                             {
                                  new MenuItem
                                     {
@@ -168,14 +233,7 @@ namespace eMotive.MMI.Controllers
                                         Name = "Change Password",
                                         URL = Url.Action("Details","Account"),//"/SCE/Account/Details",
                                         Title = "Change Password"
-                                    },   
-                                 new MenuItem
-                                    {
-                                        ID = 2,
-                                        Name = "Withdraw",
-                                        URL = Url.Action("Withdraw","Account"),//"/SCE/Account/Details",
-                                        Title = "Withdraw from application process"
-                                    },   
+                                    },
                                  new MenuItem
                                     {
                                         ID = 2,
@@ -192,7 +250,8 @@ namespace eMotive.MMI.Controllers
                                     }
 
                             }
-            };
+                };
+            }
 
             return menu;
         }

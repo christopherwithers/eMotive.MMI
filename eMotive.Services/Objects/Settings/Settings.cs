@@ -14,6 +14,7 @@ namespace eMotive.Services.Objects.Settings
         public string MailFromAddress { get; set; }
         public string GoogleAnalytics { get; set; }
         public string MetaTags { get; set; }
+        public bool AllowWithdrawals { get; set; }
     }
 
 }

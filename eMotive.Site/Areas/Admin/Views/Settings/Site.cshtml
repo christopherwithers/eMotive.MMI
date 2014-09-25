@@ -82,6 +82,15 @@
 
     <div class="control-group">
         <div class="controls">
+            <label class="checkbox">
+                @Html.CheckBoxFor(m => m.AllowWithdrawals)
+                Allow withdrawals
+            </label>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
             <button type="submit" class="btn btn-info">Save</button>
             <a href="@Url.Action("Index")" class="btn">Cancel</a>
         </div>

@@ -11,5 +11,8 @@ namespace eMotive.Managers.Interfaces
         bool ResendUsername(string _email);
         bool ChangePassword(ChangePassword _changePassword);
         bool ResendAccountCreationEmail(string _username);
+
+        bool WithdrawUser(int _userID);
+        bool UserHasWithdrawn(int userId);
     }
 }

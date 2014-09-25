@@ -19,11 +19,13 @@ namespace eMotive.MMI.Controllers
     {
         private readonly ISessionManager signupManager;
         private readonly IPartialPageManager pageManager;
+        private readonly IUserManager userManager;
 
-        public InterviewsController(ISessionManager _signupManager, IPartialPageManager _pageManager)
+        public InterviewsController(ISessionManager _signupManager, IPartialPageManager _pageManager, IUserManager _userManager)
         {
             signupManager = _signupManager;
             pageManager = _pageManager;
+            userManager = _userManager;
         }
 
         //[Inject]
@@ -52,10 +54,23 @@ namespace eMotive.MMI.Controllers
         public ActionResult Signups()
         {
             var signups = signupManager.FetchSignupInformation(User.Identity.Name);
+            var user = userManager.Fetch(User.Identity.Name);
 
-            var pageText = pageManager.FetchPartials(new[] {"Session-List-header", "Session-List-Footer"}).ToDictionary(k => k.Key, v => v.Text);
-            signups.HeaderText = pageText["Session-List-header"];
-            signups.FooterText = pageText["Session-List-Footer"];
+            Dictionary<string, string> pageText = null;
+
+            if (user.Roles.Any(n => n.Name == "Applicant"))
+            {
+                pageText = pageManager.FetchPartials(new[] { "Applicant-Session-List-Header", "Applicant-Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
+                signups.HeaderText = pageText["Applicant-Session-List-Header"];
+                signups.FooterText = pageText["Applicant-Session-List-Footer"];
+            }
+            else
+            {
+                pageText= pageManager.FetchPartials(new[] { "Session-List-header", "Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
+                signups.HeaderText = pageText["Session-List-header"];
+                signups.FooterText = pageText["Session-List-Footer"];
+            }
+
 
             return View(signups);
         }
@@ -68,10 +83,22 @@ namespace eMotive.MMI.Controllers
         public ActionResult TestPage()
         {
             var signups = signupManager.FetchSignupInformation(User.Identity.Name);
+            var user = userManager.Fetch(User.Identity.Name);
 
-            var pageText = pageManager.FetchPartials(new[] { "Session-List-header", "Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
-            signups.HeaderText = pageText["Session-List-header"];
-            signups.FooterText = pageText["Session-List-Footer"];
+            Dictionary<string, string> pageText = null;
+
+            if (user.Roles.Any(n => n.Name == "Applicant"))
+            {
+                pageText = pageManager.FetchPartials(new[] {"Session-List-header", "Session-List-Footer"}).ToDictionary(k => k.Key, v => v.Text);
+                signups.HeaderText = pageText["Session-List-header"];
+                signups.FooterText = pageText["Session-List-Footer"];
+            }
+            else
+            {
+                pageText = pageManager.FetchPartials(new[] { "Session-List-header", "Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
+                signups.HeaderText = pageText["Session-List-header"];
+                signups.FooterText = pageText["Session-List-Footer"];
+            }
 
             return View(signups);
         }
@@ -79,6 +106,22 @@ namespace eMotive.MMI.Controllers
         public ActionResult Slots(int? id)
         {
             var slots = signupManager.FetchSlotInformation(id.HasValue ? id.Value : -1, User.Identity.Name);
+            var user = userManager.Fetch(User.Identity.Name);
+
+            Dictionary<string, string> pageText;
+
+            if (user.Roles.Any(n => n.Name == "Applicant"))
+            {
+                pageText = pageManager.FetchPartials(new[] { "Applicant-Interview-Date-Page", "Applicant-Interview-Date-Page-Footer" }).ToDictionary(k => k.Key, v => v.Text);
+                slots.HeaderText = pageText["Applicant-Interview-Date-Page"];
+                slots.FooterText = pageText["Applicant-Interview-Date-Page-Footer"];
+            }
+            else
+            {
+                pageText = pageManager.FetchPartials(new[] { "Interview-Date-Page", "Interview-Date-Page-Footer" }).ToDictionary(k => k.Key, v => v.Text);
+                slots.HeaderText = pageText["Interview-Date-Page"];
+                slots.FooterText = pageText["Interview-Date-Page-Footer"];
+            }
 
             if (slots != null)
             {
@@ -89,15 +132,19 @@ namespace eMotive.MMI.Controllers
                     {"#group#", slots.Group.Name}
                 };
                 //Disability-Interview-Date-Page
-                var sb = new StringBuilder(pageManager.Fetch("Interview-Date-Page").Text);
+                var sbHead = new StringBuilder(slots.HeaderText);
+                var sbFoot = new StringBuilder(slots.FooterText);
 
                 foreach (var replacment in replacements)
                 {
-                    sb.Replace(replacment.Key, replacment.Value);
+                    sbHead.Replace(replacment.Key, replacment.Value);
+                    sbFoot.Replace(replacment.Key, replacment.Value);
                 }
 
-                slots.HeaderText = sb.ToString();
-                slots.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;
+                slots.HeaderText = sbHead.ToString();
+                slots.FooterText = sbFoot.ToString();
+                /*slots.HeaderText = sb.ToString();
+                slots.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;*/
                 slots.LoggedInUser = User.Identity.Name ?? string.Empty;
             }
 

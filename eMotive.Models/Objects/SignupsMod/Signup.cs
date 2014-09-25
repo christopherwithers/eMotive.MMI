@@ -8,7 +8,7 @@ namespace eMotive.Models.Objects.SignupsMod
     public class Signup
     {
         private bool? _isSignedUp;
-        
+
         public Signup()
         {
             _isSignedUp = false;
@@ -46,9 +46,9 @@ namespace eMotive.Models.Objects.SignupsMod
                 _isSignedUp = false;
                 return false;
             }*/
-                _isSignedUp = Slots.Any(n => /*n.UsersSignedUp.HasContent() &&*/ n.SignedUp(username));
+            _isSignedUp = Slots.Any(n => /*n.UsersSignedUp.HasContent() &&*/ n.SignedUp(username));
 
-         //   _isSignedUp = Slots.Any(n => n.SignedUp(username));
+            //   _isSignedUp = Slots.Any(n => n.SignedUp(username));
 
             return _isSignedUp.Value;
         }
@@ -59,62 +59,45 @@ namespace eMotive.Models.Objects.SignupsMod
             if (!OverrideClose && Closed)
                 SlotsAvailableString = "Sign up closed";
 
-            TotalSlotsAvailable = Slots.Select(n => n.PlacesAvailable).Count();
-            TotalReserveAvailable = Slots.Select(n => n.ReservePlaces).Count();
-            TotalInterestedAvaiable = Slots.Select(n => n.InterestedPlaces).Count();
-            TotalNumberSignedUp = Slots.Select(n => n.NumberSignedUp()).Count();
+            TotalSlotsAvailable = Slots.Sum(n => n.PlacesAvailable);
+            TotalReserveAvailable = Slots.Sum(n => n.ReservePlaces);
+            TotalInterestedAvaiable = Slots.Sum(n => n.InterestedPlaces);
+            TotalNumberSignedUp = Slots.Sum(n => n.NumberSignedUp());
 
             int placesAvailable;
-
             if (!MergeReserve)
             {
-             //   var inMain = false;
-
-                var totalMainRemaining = 0;
-                var totalReserveRemaining = 0;
-                
-                foreach (var slot in Slots)
-                {
-                    totalMainRemaining += slot.PlacesAvailable - slot.NumberSignedUp() < 0 ? 0 : slot.PlacesAvailable - slot.NumberSignedUp();
-
-                    if (totalMainRemaining >= slot.NumberSignedUp())
-                    {
-                        totalReserveRemaining += slot.ReservePlaces;
+                if (TotalNumberSignedUp >= TotalSlotsAvailable)
+                {//if there are more users signed up than there are main spaces available
+                    if (TotalNumberSignedUp >= TotalSlotsAvailable + TotalReserveAvailable)
+                    {//if more people signed up than main and reserve combined, no places available
+                        SlotsAvailableString = "No Places Available";
+                        return;
                     }
-                    else
-                    {
-                        totalReserveRemaining += (slot.PlacesAvailable + slot.ReservePlaces) - slot.NumberSignedUp();
-                    }
-                }
 
-                if (totalMainRemaining > 0)
-                {
-                    SlotsAvailableString = string.Format("{1} {0} Available ({2} Main, {3} Reserve)",
-                        "PLACE".SingularOrPlural(TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp),
-                        TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp,
-                        totalMainRemaining,
-                        totalReserveRemaining);
+                    //THere are only reserve places available, display how many
+                    var value = (TotalSlotsAvailable + TotalReserveAvailable) - TotalNumberSignedUp;
+                    SlotsAvailableString = string.Format("{1} {0} Available", "RESERVE".SingularOrPlural(value), value);
                     return;
                 }
 
-                totalReserveRemaining = Slots.Sum(n => n.ReservePlaces + n.PlacesAvailable - n.NumberSignedUp());
 
-                SlotsAvailableString = string.Format("{1} {0} Available",
-                    "RESERVE".SingularOrPlural(totalReserveRemaining - TotalNumberSignedUp),
-                    totalReserveRemaining);
-
-                SlotsAvailableString = string.Format("{1} {0} Available", "Place".SingularOrPlural(TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp), TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp);
+                //There are main spots available, show user how many main and reserve are remaining
+                SlotsAvailableString = string.Format("{1} {0} Available ({2} Main, {3} Reserve)",
+                                        "PLACE".SingularOrPlural(TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp),
+                                        TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp,
+                                        TotalSlotsAvailable - TotalNumberSignedUp,
+                                        TotalReserveAvailable);
                 return;
             }
-            else
+
+            if (TotalNumberSignedUp < TotalSlotsAvailable + TotalReserveAvailable)
             {
-                if (TotalNumberSignedUp < TotalSlotsAvailable + TotalReserveAvailable)
-                {
-                    placesAvailable = TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp;
-                    SlotsAvailableString = string.Format("{1} {0} Available", "PLACE".SingularOrPlural(placesAvailable), placesAvailable);
-                    return;
-                }
+                placesAvailable = TotalSlotsAvailable + TotalReserveAvailable - TotalNumberSignedUp;
+                SlotsAvailableString = string.Format("{1} {0} Available", "PLACE".SingularOrPlural(placesAvailable), placesAvailable);
+                return;
             }
+
 
             if (TotalNumberSignedUp < TotalSlotsAvailable + TotalReserveAvailable + TotalInterestedAvaiable)
             {

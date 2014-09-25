@@ -20,6 +20,8 @@ namespace eMotive.Services.Interfaces
         string GoogleAnalytics();
         string MetaTags();
 
+        bool AllowWithdrawals();
+
         bool SaveSettings(Settings settings);
         Settings FetchSettings();
 

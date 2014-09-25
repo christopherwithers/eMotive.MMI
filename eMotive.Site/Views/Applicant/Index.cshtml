@@ -14,7 +14,7 @@
     }*/
 }
 
-@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Home-Header-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Home-Header-Unsigned"].Text)))
+@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Header-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Header-Unsigned"].Text)))
 
 @if (ViewBag.GroupDetails != null)
 {
@@ -45,4 +45,4 @@ else
         </tbody>
     </table>
 }
-
+@(Model.HasSignedUp ? Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Footer-Signed"].Text)) : Html.Raw(Server.HtmlDecode(Model.PageSections["Applicant-Home-Footer-Unsigned"].Text)))

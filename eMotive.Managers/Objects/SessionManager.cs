@@ -18,7 +18,6 @@ using eMotive.Models.Objects.Signups;
 using eMotive.Repository.Interfaces;
 using eMotive.Services.Interfaces;
 using Lucene.Net.Search;
-using Ninject;
 using rep = eMotive.Repository.Objects.Signups;
 using emSearch = eMotive.Search.Objects.Search;
 
@@ -39,13 +38,9 @@ namespace eMotive.Managers.Objects
             AutoMapperManagerConfiguration.Configure();
         }
 
-        [Inject]
         public IeMotiveConfigurationService configurationService { get; set; }
-        [Inject]
         public INotificationService notificationService { get; set; }
-        [Inject]
         public IEmailService emailService { get; set; }
-        [Inject]
         public ICache cache { get; set; }
 
         readonly Dictionary<int, object> dictionary = new Dictionary<int, object>();

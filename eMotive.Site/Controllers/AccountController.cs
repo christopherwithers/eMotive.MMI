@@ -71,8 +71,25 @@ namespace eMotive.MMI.Controllers
             {
                 var user = userManager.Fetch(User.Identity.Name);
 
-                
+                if (user != null)
+                {
+                    if (accountManager.WithdrawUser(user.ID))
+                    {
+                        withdraw.PageText = pageText["Withdrawn-header"];
+
+                        //log out user
+                        Authentication.SignOut();
+                        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+                        Response.Cache.SetNoStore();
+
+
+                        return View(withdraw);
+                    }
+                }                
             }
+
+            withdraw.PageText = pageText["Withdraw-header"]; ;
+
             return View(withdraw);
         }
 

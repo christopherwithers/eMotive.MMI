@@ -10,7 +10,6 @@ using eMotive.Repository.Interfaces;
 using eMotive.Search.Interfaces;
 using eMotive.Search.Objects;
 using eMotive.Services.Interfaces;
-using Ninject;
 using rep = eMotive.Repository.Objects.Users;
 namespace eMotive.Managers.Objects
 {
@@ -27,7 +26,6 @@ namespace eMotive.Managers.Objects
             AutoMapperManagerConfiguration.Configure();
         }
 
-        [Inject]
         public INotificationService notificationService { get; set; }
 
         public Role New()

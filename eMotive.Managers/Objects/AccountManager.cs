@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Dapper;
-using eMotive.Models.Objects.Roles;
 using Extensions;
 using MySql.Data.MySqlClient;
 using eMotive.Managers.Interfaces;
@@ -14,7 +13,7 @@ using eMotive.Models.Objects.Users;
 using eMotive.Repository;
 using eMotive.Repository.Interfaces;
 using eMotive.Services.Interfaces;
-using Ninject;
+
 
 namespace eMotive.Managers.Objects
 {
@@ -32,11 +31,11 @@ namespace eMotive.Managers.Objects
             AutoMapperManagerConfiguration.Configure();
         }
 
-        [Inject]
+
         public IEmailService emailService { get; set; }
-        [Inject]
+
         public INotificationService notificationService { get; set; }
-        [Inject]
+
         public IeMotiveConfigurationService configurationService { get; set; }
 
         public bool ValidateUser(string _username, string _password)
@@ -73,17 +72,18 @@ namespace eMotive.Managers.Objects
 
             if (!user.Enabled)
             {
-                notificationService.AddIssue("Your account has been diabled.");
+                notificationService.AddIssue("Your account has been disabled.");
+                return false;
+            }
+
+            if (userRepository.UserHasWithdrawn(user.ID))
+            {
+                notificationService.AddIssue("You have withdrawn from the MMI application process.");
                 return false;
             }
 
             if (success)
                 return true;
-
-            if (!userRepository.UserHasWithdrawn(user.ID))
-            {
-                return false;
-            }
 
             notificationService.AddIssue("The entered username and password were not recognised.");
             LoginAttempt(_username);
@@ -94,6 +94,11 @@ namespace eMotive.Managers.Objects
         public bool WithdrawUser(int userId)
         {
             return userRepository.WithdrawUser(userId);
+        }
+
+        public bool UserHasWithdrawn(int userId)
+        {
+            return userRepository.UserHasWithdrawn(userId);
         }
 
         public bool CreateNewAccountPassword(User _user)

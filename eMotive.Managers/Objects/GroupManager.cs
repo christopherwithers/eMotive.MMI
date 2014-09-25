@@ -5,7 +5,7 @@ using eMotive.Managers.Interfaces;
 using eMotive.Models.Objects.Signups;
 using eMotive.Repository.Interfaces;
 using eMotive.Services.Interfaces;
-using Ninject;
+
 
 namespace eMotive.Managers.Objects
 {
@@ -19,7 +19,6 @@ namespace eMotive.Managers.Objects
             signupRepository = _signupRepository;
         }
 
-        [Inject]
         public INotificationService notificationService { get; set; }
 
         public bool UpdateUsersGroups(int _userId, IEnumerable<int> _ids)

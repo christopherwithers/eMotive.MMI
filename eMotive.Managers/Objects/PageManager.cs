@@ -11,7 +11,6 @@ using eMotive.Repository.Interfaces;
 using eMotive.Search.Interfaces;
 using eMotive.Search.Objects;
 using eMotive.Services.Interfaces;
-using Ninject;
 using repPages = eMotive.Repository.Objects.Pages;
 using emSearch = eMotive.Search.Objects.Search;
 
@@ -30,7 +29,6 @@ namespace eMotive.Managers.Objects
             AutoMapperManagerConfiguration.Configure();
         }
 
-        [Inject]
         public INotificationService notificationService { get; set; }
 
         public Page New()

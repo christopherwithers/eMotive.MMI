@@ -45,5 +45,7 @@ namespace eMotive.Repository.Interfaces
 
         bool UserHasWithdrawn(int userId);
         bool WithdrawUser(int userId);
+
+        
     }
 }

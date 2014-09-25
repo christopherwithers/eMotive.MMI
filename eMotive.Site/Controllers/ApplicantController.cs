@@ -52,10 +52,10 @@ namespace eMotive.MMI.Controllers
                     PageSections = pageManager.FetchPartials(new[] { "Applicant-Home-Header-Unsigned", "Applicant-Home-Footer-Unsigned" }).ToDictionary(k => k.Key, v => v);
 
 
-            var modifiedSections = PageSections.ToDictionary(section => section.Key.Substring(section.Key.IndexOf('-') + 1), section => section.Value);
+         //   var modifiedSections = PageSections.ToDictionary(section => section.Key.Substring(section.Key.IndexOf('-') + 1), section => section.Value);
 
 
-            homeView.PageSections = modifiedSections;
+                homeView.PageSections = PageSections;
 
             if (replacements.HasContent())
             {

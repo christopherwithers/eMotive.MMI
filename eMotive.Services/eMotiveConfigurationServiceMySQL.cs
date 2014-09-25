@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Transactions;
@@ -105,6 +103,12 @@ namespace eMotive.Services
         {
             return Settings().MetaTags;
         }
+
+        public bool AllowWithdrawals()
+        {
+            return Settings().AllowWithdrawals;
+        }
+
         /*        private bool GetSettings()
         {
             using (var cn = Connection)
@@ -150,12 +154,12 @@ namespace eMotive.Services
 
                         if (cn.Query<ulong>(sql).SingleOrDefault() > 0)
                         {//todo: check more than 1, if so, delete and reinsert?
-                            success = cn.Execute("UPDATE `settings` SET `SiteName`=@SiteName,`SiteURL`=@SiteURL,`DisableEmails`=@DisableEmails,`MaxLoginAttempts`=@MaxLoginAttempts,`LockoutTimeMinutes`=@LockoutTimeMinutes,`MailFromAddress`=@MailFromAddress,`GoogleAnalytics`=@GoogleAnalytics,`MetaTags`=@MetaTags LIMIT 1;", settings) > 0;
+                            success = cn.Execute("UPDATE `settings` SET `SiteName`=@SiteName,`SiteURL`=@SiteURL,`DisableEmails`=@DisableEmails,`MaxLoginAttempts`=@MaxLoginAttempts,`LockoutTimeMinutes`=@LockoutTimeMinutes,`MailFromAddress`=@MailFromAddress,`GoogleAnalytics`=@GoogleAnalytics,`MetaTags`=@MetaTags, `AllowWithdrawals`=@AllowWithdrawals LIMIT 1;", settings) > 0;
 
                         }
                         else
                         {
-                            success = cn.Execute( "INSERT INTO `settings` (`SiteName`,`SiteURL`,`DisableEmails`,`MaxLoginAttempts`,`LockoutTimeMinutes`,`MailFromAddress`,`GoogleAnalytics`,`MetaTags`) VALUES (@SiteName, @SiteURL, @DisableEmails, @MaxLoginAttempts, @LockoutTimeMinutes, @MailFromAddress, @GoogleAnalytics, @MetaTags);", settings) > 0;
+                            success = cn.Execute("INSERT INTO `settings` (`SiteName`,`SiteURL`,`DisableEmails`,`MaxLoginAttempts`,`LockoutTimeMinutes`,`MailFromAddress`,`GoogleAnalytics`,`MetaTags`, `AllowWithdrawals`) VALUES (@SiteName, @SiteURL, @DisableEmails, @MaxLoginAttempts, @LockoutTimeMinutes, @MailFromAddress, @GoogleAnalytics, @MetaTags, @AllowWithdrawals);", settings) > 0;
                         }
 
                         if (success)
