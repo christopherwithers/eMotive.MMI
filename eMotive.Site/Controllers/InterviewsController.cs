@@ -3,13 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using eMotive.Managers.Interfaces;
-using eMotive.MMI.Common;
-using eMotive.MMI.Common.ActionFilters;
-using eMotive.MMI.SignalR;
 using eMotive.Services.Interfaces;
-using Extensions;
-
-using Microsoft.AspNet.SignalR;
 using ServiceStack.Mvc;
 
 namespace eMotive.MMI.Controllers
@@ -206,7 +200,7 @@ namespace eMotive.MMI.Controllers
                 Data = new { success = false, message = "An error occurred. The signup could not be cancelled." }
             };
         }*/
-
+        /*
         private void ApplicantSignupPush(int _signupID, int _totalPlaces, int _remainingPlaces)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
@@ -229,7 +223,7 @@ namespace eMotive.MMI.Controllers
                 TotalPlaces = _totalPlaces,
                 PlacesAvailable = _remainingPlaces
             });
-        }
+        }*/
 
     }
 }

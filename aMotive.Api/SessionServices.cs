@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using eMotive.Managers.Interfaces;
 using eMotive.Managers.Objects.Search;
+using eMotive.MMI.SignalR;
 using eMotive.Models.Objects.SignupsMod;
 using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
+using Microsoft.AspNet.SignalR;
 using ServiceStack.Common.Extensions;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
@@ -58,6 +61,7 @@ namespace eMotive.Api
         public int IdSlot { get; set; }
         public string Username { get; set; }
     }
+
 
   //  [Authenticate] 
     public class SessionService : Service
@@ -115,17 +119,8 @@ namespace eMotive.Api
             {
                 _searchManager.Update(new SignupSearchDocument(sessionSignup.Signup));
 
-                // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
-
-                // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
-                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
-
-                // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
-                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
-
                 return new ServiceResult<bool>
                 {
-                    //  Data = new { success = true, message = "successfully signed up." }
                     Success = true,
                     Result = true,
                     Errors = null
@@ -151,17 +146,16 @@ namespace eMotive.Api
                 if (signup != null)
                     _searchManager.Update(new SignupSearchDocument(signup));
               
-               // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
 
-               // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
-                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
+        //        signup.si
 
-               // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
-                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
-
+                signup.GenerateSlotsAvailableString();
+                var slot = signup.Slots.Single(n => n.id == request.IdSlot);
+                slot.GeneratePlacesAvailableString();
+                SignupNumbersPush(signup.Id, signup.SlotsAvailableString,signup.SignedUp(request.Username), "warning");
+                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, "warning");
                 return new ServiceResult<bool>
                 {
-                  //  Data = new { success = true, message = "successfully signed up." }
                     Success = true,
                     Result = true,
                     Errors = null
@@ -186,18 +180,14 @@ namespace eMotive.Api
                 var signup = _sessionManager.FetchM(request.IdSignup);
                 if (signup != null)
                     _searchManager.Delete(new SignupSearchDocument(signup));
-                // var signup = _sessionManager.Fetch(request.IdSignup);
-                // var slot = signup.Slots.Single(n => n.ID == request.IdSlot);
 
-                // ApplicantSignupPush(signup.ID, signup.Slots.Sum(n => n.TotalPlacesAvailable),
-                //    signup.Slots.Sum(n => n.ApplicantsSignedUp.HasContent() ? n.TotalPlacesAvailable - n.ApplicantsSignedUp.Count() : n.TotalPlacesAvailable));
-
-                // ApplicantSlotPush(slot.ID, slot.TotalPlacesAvailable,
-                //    slot.ApplicantsSignedUp.HasContent() ? slot.TotalPlacesAvailable - slot.ApplicantsSignedUp.Count() : slot.TotalPlacesAvailable);
-
+                signup.GenerateSlotsAvailableString();
+                SignupNumbersPush(signup.Id, signup.SlotsAvailableString,signup.SignedUp(request.Username), "warning");
+                var slot = signup.Slots.Single(n => n.id == request.IdSlot);
+                slot.GeneratePlacesAvailableString();
+                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, "warning");//do we need to do a GenerateString thing here???
                 return new ServiceResult<bool>
                 {
-                    //  Data = new { success = true, message = "successfully signed up." }
                     Success = true,
                     Result = true,
                     Errors = null
@@ -215,15 +205,32 @@ namespace eMotive.Api
             };
         }
 
-        /*public object Get(NewCourse request)
-        {
-            return new ServiceResult<string>
-            {
-                Success = true,
-                Result = string.Empty,
-                Errors = new string[] { }
-            };
 
-        }*/
+
+        private void SignupNumbersPush(int _signupID, string _placesRemaining, bool _isSignedUp, string _status)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
+
+            hubContext.Clients.Group("SignupSelection").placesChanged(new
+            {
+                SignUpId = _signupID,
+                PlacesRemaining = _placesRemaining,
+                SignedUp = _isSignedUp,
+                Status = _status
+            });
+        }
+
+        private void SlotNumbersPush(int _slotID, string _placesRemaining, string _status)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
+
+            hubContext.Clients.Group("SlotSelection").placesChanged(new
+            {
+                SlotId = _slotID,
+                PlacesRemaining = _placesRemaining,
+                Status = _status
+            });
+        }
+
     }
 }
