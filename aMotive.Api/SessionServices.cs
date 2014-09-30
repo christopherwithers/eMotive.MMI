@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using eMotive.Managers.Interfaces;
 using eMotive.Managers.Objects.Search;
 using eMotive.MMI.SignalR;
@@ -7,7 +9,9 @@ using eMotive.Models.Objects.SignupsMod;
 using eMotive.Search.Interfaces;
 using eMotive.Services.Interfaces;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using ServiceStack.Common.Extensions;
+using ServiceStack.Common.Utils;
 using ServiceStack.ServiceHost;
 using ServiceStack.ServiceInterface;
 
@@ -148,12 +152,27 @@ namespace eMotive.Api
               
 
         //        signup.si
+                var slotView = new UserSlotView { Signup = signup, LoggedInUser = request.Username };
 
-                signup.GenerateSlotsAvailableString();
-                var slot = signup.Slots.Single(n => n.id == request.IdSlot);
-                slot.GeneratePlacesAvailableString();
+
+                slotView.Initialise(request.Username);
+                var slot = slotView.Signup.Slots.Single(n => n.id == request.IdSlot);
+             //   slot.GeneratePlacesAvailableString();
+
+                //(int _slotID, string _description, string _badges, string _rowStatus, string _buttonStatus, string _functionality)
                 SignupNumbersPush(signup.Id, signup.SlotsAvailableString,signup.SignedUp(request.Username), "warning");
-                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, "warning");
+                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, slotView.HomeViewRowBadge(request.IdSlot), slotView.HomeViewRowStyle(request.IdSlot), slotView.HomeViewRowButton(request.IdSlot), slotView.AssignStatusFunctionality(request.IdSlot, request.Username), slotView.SlotStatusName(request.IdSlot), request.Username);
+                UserSignupConfirm(request.IdSlot, slot.SlotsAvailableString, slotView.HomeViewRowBadge(request.IdSlot), slotView.HomeViewRowStyle(request.IdSlot), slotView.HomeViewRowButton(request.IdSlot), slotView.AssignStatusFunctionality(request.IdSlot, request.Username), slotView.SlotStatusName(request.IdSlot), request.Username);
+                
+                /*                userSlotView.LoggedInUser = User.Identity.Name ?? string.Empty;
+                userSlotView.Signup = slotsM;
+                userSlotView.HeaderText = sb.ToString();
+                userSlotView.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;
+
+
+                userSlotView.Initialise(userSlotView.LoggedInUser);*/
+                
+                
                 return new ServiceResult<bool>
                 {
                     Success = true,
@@ -183,9 +202,19 @@ namespace eMotive.Api
 
                 signup.GenerateSlotsAvailableString();
                 SignupNumbersPush(signup.Id, signup.SlotsAvailableString,signup.SignedUp(request.Username), "warning");
-                var slot = signup.Slots.Single(n => n.id == request.IdSlot);
-                slot.GeneratePlacesAvailableString();
-                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, "warning");//do we need to do a GenerateString thing here???
+
+                var slotView = new UserSlotView { Signup = signup, LoggedInUser = request.Username}; 
+                slotView.Initialise(request.Username);
+                var slot = slotView.Signup.Slots.Single(n => n.id == request.IdSlot);
+
+
+                
+                
+              //  slot.GeneratePlacesAvailableString();
+                //SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, "warning");//do we need to do a GenerateString thing here???
+                SlotNumbersPush(request.IdSlot, slot.SlotsAvailableString, slotView.HomeViewRowBadge(request.IdSlot), slotView.HomeViewRowStyle(request.IdSlot), slotView.HomeViewRowButton(request.IdSlot), slotView.AssignStatusFunctionality(request.IdSlot, request.Username), slotView.SlotStatusName(request.IdSlot), request.Username);
+                UserSignupConfirm(request.IdSlot, slot.SlotsAvailableString, slotView.HomeViewRowBadge(request.IdSlot), slotView.HomeViewRowStyle(request.IdSlot), slotView.HomeViewRowButton(request.IdSlot), slotView.AssignStatusFunctionality(request.IdSlot, request.Username), slotView.SlotStatusName(request.IdSlot), request.Username);
+                
                 return new ServiceResult<bool>
                 {
                     Success = true,
@@ -205,7 +234,25 @@ namespace eMotive.Api
             };
         }
 
+        private void UserSignupConfirm(int _slotID, string _description, string _badges, string _rowStatus, string _buttonStatus, string _functionality, string _buttonText, string _username)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
 
+            hubContext.Clients.User(_username).signupConfirm(new
+            {
+                SlotId = _slotID,
+                Description = _description,
+                Badges = _badges,
+                RowStatus = _rowStatus,
+                ButtonStatus = _buttonStatus,
+                Functionality = _functionality,
+                ButtonText = _buttonText,
+                Username = _username
+            });
+
+            /*
+            hubContext.Clients.Group("SignupConfirm")*/
+        }
 
         private void SignupNumbersPush(int _signupID, string _placesRemaining, bool _isSignedUp, string _status)
         {
@@ -220,15 +267,28 @@ namespace eMotive.Api
             });
         }
 
-        private void SlotNumbersPush(int _slotID, string _placesRemaining, string _status)
+        private void SlotNumbersPush(int _slotID, string _description, string _badges, string _rowStatus, string _buttonStatus, string _functionality, string _buttonText, string _username)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<MMIHub>();
+            
+           // var test = hubContext.Clients.User("dsfds").;
+            var user = MMIHub.GetUser(_username);
 
-            hubContext.Clients.Group("SlotSelection").placesChanged(new
+            var except = new [] {string.Empty};
+
+            if (user != null)
+                except = user.ConnectionIds.ToArray();
+
+            hubContext.Clients.Group("SlotSelection", except).placesChanged(new
             {
                 SlotId = _slotID,
-                PlacesRemaining = _placesRemaining,
-                Status = _status
+                Description = _description,
+                Badges = _badges,
+                RowStatus = _rowStatus,
+                ButtonStatus = _buttonStatus,
+                Functionality = _functionality,
+                ButtonText = _buttonText,
+                Username = _username
             });
         }
 

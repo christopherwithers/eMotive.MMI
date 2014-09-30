@@ -307,6 +307,10 @@ namespace eMotive.Managers.Objects
             }
 
             var profile = userManager.FetchProfile(_username);
+
+            if (!profile.Groups.HasContent())
+                return null;
+
             var signups = FetchSignupsByGroup(profile.Groups.Select(n => n.ID));
 
             if (signups == null)

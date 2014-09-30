@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Extensions;
@@ -8,7 +9,7 @@ namespace eMotive.Models.Objects.SignupsMod
     public class UserSignupView
     {
         private IDictionary<string, List<Signup>> _signupsByGroup;
-        private Collection<SlotType> _userSignupTypes;
+     //   private Collection<SlotType> _userSignupTypes;
 
         public string LoggedInUser { get; set; }
 
@@ -17,7 +18,7 @@ namespace eMotive.Models.Objects.SignupsMod
         
         public IEnumerable<Signup> Signups { get; set; }
 
-        public IDictionary<int,SlotType> SignedInUserSlotTypes { get; set; }
+        public List<Tuple<int, SlotType>> SignedInUserSlotTypes { get; set; }
 
 
         public IDictionary<string, List<Signup>> GetSignupsByGroup()
@@ -80,7 +81,7 @@ namespace eMotive.Models.Objects.SignupsMod
 
         public void Initialise(string username)
         {
-            SignedInUserSlotTypes = new Dictionary<int, SlotType>();
+            SignedInUserSlotTypes = new List<Tuple<int, SlotType>>();
 
             foreach (var signup in Signups ?? new Signup[] {})
             {
@@ -90,7 +91,7 @@ namespace eMotive.Models.Objects.SignupsMod
                 {
                     if (slot.SignedUp(username))
                     {
-                        SignedInUserSlotTypes.Add(signup.Id, slot.GetUserSignupType(username));
+                        SignedInUserSlotTypes.Add(new Tuple<int, SlotType>(signup.Id, slot.GetUserSignupType(username)));
                     }
                 }
             }

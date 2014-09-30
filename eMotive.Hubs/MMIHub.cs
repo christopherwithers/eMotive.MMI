@@ -1,19 +1,127 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
 namespace eMotive.MMI.SignalR
-{//
+{
+    public class User
+    {
+        public string Name { get; set; }
+        public HashSet<string> ConnectionIds { get; set; }
+    }
+
     [HubName("MMIHub")]
     public class MMIHub : Hub
     {
-        public void Hello()
+        private static readonly ConcurrentDictionary<string, User> Users
+            = new ConcurrentDictionary<string, User>(StringComparer.InvariantCultureIgnoreCase);
+
+
+        public override Task OnConnected()
         {
-            Clients.All.hello();
+
+            string userName = Context.User.Identity.Name;
+            string connectionId = Context.ConnectionId;
+
+            var user = Users.GetOrAdd(userName, _ => new User
+            {
+                Name = userName,
+                ConnectionIds = new HashSet<string>()
+            });
+
+            lock (user.ConnectionIds)
+            {
+                user.ConnectionIds.Add(connectionId);
+            }
+
+            return base.OnConnected();
         }
 
-        public void Send(string test)
+        public override Task OnDisconnected(bool _test)
         {
+
+            string userName = Context.User.Identity.Name;
+            string connectionId = Context.ConnectionId;
+
+            User user;
+            Users.TryGetValue(userName, out user);
+
+            if (user == null) return base.OnDisconnected(_test);
+
+            lock (user.ConnectionIds)
+            {
+
+                user.ConnectionIds.RemoveWhere(cid => cid.Equals(connectionId));
+
+                if (!user.ConnectionIds.Any())
+                {
+
+                    User removedUser;
+                    Users.TryRemove(userName, out removedUser);
+                }
+            }
+
+            return base.OnDisconnected(_test);
+        }
+
+        public static User GetUser(string username)
+        {
+
+            User user;
+            Users.TryGetValue(username, out user);
+
+            return user;
+        }
+
+        public void Send(string message, string to)
+        {
+
+            User receiver;
+            if (Users.TryGetValue(to, out receiver))
+            {
+
+                User sender = GetUser(Context.User.Identity.Name);
+
+                IEnumerable<string> allReceivers;
+                lock (receiver.ConnectionIds)
+                {
+                    lock (sender.ConnectionIds)
+                    {
+
+                        allReceivers = receiver.ConnectionIds.Concat(sender.ConnectionIds);
+                    }
+                }
+
+                foreach (var cid in allReceivers)
+                {
+                    Clients.Client(cid).received(new { sender = sender.Name, message = message, isPrivate = true });
+                }
+            }
+        }
+
+
+        public IEnumerable<string> GetConnectedUsers()
+        {
+
+            return Users.Where(x =>
+            {
+
+                lock (x.Value.ConnectionIds)
+                {
+
+                    return !x.Value.ConnectionIds.Contains(Context.ConnectionId, StringComparer.InvariantCultureIgnoreCase);
+                }
+
+            }).Select(x => x.Key);
+        }
+
+
+        public void Send(string test)
+        { //Context
             Clients.All.addNewMessageToPage(test);
         }
 

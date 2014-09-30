@@ -38,17 +38,7 @@ namespace eMotive.Models.Objects.SignupsMod
 
         public bool SignedUp(string username)
         {//TODO: do we need this n.UsersSignedUp.HasContent() ??
-            /*if (_isSignedUp.HasValue)
-                return _isSignedUp.Value;
-
-            if (string.IsNullOrEmpty(username))
-            {
-                _isSignedUp = false;
-                return false;
-            }*/
-            _isSignedUp = Slots.Any(n => /*n.UsersSignedUp.HasContent() &&*/ n.SignedUp(username));
-
-            //   _isSignedUp = Slots.Any(n => n.SignedUp(username));
+            _isSignedUp = Slots.Any(n =>  n.SignedUp(username));
 
             return _isSignedUp.Value;
         }
@@ -110,6 +100,109 @@ namespace eMotive.Models.Objects.SignupsMod
         }
 
 
+        virtual public SlotType GenerateUserSignupType(Slot _slot, int _userId)
+        {
+            //   var userPosition = _slot.UsersSignedUp.ToList().FindIndex(n => n.Type ==)
+            // throw new NotImplementedException();
+
+            //    if(_slot)
+
+            if (_slot.UsersSignedUp.HasContent())
+            {
+                var userSignup = _slot.UsersSignedUp.SingleOrDefault(n => n.User.ID == _userId);
+
+                if (userSignup != null)
+                {
+                    var usersIndex = _slot.UsersSignedUp.FindIndex(n => n.User.ID == _userId) + 1;
+
+                    if (usersIndex <= _slot.PlacesAvailable)
+                        return SlotType.Main;
+
+                    if (usersIndex <= _slot.PlacesAvailable + _slot.ReservePlaces)
+                        return SlotType.Reserve;
+
+                    return SlotType.Interested;
+                }
+
+                //todo: error check incase userSignup is null??
+            }
+
+            return SlotType.Interested; //todo: need an error slot?
+        }
+        /*
+        virtual public SlotStatus GenerateSlotStatus(Slot _slot, string _username)
+        {
+
+            if (!_slot.Enabled)
+                return SlotStatus.Closed;
+
+            if (Closed && !OverrideClose)//checked for overide? - centralise closed logic??
+                return SlotStatus.Closed;
+
+            var userIsSignnedUpToCurrentSignup = false;
+            var applicantsSignedUp = 0;
+
+            if (_slot.UsersSignedUp.HasContent())
+            {
+                userIsSignnedUpToCurrentSignup = _slot.UsersSignedUp.Any(n => String.Equals(n.User.Username, _username, StringComparison.CurrentCultureIgnoreCase));
+                applicantsSignedUp = _slot.UsersSignedUp.Count();
+            }
+
+            var currentSignup = _params.UsersSignups.Select(n => n.IdSlot == _slot.ID);
+
+            if (AllowMultipleSignups)
+            {
+                if (userIsSignnedUpToCurrentSignup)
+                    return SlotStatus.AlreadySignedUp;
+
+                if (_params.UserHasSignup && !_params.MultipleSignupsPerSignup)
+                    return SlotStatus.Clash;
+
+                return SlotStatus.Signup;
+            }
+
+
+            if (!_params.MultipleSignupsPerSignup)
+            {
+                if (userIsSignnedUpToCurrentSignup)
+                    return SlotStatus.AlreadySignedUp;
+
+                if (_params.UserHasSignup)
+                    return SlotStatus.Clash;
+
+                return SlotStatus.Signup;
+            }
+
+
+            if (applicantsSignedUp < _slot.TotalPlacesAvailable)
+            {
+                return SlotStatus.Signup;
+            }
+
+            if (applicantsSignedUp < _slot.TotalPlacesAvailable + _slot.ReservePlaces)
+            {
+                return _params.MergeReserve ? SlotStatus.Signup : SlotStatus.Reserve;
+            }
+
+            if (applicantsSignedUp < _slot.TotalPlacesAvailable + _slot.ReservePlaces + _slot.InterestedPlaces)
+                return SlotStatus.Interested;
+
+            if (applicantsSignedUp >= _slot.TotalPlacesAvailable + _slot.ReservePlaces + _slot.InterestedPlaces)
+                return SlotStatus.Full;
+
+            /*if (_userSignup != null)
+                return SlotStatus.Clash;*/
+        /*
+            if (!_slot.ApplicantsSignedUp.HasContent())
+                return SlotStatus.Signup;
+
+
+
+            return SlotStatus.Signup;//todo: need ERROR here?
+
+        }
+
+    */
 
     }
 

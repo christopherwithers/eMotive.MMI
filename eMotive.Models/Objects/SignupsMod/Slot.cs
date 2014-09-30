@@ -54,6 +54,8 @@ namespace eMotive.Models.Objects.SignupsMod
             return _numberSignedUp = UsersSignedUp.HasContent() ? UsersSignedUp.Count : 0;
         }
 
+
+        //TODO:merge reserve(!)
         virtual public SlotType GetUserSignupType(string username)
         {
             //   var userPosition = _slot.UsersSignedUp.ToList().FindIndex(n => n.Type ==)

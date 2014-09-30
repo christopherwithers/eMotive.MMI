@@ -85,7 +85,7 @@ namespace eMotive.MMI.Controllers
                 userSlotView.FooterText = pageManager.Fetch("Interview-Date-Page-Footer").Text;
 
 
-                userSlotView.Initialise();
+                userSlotView.Initialise(userSlotView.LoggedInUser);
             }
 
             return View(userSlotView);
