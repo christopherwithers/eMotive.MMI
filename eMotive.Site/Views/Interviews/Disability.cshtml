@@ -1,4 +1,5 @@
-﻿@using Extensions
+﻿@using System.Linq
+@using Extensions
 @using eMotive.SCE.Common.Helpers
 @using eMotive.Models.Objects.Signups
 
@@ -72,9 +73,9 @@ else
     
     <table class="table table-striped table-hover">
         <tbody>
-            @foreach (var signup in Model.SignupInformation.Where(n => n.DisabilitySignup == true))
+            @foreach (var signup in Model.SignupInformation)
             {
-                <tr id="signup_class_@signup.ID" @Html.SetStatusStyle(signup.TotalSlotsAvailable, signup.SlotsAvailable, signup.SignedUp) >
+                <tr id="signup_class_@signup.ID" @Html.SetStatusStyle(signup.TotalSlotsAvailable, 0, signup.SignedUp) >
                 
                     <td id="badgelocation"  style="width: 60px;">
                         @if (signup.SignedUp)
@@ -91,7 +92,7 @@ else
                     <td id="signup_value_@signup.ID" >@signup.SlotsAvailableString()</td>
                     <td>
                         <form action="@Url.Action("Slots", "Interviews", new { area = "", id = signup.ID })">
-                            <button id="signup_button_@signup.ID" @Html.SetStatusButton(signup.TotalSlotsAvailable, signup.SlotsAvailable, signup.SignedUp) type="submit">View</button>
+                            <button id="signup_button_@signup.ID" @Html.SetStatusButton(signup.TotalSlotsAvailable, 0, signup.SignedUp) type="submit">View</button>
                         </form>
                     </td>
                 </tr>

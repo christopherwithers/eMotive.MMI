@@ -49,6 +49,16 @@ namespace eMotive.Services.Objects
             }
         }
 
+        public IEnumerable<SCEReportItem> FetchApplicantData(IEnumerable<int> _userIds)
+        {
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                const string sql = "SELECT * FROM `Users` a INNER JOIN `applicantreference` b ON a.`username`=b.`PersonalID` WHERE a.`ID` IN @ids GROUP BY Username;";
+
+                return connection.Query<SCEReportItem>(sql, new { ids = _userIds });
+            }
+        }
+
         public IEnumerable<InterviewerReportItem> FetchAllInterviewers()
         {
             using (var connection = new MySqlConnection(connectionString))

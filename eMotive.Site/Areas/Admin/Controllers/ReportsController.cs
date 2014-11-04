@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -49,6 +50,302 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
             return View(signupAdminView);
         }
+        /*
+        public FileStreamResult SignupsWithEmptySpaces()
+        {
+            var loggedInUser = userManager.Fetch(User.Identity.Name);
+            var signups = signupManager.FetchAll();
+            var sceFormData = new SCEFormData();
+
+            if (signups != null)
+            {// var userIDs = signups.Where(o => o.Slots != null).SelectMany(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).SelectMany(m => m.ApplicantsSignedUp).Select(o => o.User.ID));
+                //    signups = signups.Select(n => n).Where(o => o.Slots != null).Where(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).Where(p => p.ApplicantsSignedUp.Count() < (p.TotalPlacesAvailable + p.InterestedPlaces + p.ReservePlaces)));
+                var filtered = signups.Where(o => o.Slots != null && o.Slots.Any(m => m.ApplicantsSignedUp != null && m.ApplicantsSignedUp.Count() < (m.TotalPlacesAvailable + m.InterestedPlaces + m.ReservePlaces)));
+                signups = filtered;
+                using (var xlPackage = new ExcelPackage())
+                {
+                    string REPORT_NAME = "Sessions With Space Report";
+                    var worksheet = xlPackage.Workbook.Worksheets.Add(REPORT_NAME);
+
+                    int x = 1;
+                    using (var r = worksheet.Cells["A1:U1"])
+                    {
+                        r.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
+                        r.Style.Font.Bold = true;
+                        r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+                    worksheet.Cells[x, 1].Value = "Date";
+                    worksheet.Cells[x, 2].Value = "Specialty";
+                    worksheet.Cells[x, 3].Value = "Location";
+                    worksheet.Cells[x, 4].Value = "Slot";
+                    worksheet.Cells[x, 5].Value = "Place";
+                    worksheet.Cells[x, 6].Value = "Date Signed Up";
+                    worksheet.Cells[x, 7].Value = "Username";
+                    worksheet.Cells[x, 8].Value = "Title";
+                    worksheet.Cells[x, 9].Value = "Forename";
+                    worksheet.Cells[x, 10].Value = "Surname";
+                    worksheet.Cells[x, 11].Value = "GMCNumber";
+                    worksheet.Cells[x, 12].Value = "Home Trust";
+                    worksheet.Cells[x, 13].Value = "Email";
+                    worksheet.Cells[x, 14].Value = "SecretaryEmail";
+                    worksheet.Cells[x, 15].Value = "OtherEmail";
+                    worksheet.Cells[x, 16].Value = "PhoneWork";
+                    worksheet.Cells[x, 17].Value = "PhoneMobile";
+                    worksheet.Cells[x, 18].Value = "PhoneOther";
+                    worksheet.Cells[x, 19].Value = "Trained";
+                    worksheet.Cells[x, 20].Value = "Enabled";
+
+                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                    {
+                        worksheet.Cells[x, 21].Value = "Notes";
+                    }
+
+                    x++;
+
+                    var userIDs = signups.Where(o => o.Slots != null).SelectMany(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).SelectMany(m => m.ApplicantsSignedUp).Select(o => o.User.ID));
+
+                    IDictionary<string, SCEReportItem> userDict;
+
+                    if (!userIDs.HasContent())
+                        userDict = new Dictionary<string, SCEReportItem>();
+                    else
+                        userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
+
+                    foreach (var signup in signups)
+                    {
+                        foreach (var slot in signup.Slots.OrderBy(n => n.Time))
+                        {
+                            var users = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray() : new UserSignup[] { };
+                            var slotCount = 0;
+                            for (int i = 1; i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces; i++)
+                            {
+                                string slotType = "Error";
+
+                                if (slotCount + 1 <= slot.TotalPlacesAvailable) slotType = "Main";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces) slotType = "Reserve";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces) slotType = "Interested";
+
+                                if (users.Length > slotCount)
+                                {
+                                    var sceData = userDict[users[slotCount].User.Username];
+
+                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
+                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
+                                    worksheet.Cells[x, 3].Value = signup.Description;
+                                    worksheet.Cells[x, 4].Value = slot.Description;
+                                    worksheet.Cells[x, 5].Value = slotType;
+                                    worksheet.Cells[x, 6].Value = users[slotCount].SignupDate.ToString("f");
+                                    worksheet.Cells[x, 7].Value = sceData.Username;
+                                    worksheet.Cells[x, 8].Value = sceData.Title;
+                                    worksheet.Cells[x, 9].Value = sceData.Forename;
+                                    worksheet.Cells[x, 10].Value = sceData.Surname;
+                                    worksheet.Cells[x, 11].Value = sceData.GMCNumber;
+
+
+                                    string trust;
+
+                                    worksheet.Cells[x, 13].Value = sceData.Email;
+                                    worksheet.Cells[x, 14].Value = sceData.SecretaryEmail;
+                                    worksheet.Cells[x, 15].Value = sceData.OtherEmail;
+                                    worksheet.Cells[x, 16].Value = sceData.PhoneWork;
+                                    worksheet.Cells[x, 17].Value = sceData.PhoneMobile;
+                                    worksheet.Cells[x, 18].Value = sceData.PhoneOther;
+                                    worksheet.Cells[x, 19].Value = sceData.Trained ? "Yes" : "No";
+                                    worksheet.Cells[x, 20].Value = sceData.Enabled ? "Yes" : "No";
+
+                                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                                    {
+                                        worksheet.Cells[x, 21].Value = sceData.Notes;
+                                    }
+
+                                }
+                                else
+                                {
+                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
+                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
+                                    worksheet.Cells[x, 3].Value = signup.Description;
+                                    worksheet.Cells[x, 4].Value = slot.Description;
+                                    worksheet.Cells[x, 5].Value = slotType;
+                                }
+                                slotCount++;
+                                x++;
+                            }
+                        }
+
+                    }
+
+                    worksheet.Cells.AutoFitColumns();
+
+                    return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
+                    {
+                        FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
+                    };
+                }
+            }
+
+            throw new HttpException(404, "File not found.");
+        }
+        */
+
+        public FileStreamResult SignupsWithEmptySpaces()
+        {
+            var loggedInUser = userManager.Fetch(User.Identity.Name);
+            var signups = signupManager.FetchAll();
+            var groups = groupManager.FetchGroups();
+
+
+            var filtered = signups.Where(o => o.Slots != null && o.Slots.Any(m => m.ApplicantsSignedUp != null && m.ApplicantsSignedUp.Count() < (m.TotalPlacesAvailable + m.InterestedPlaces + m.ReservePlaces)));
+            signups = filtered;
+
+            using (var xlPackage = new ExcelPackage())
+            {
+                var REPORT_NAME = "Sessions With Space Report";
+
+                foreach (var group in groups)
+                {
+                    var worksheet = xlPackage.Workbook.Worksheets.Add(group.Name);
+                    int x = 1;
+                    ExcelRange r;
+
+
+
+
+
+                    var j = 0;
+
+                    worksheet.Cells[x, ++j].Value = "Slot";
+                    worksheet.Cells[x, ++j].Value = "Place";
+                    worksheet.Cells[x, ++j].Value = "Date Signed Up";
+                    worksheet.Cells[x, ++j].Value = "Username";
+                    worksheet.Cells[x, ++j].Value = "Title";
+                    worksheet.Cells[x, ++j].Value = "Forename";
+                    worksheet.Cells[x, ++j].Value = "Surname";
+                    worksheet.Cells[x, ++j].Value = "Email";
+
+                    switch (group.Name.ToLower())
+                    {
+                        case "interviewer":
+                        case "observer":
+                            worksheet.Cells[x, ++j].Value = "SecretaryEmail";
+                            worksheet.Cells[x, ++j].Value = "OtherEmail";
+                            worksheet.Cells[x, ++j].Value = "PhoneWork";
+                            worksheet.Cells[x, ++j].Value = "PhoneMobile";
+                            worksheet.Cells[x, ++j].Value = "PhoneOther";
+                            worksheet.Cells[x, ++j].Value = "Trained";
+                            worksheet.Cells[x, ++j].Value = "Enabled";
+                            r = worksheet.Cells["A1:O1"];
+                            break;
+                        default:
+                            r = worksheet.Cells["A1:H1"];
+                            break;
+                    }
+
+                    r.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
+                    r.Style.Font.Bold = true;
+                    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    foreach (var signup in signups.Where(n => n.Group.Name == group.Name))
+                    {
+                        x++;
+                        var userIDs =
+                                        signup.Slots.Where(o => o.ApplicantsSignedUp != null)
+                                            .SelectMany(n => n.ApplicantsSignedUp.Select(m => m.User.ID));
+                        var isApplicant = false;
+                        IDictionary<string, SCEReportItem> userDict;
+
+                        if (!userIDs.HasContent())
+                        {
+                            userDict = new Dictionary<string, SCEReportItem>();
+                        }
+                        else
+                        {
+                            if (signup.Group.Name == "A100" || signup.Group.Name == "A101" || signup.Group.Name == "Disability")
+                            {
+                                userDict = reportService.FetchApplicantData(userIDs).ToDictionary(k => k.Username, v => v);
+                            }
+                            else
+                            {
+                                userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
+                            }
+                        }
+
+                        foreach (var slot in signup.Slots.OrderBy(n => n.Time))
+                        {
+                            var users = slot.ApplicantsSignedUp.HasContent()
+                                ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray()
+                                : new UserSignup[] { };
+                            var slotCount = 0;
+                            for (int i = 1;
+                                i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces;
+                                i++)
+                            {
+                                string slotType = "Error";
+
+                                if (slotCount + 1 <= slot.TotalPlacesAvailable) slotType = "Main";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable &&
+                                    slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces)
+                                    slotType = "Reserve";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces &&
+                                    slotCount + 1 <=
+                                    slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces)
+                                    slotType = "Interested";
+
+                                if (users.Length > slotCount)
+                                {
+
+                                    j = 0;
+                                    var sceData = userDict[users[slotCount].User.Username];
+                                    worksheet.Cells[x, ++j].Value = slot.Description;
+                                    worksheet.Cells[x, ++j].Value = slotType;
+                                    worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
+                                    worksheet.Cells[x, ++j].Value = sceData.Username;
+                                    worksheet.Cells[x, ++j].Value = sceData.Title;
+                                    worksheet.Cells[x, ++j].Value = sceData.Forename;
+                                    worksheet.Cells[x, ++j].Value = sceData.Surname;
+                                    worksheet.Cells[x, ++j].Value = sceData.Email;
+
+                                    switch (group.Name.ToLower())
+                                    {
+                                        case "interviewer":
+                                        case "observer":
+                                            worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
+                                            worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneMobile;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneOther;
+                                            worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
+                                            worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    worksheet.Cells[x, 1].Value = slot.Description;
+                                    worksheet.Cells[x, 2].Value = slotType;
+                                }
+                                slotCount++;
+                                x++;
+                            }
+                        }
+
+                        worksheet.Cells.AutoFitColumns();
+
+
+
+                        x++;
+                    }
+                }
+
+                return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
+                {
+                    FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
+                };
+            }
+
+        }
+
 
         public FileStreamResult AllInterviewers()
         {
@@ -140,7 +437,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             var loggedInUser = userManager.Fetch(User.Identity.Name);
 
             var users = reportService.FetchAllObservers();
-          //  var groupsDict = groupManager.FetchGroups().ToDictionary(k => k.ID, v => v.Name);
+            //  var groupsDict = groupManager.FetchGroups().ToDictionary(k => k.ID, v => v.Name);
             if (users.HasContent())
             {
                 using (var xlPackage = new ExcelPackage())
@@ -190,8 +487,8 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                             }
                         }
 
-                     //   var specialty = "Unknown";
-                       // groupsDict.TryGetValue(user.MainSpecialty, out specialty);
+                        //   var specialty = "Unknown";
+                        // groupsDict.TryGetValue(user.MainSpecialty, out specialty);
 
                         i = 0;
                         worksheet.Cells[x, ++i].Value = user.Username;
@@ -648,147 +945,160 @@ namespace eMotive.MMI.Areas.Admin.Controllers
         }
 
 
+
         public FileStreamResult FullInterviewReport()
         {
             var loggedInUser = userManager.Fetch(User.Identity.Name);
             var signups = signupManager.FetchAll();
-            var sceFormData = new SCEFormData();
+            var groups = groupManager.FetchGroups();
 
-            if (signups != null)
+            using (var xlPackage = new ExcelPackage())
             {
+                var REPORT_NAME = string.Format("Full Report {0}", DateTime.Now.ToString("F"));
 
-
-                using (var xlPackage = new ExcelPackage())
+                foreach (var group in groups)
                 {
-                    string REPORT_NAME = "Full Session Report";
-                    var worksheet = xlPackage.Workbook.Worksheets.Add(REPORT_NAME);
-
+                    var worksheet = xlPackage.Workbook.Worksheets.Add(group.Name);
                     int x = 1;
-                    using (var r = worksheet.Cells["A1:U1"])
+                    ExcelRange r;
+                    
+                    
+
+                    
+
+                    var j = 0;
+
+                    worksheet.Cells[x, ++j].Value = "Slot";
+                    worksheet.Cells[x, ++j].Value = "Place";
+                    worksheet.Cells[x, ++j].Value = "Date Signed Up";
+                    worksheet.Cells[x, ++j].Value = "Username";
+                    worksheet.Cells[x, ++j].Value = "Title";
+                    worksheet.Cells[x, ++j].Value = "Forename";
+                    worksheet.Cells[x, ++j].Value = "Surname";
+                    worksheet.Cells[x, ++j].Value = "Email";
+
+                    switch (group.Name.ToLower())
                     {
-                        r.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
-                        r.Style.Font.Bold = true;
-                        r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        case "interviewer":
+                        case "observer":
+                            worksheet.Cells[x, ++j].Value = "SecretaryEmail";
+                            worksheet.Cells[x, ++j].Value = "OtherEmail";
+                            worksheet.Cells[x, ++j].Value = "PhoneWork";
+                            worksheet.Cells[x, ++j].Value = "PhoneMobile";
+                            worksheet.Cells[x, ++j].Value = "PhoneOther";
+                            worksheet.Cells[x, ++j].Value = "Trained";
+                            worksheet.Cells[x, ++j].Value = "Enabled";
+                            r = worksheet.Cells["A1:O1"];
+                            break;
+                        default:
+                            r = worksheet.Cells["A1:H1"];
+                            break;
                     }
-                    worksheet.Cells[x, 1].Value = "Date";
-                    worksheet.Cells[x, 2].Value = "Specialty";
-                    worksheet.Cells[x, 3].Value = "Location";
-                    worksheet.Cells[x, 4].Value = "Slot";
-                    worksheet.Cells[x, 5].Value = "Place";
-                    worksheet.Cells[x, 6].Value = "Date Signed Up";
-                    worksheet.Cells[x, 7].Value = "Username";
-                    worksheet.Cells[x, 8].Value = "Title";
-                    worksheet.Cells[x, 9].Value = "Forename";
-                    worksheet.Cells[x, 10].Value = "Surname";
-                    worksheet.Cells[x, 11].Value = "GMCNumber";
-                    worksheet.Cells[x, 12].Value = "Home Trust";
-                    worksheet.Cells[x, 13].Value = "Email";
-                    worksheet.Cells[x, 14].Value = "SecretaryEmail";
-                    worksheet.Cells[x, 15].Value = "OtherEmail";
-                    worksheet.Cells[x, 16].Value = "PhoneWork";
-                    worksheet.Cells[x, 17].Value = "PhoneMobile";
-                    worksheet.Cells[x, 18].Value = "PhoneOther";
-                    worksheet.Cells[x, 19].Value = "Trained";
-                    worksheet.Cells[x, 20].Value = "Enabled";
 
-                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                    r.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
+                    r.Style.Font.Bold = true;
+                    r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    foreach (var signup in signups.Where(n => n.Group.Name == group.Name))
                     {
-                        worksheet.Cells[x, 21].Value = "Notes";
-                    }
+                        x++;
+                        var userIDs =
+                                        signup.Slots.Where(o => o.ApplicantsSignedUp != null)
+                                            .SelectMany(n => n.ApplicantsSignedUp.Select(m => m.User.ID));
+                                                            var isApplicant = false;
+                        IDictionary<string, SCEReportItem> userDict;
 
-                    x++;
-                
-                    var userIDs = signups.Where(o => o.Slots != null).SelectMany(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).SelectMany(m => m.ApplicantsSignedUp).Select(o => o.User.ID));
+                        if (!userIDs.HasContent())
+                        {
+                            userDict = new Dictionary<string, SCEReportItem>();
+                        }
+                        else
+                        {
+                            if (signup.Group.Name == "A100" || signup.Group.Name == "A101" || signup.Group.Name == "Disability")
+                            {
+                                userDict = reportService.FetchApplicantData(userIDs).ToDictionary(k => k.Username, v => v);
+                            }
+                            else
+                            {
+                                userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
+                            }
+                        }
 
-                    IDictionary<string, SCEReportItem> userDict;
-
-                    if (!userIDs.HasContent())
-                        userDict = new Dictionary<string, SCEReportItem>();
-                    else
-                        userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
-
-                    foreach (var signup in signups)
-                    {
                         foreach (var slot in signup.Slots.OrderBy(n => n.Time))
                         {
-                            var users = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray() : new UserSignup[] { };
+                            var users = slot.ApplicantsSignedUp.HasContent()
+                                ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray()
+                                : new UserSignup[] { };
                             var slotCount = 0;
-                            for (int i = 1; i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces; i++)
+                            for (int i = 1;
+                                i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces;
+                                i++)
                             {
                                 string slotType = "Error";
 
                                 if (slotCount + 1 <= slot.TotalPlacesAvailable) slotType = "Main";
-                                if (slotCount + 1 > slot.TotalPlacesAvailable && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces) slotType = "Reserve";
-                                if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces) slotType = "Interested";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable &&
+                                    slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces)
+                                    slotType = "Reserve";
+                                if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces &&
+                                    slotCount + 1 <=
+                                    slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces)
+                                    slotType = "Interested";
 
                                 if (users.Length > slotCount)
                                 {
+
+                                    j = 0;
                                     var sceData = userDict[users[slotCount].User.Username];
+                                    worksheet.Cells[x, ++j].Value = slot.Description;
+                                    worksheet.Cells[x, ++j].Value = slotType;
+                                    worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
+                                    worksheet.Cells[x, ++j].Value = sceData.Username;
+                                    worksheet.Cells[x, ++j].Value = sceData.Title;
+                                    worksheet.Cells[x, ++j].Value = sceData.Forename;
+                                    worksheet.Cells[x, ++j].Value = sceData.Surname;
+                                    worksheet.Cells[x, ++j].Value = sceData.Email;
 
-                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
-                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
-                                    worksheet.Cells[x, 3].Value = signup.Description;
-                                    worksheet.Cells[x, 4].Value = slot.Description;
-                                    worksheet.Cells[x, 5].Value = slotType;
-                                    worksheet.Cells[x, 6].Value = users[slotCount].SignupDate.ToString("f");
-                                    worksheet.Cells[x, 7].Value = sceData.Username;
-                                    worksheet.Cells[x, 8].Value = sceData.Title;
-                                    worksheet.Cells[x, 9].Value = sceData.Forename;
-                                    worksheet.Cells[x, 10].Value = sceData.Surname;
-                                    worksheet.Cells[x, 11].Value = sceData.GMCNumber;
-
-
-                                    string trust;
-
-                                    /*if (!sceFormData.Trusts.TryGetValue(sceData.Trust, out trust))
+                                    switch (group.Name.ToLower())
                                     {
-                                        trust = "Unknwon";
+                                        case "interviewer":
+                                        case "observer":
+                                            worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
+                                            worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneMobile;
+                                            worksheet.Cells[x, ++j].Value = sceData.PhoneOther;
+                                            worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
+                                            worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
+                                            break;
                                     }
-
-                                    worksheet.Cells[x, 12].Value = trust;*/
-                                    worksheet.Cells[x, 13].Value = sceData.Email;
-                                    worksheet.Cells[x, 14].Value = sceData.SecretaryEmail;
-                                    worksheet.Cells[x, 15].Value = sceData.OtherEmail;
-                                    worksheet.Cells[x, 16].Value = sceData.PhoneWork;
-                                    worksheet.Cells[x, 17].Value = sceData.PhoneMobile;
-                                    worksheet.Cells[x, 18].Value = sceData.PhoneOther;
-                                    worksheet.Cells[x, 19].Value = sceData.Trained ? "Yes" : "No";
-                                    worksheet.Cells[x, 20].Value = sceData.Enabled ? "Yes" : "No";
-
-                                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
-                                    {
-                                        worksheet.Cells[x, 21].Value = sceData.Notes;
-                                    }
-
                                 }
                                 else
                                 {
-                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
-                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
-                                    worksheet.Cells[x, 3].Value = signup.Description;
-                                    worksheet.Cells[x, 4].Value = slot.Description;
-                                    worksheet.Cells[x, 5].Value = slotType;
+                                    worksheet.Cells[x, 1].Value = slot.Description;
+                                    worksheet.Cells[x, 2].Value = slotType;
                                 }
                                 slotCount++;
                                 x++;
                             }
                         }
 
+                        worksheet.Cells.AutoFitColumns();
+
+
+
+                        x++;
                     }
-
-                    worksheet.Cells.AutoFitColumns();
-
-                    return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
-                    {
-                        FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
-                    };
                 }
+
+                return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
+                {
+                    FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
+                };
             }
 
-            throw new HttpException(404, "File not found.");
         }
-
 
         public FileStreamResult InterviewReport(int id)
         {
@@ -796,20 +1106,36 @@ namespace eMotive.MMI.Areas.Admin.Controllers
             var signup = signupManager.Fetch(id);
             if (signup != null)
             {
-                var userIDs = signup.Slots.Where(o => o.ApplicantsSignedUp != null).SelectMany(n => n.ApplicantsSignedUp.Select(m => m.User.ID));
-
+                var userIDs =
+                    signup.Slots.Where(o => o.ApplicantsSignedUp != null)
+                        .SelectMany(n => n.ApplicantsSignedUp.Select(m => m.User.ID));
+                var isApplicant = false;
                 IDictionary<string, SCEReportItem> userDict;
 
                 if (!userIDs.HasContent())
+                {
                     userDict = new Dictionary<string, SCEReportItem>();
+                }
                 else
-                    userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
+                {
+                    if (signup.Group.Name == "A100" || signup.Group.Name == "A101" || signup.Group.Name == "Disability")
+                    {
+                        userDict = reportService.FetchApplicantData(userIDs).ToDictionary(k => k.Username, v => v);
+                        isApplicant = true;
+                    }
+                    else
+                    {
+                        userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
+                    }
+                }
+
 
                 using (var xlPackage = new ExcelPackage())
                 {
-                    string REPORT_NAME = string.Format("{0} {1} Report", signup.Group.Name, signup.Date.ToString("F"));
+                    string REPORT_NAME = string.Format("{0} {1} Report", signup.Group.Name,
+                        signup.Date.ToString("F"));
                     var worksheet = xlPackage.Workbook.Worksheets.Add(REPORT_NAME);
-                  
+
                     int x = 1;
                     using (var r = worksheet.Cells["A1:S1"])
                     {
@@ -829,37 +1155,50 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     worksheet.Cells[x, ++j].Value = "Forename";
                     worksheet.Cells[x, ++j].Value = "Surname";
                     worksheet.Cells[x, ++j].Value = "Email";
-                    worksheet.Cells[x, ++j].Value = "SecretaryEmail";
-                    worksheet.Cells[x, ++j].Value = "OtherEmail";
-                    worksheet.Cells[x, ++j].Value = "PhoneWork";
-                    worksheet.Cells[x, ++j].Value = "PhoneMobile";
-                    worksheet.Cells[x, ++j].Value = "PhoneOther";
-                    worksheet.Cells[x, ++j].Value = "Trained";
-                    worksheet.Cells[x, ++j].Value = "Enabled";
-
-                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                    if (!isApplicant)
                     {
-                        worksheet.Cells[x, 18].Value = "Notes";
+                        worksheet.Cells[x, ++j].Value = "SecretaryEmail";
+                        worksheet.Cells[x, ++j].Value = "OtherEmail";
+                        worksheet.Cells[x, ++j].Value = "PhoneWork";
+                        worksheet.Cells[x, ++j].Value = "PhoneMobile";
+                        worksheet.Cells[x, ++j].Value = "PhoneOther";
+                        worksheet.Cells[x, ++j].Value = "Trained";
+                        worksheet.Cells[x, ++j].Value = "Enabled";
+
+                        if (loggedInUser != null &&
+                            loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                        {
+                            worksheet.Cells[x, 18].Value = "Notes";
+                        }
                     }
 
                     x++;
 
                     foreach (var slot in signup.Slots.OrderBy(n => n.Time))
                     {
-                        var users = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray() : new UserSignup[] { };
+                        var users = slot.ApplicantsSignedUp.HasContent()
+                            ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray()
+                            : new UserSignup[] { };
                         var slotCount = 0;
-                        for (int i = 1; i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces; i++)
+                        for (int i = 1;
+                            i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces;
+                            i++)
                         {
                             string slotType = "Error";
 
                             if (slotCount + 1 <= slot.TotalPlacesAvailable) slotType = "Main";
-                            if (slotCount + 1 > slot.TotalPlacesAvailable && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces) slotType = "Reserve";
-                            if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces) slotType = "Interested";
+                            if (slotCount + 1 > slot.TotalPlacesAvailable &&
+                                slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces)
+                                slotType = "Reserve";
+                            if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces &&
+                                slotCount + 1 <=
+                                slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces)
+                                slotType = "Interested";
 
                             if (users.Length > slotCount)
                             {
-                               // PopulateWorksheetForSingleReport(ref worksheet, x, slot, userDict[users[slotCount].User.Username], slotType,
-                                 //   users[slotCount]);
+                                // PopulateWorksheetForSingleReport(ref worksheet, x, slot, userDict[users[slotCount].User.Username], slotType,
+                                //   users[slotCount]);
                                 j = 0;
                                 var sceData = userDict[users[slotCount].User.Username];
                                 worksheet.Cells[x, ++j].Value = slot.Description;
@@ -870,17 +1209,21 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                 worksheet.Cells[x, ++j].Value = sceData.Forename;
                                 worksheet.Cells[x, ++j].Value = sceData.Surname;
                                 worksheet.Cells[x, ++j].Value = sceData.Email;
-                                worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
-                                worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
-                                worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
-                                worksheet.Cells[x, ++j].Value = sceData.PhoneMobile;
-                                worksheet.Cells[x, ++j].Value = sceData.PhoneOther;
-                                worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
-                                worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
-
-                                if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                                if (!isApplicant)
                                 {
-                                    worksheet.Cells[x, 18].Value = sceData.Notes;
+                                    worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
+                                    worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
+                                    worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
+                                    worksheet.Cells[x, ++j].Value = sceData.PhoneMobile;
+                                    worksheet.Cells[x, ++j].Value = sceData.PhoneOther;
+                                    worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
+                                    worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
+
+                                    if (loggedInUser != null &&
+                                        loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
+                                    {
+                                        worksheet.Cells[x, 18].Value = sceData.Notes;
+                                    }
                                 }
 
                             }
@@ -897,11 +1240,12 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     worksheet.Cells.AutoFitColumns();
 
                     return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
-                        {
-                            FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
-                        };
+                    {
+                        FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
+                    };
                 }
             }
+
 
             throw new HttpException(404, "File not found.");
         }

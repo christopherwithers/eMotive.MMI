@@ -56,7 +56,7 @@ namespace eMotive.Repository.Objects
                 connection.Open();
 
                 //Fetch all signup information which is assigned to any of the passed _groupIds
-                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE `idGroup` IN  @ids;";
+                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE `idGroup` IN  @ids ORDER BY `Date` ASC;";
                 var signUps = connection.Query<Signup, Group, Signup>(sql, (signupDTO, groupDTO) => { signupDTO.Group = groupDTO; return signupDTO; }, new { ids = _groupIds });
 
                 if (signUps.HasContent())
@@ -75,7 +75,7 @@ namespace eMotive.Repository.Objects
 
                         //pull out any applicants assigned to any of the slot ids we have passed in
                        // sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.id=b.id WHERE a.`idSlot` IN @ids;";
-                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids;";
+                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids ORDER BY `SignUpDate`, `idSlot` DESC;";
                         var userSignups = connection.Query<UserSignup>(sql, new { ids = qIds });
 
                         if (userSignups.HasContent())
@@ -138,7 +138,7 @@ namespace eMotive.Repository.Objects
                 connection.Open();
 
                 //Fetch all signup information which is assigned to any of the passed _groupIds
-                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE a.`id` IN  @ids;";
+                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE a.`id` IN  @ids ORDER BY `Date` ASC;";
                 var signUps = connection.Query<Signup, Group, Signup>(sql, (signupDTO, groupDTO) => { signupDTO.Group = groupDTO; return signupDTO; }, new { ids = _ids });
 
                 if (signUps.HasContent())
@@ -157,7 +157,7 @@ namespace eMotive.Repository.Objects
 
                         //pull out any applicants assigned to any of the slot ids we have passed in
                         // sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.id=b.id WHERE a.`idSlot` IN @ids;";
-                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids;";
+                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids ORDER BY `SignUpDate`, `idSlot` DESC;";
                         var userSignups = connection.Query<UserSignup>(sql, new { ids = qIds });
 
                         if (userSignups.HasContent())
@@ -220,7 +220,7 @@ namespace eMotive.Repository.Objects
                 connection.Open();
 
                 //Fetch all signup information which is assigned to any of the passed _groupIds
-                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE `IsTraining` = true;";
+                var sql = "SELECT * FROM `signup` a INNER JOIN `groups` b ON a.`idGroup` = b.`id` WHERE `IsTraining` = true ORDER BY `Date` ASC;";
                 var signUps = connection.Query<Signup, Group, Signup>(sql, (signupDTO, groupDTO) => { signupDTO.Group = groupDTO; return signupDTO; });
 
                 if (signUps.HasContent())
@@ -239,7 +239,7 @@ namespace eMotive.Repository.Objects
 
                         //pull out any applicants assigned to any of the slot ids we have passed in
                         // sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.id=b.id WHERE a.`idSlot` IN @ids;";
-                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids;";
+                        sql = "SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate`FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids ORDER BY `SignUpDate`, `idSlot` DESC;";
                         var userSignups = connection.Query<UserSignup>(sql, new { ids = qIds });
 
                         if (userSignups.HasContent())
@@ -371,7 +371,7 @@ namespace eMotive.Repository.Objects
                         //pull out any applicants assigned to any of the slot ids we have passed in
                         //    sql = string.Format("SELECT * FROM `{0}`.`applicant_has_slots` WHERE `idSlot` IN @ids;", DatabaseName);
 
-                        sql = @"SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate` FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids;";
+                        sql = @"SELECT a.`id`, a.`idslot`, a.`idUser`, a.`SignUpDate` FROM `UserHasSlots` a INNER JOIN `users` b ON a.idUser=b.id WHERE a.`idSlot` IN @ids ORDER BY `SignUpDate`, `idSlot` DESC;";
 
                         var userSignups = connection.Query<UserSignup>(sql, new { ids = qIds });
 
@@ -536,7 +536,7 @@ namespace eMotive.Repository.Objects
             {
                 connection.Open();
 
-                const string sql = "SELECT a.`id`, b.`id` AS 'IdSlot', c.`id` AS 'IdSignUp', c.`Date`, c.`Description`, a.`SignUpDate` FROM `userhasslots` a INNER JOIN `slot` b ON a.`idSlot` = b.`id` INNER JOIN `signup` c ON b.`idSignUp` = c.`id` WHERE idSlot IN (SELECT `id` FROM `slot` WHERE idSignUp IN (SELECT `id` FROM `signup` WHERE idGroup IN @idGroups)) AND idUser=@idUser";
+                const string sql = "SELECT a.`id`, b.`id` AS 'IdSlot', c.`id` AS 'IdSignUp', c.`Date`, c.`Description`, a.`SignUpDate` FROM `userhasslots` a INNER JOIN `slot` b ON a.`idSlot` = b.`id` INNER JOIN `signup` c ON b.`idSignUp` = c.`id` WHERE idSlot IN (SELECT `id` FROM `slot` WHERE idSignUp IN (SELECT `id` FROM `signup` WHERE idGroup IN @idGroups)) AND idUser=@idUser ORDER BY c.`Date` ASC";
 
                 return connection.Query<UserSignup>(sql, new { idGroups = _groupIds, idUser = _userId }).SingleOrDefault();
             }
@@ -548,7 +548,7 @@ namespace eMotive.Repository.Objects
             {
                 connection.Open();
 
-                const string sql = "SELECT a.`id`, b.`id` AS 'IdSlot', c.`id` AS 'IdSignUp', c.`Date`, c.`Description`, a.`SignUpDate`  FROM `userhasslots` a INNER JOIN `slot` b ON a.`idSlot` = b.`id` INNER JOIN `signup` c ON b.`idSignUp` = c.`id` WHERE idSlot IN (SELECT `id` FROM `slot` WHERE idSignUp IN (SELECT `id` FROM `signup` WHERE idGroup IN @idGroups)) AND idUser=@idUser";
+                const string sql = "SELECT a.`id`, b.`id` AS 'IdSlot', c.`id` AS 'IdSignUp', c.`Date`, c.`Description`, a.`SignUpDate`  FROM `userhasslots` a INNER JOIN `slot` b ON a.`idSlot` = b.`id` INNER JOIN `signup` c ON b.`idSignUp` = c.`id` WHERE idSlot IN (SELECT `id` FROM `slot` WHERE idSignUp IN (SELECT `id` FROM `signup` WHERE idGroup IN @idGroups)) AND idUser=@idUser ORDER BY c.`Date` ASC";
 
                 return connection.Query<UserSignup>(sql, new { idGroups = _groupIds, idUser = _userId });
             }

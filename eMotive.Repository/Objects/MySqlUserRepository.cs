@@ -264,7 +264,7 @@ namespace eMotive.Repository.Objects
             }*/
                     const string sql = "INSERT INTO `applicantReference` (`TermCode`, `ApplicationDate`, `ApplicantId`, `PersonalID`, `ApplicantPrefix`, `Surname`, `FirstName`, `DateOfBirth`, `Age`, `Gender`, `DisabilityCode`, `DisabilityDesc`, `ResidenceCode`, `NationalityDesc`, `CorrespondenceAddr1`, `CorrespondenceAddr2`, `CorrespondenceAddr3`, `CorrespondenceCity`, `CorrespondenceNationDesc`, `CorrespondencePostcode`, `EmailAddress`, `PreviousSchoolDesc`, `SchoolAddressCity`, `SchoolLEADescription`) VALUES (@TermCode, @ApplicationDate, @ApplicantId, @PersonalID, @ApplicantPrefix, @Surname, @FirstName, @DateOfBirth, @Age, @Gender, @DisabilityCode, @DisabilityDesc, @ResidenceCode, @NationalityDesc, @CorrespondenceAddr1, @CorrespondenceAddr2, @CorrespondenceAddr3, @CorrespondenceCity, @CorrespondenceNationDesc, @CorrespondencePostcode, @EmailAddress, @PreviousSchoolDesc, @SchoolAddressCity, @SchoolLEADescription);";
 
-                    var success = connection.Execute(sql, _applicantData) > 0;
+                    var success = connection.Execute(sql, _applicantData.Where(n => !string.IsNullOrEmpty(n.PersonalID))) > 0;
 
                     transactionScope.Complete();
 

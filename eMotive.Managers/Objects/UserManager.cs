@@ -123,7 +123,7 @@ namespace eMotive.Managers.Objects
                         Enabled = true,
                         Forename = applicantData.Firstname,
                         Surname = applicantData.Surname,
-                        Roles = new [] {new Role{ Name = "Applicant", ID = 4, Colour = "63C763"} },
+                        Roles = new[] { new Role { Name = "Applicant", ID = 8, Colour = "47B6FF" } },
                         Username = applicantData.PersonalID
                     };
                     int id;

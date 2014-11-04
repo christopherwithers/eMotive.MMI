@@ -27,18 +27,16 @@ namespace eMotive.MMI.Controllers
        // [Inject]
         public INotificationService NotificationService { get; set; }
 
-       /* public ActionResult Disability()
+        public ActionResult Disability()
         {
-            var signups = signupManager.FetchSignupInformation(User.Identity.Name);
+            var signups = signupManager.FetchSignupInformation(User.Identity.Name, 5);//todo: how to make this more meaningful
 
             var pageText = pageManager.FetchPartials(new[] { "Disability-Session-List-header", "Disability-Session-List-Footer" }).ToDictionary(k => k.Key, v => v.Text);
-            signups.HeaderText = pageText["Disability-Session-List-header"];
-            signups.FooterText = pageText["Disability-Session-List-Footer"];
-
-       //     signups.HeaderText = pageManager.Fetch("Disability-Session-List-header").Text;
+            signups.HeaderText = pageText["Disability-Session-List-header"] ?? string.Empty;
+            signups.FooterText = pageText["Disability-Session-List-Footer"] ?? string.Empty;
             
             return View(signups);
-        }*/
+        }
 
         public ActionResult Test()
         {

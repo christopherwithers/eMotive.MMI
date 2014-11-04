@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Extensions;
 
 namespace eMotive.Models.Objects.Signups
 {
@@ -51,25 +52,36 @@ namespace eMotive.Models.Objects.Signups
                 var totalMainRemaining = 0;
                 var totalReserveRemaining = 0;
 
-                foreach (var slot in SignupNumbers)
+                if (SignupNumbers.HasContent())
                 {
-
-                    totalMainRemaining += slot.TotalSlotsAvailable - slot.NumberSignedUp < 0 ? 0 : slot.TotalSlotsAvailable - slot.NumberSignedUp;
-
-                    if (totalMainRemaining >= slot.NumberSignedUp)
+                    foreach (var slot in SignupNumbers)
                     {
-                        totalReserveRemaining += slot.TotalReserveAvailable;
+
+                        totalMainRemaining += slot.TotalSlotsAvailable - slot.NumberSignedUp < 0
+                            ? 0
+                            : slot.TotalSlotsAvailable - slot.NumberSignedUp;
+
+                        if (totalMainRemaining >= slot.NumberSignedUp)
+                        {
+                            totalReserveRemaining += slot.TotalReserveAvailable;
+                        }
+                        else
+                        {
+                            totalReserveRemaining += (slot.TotalSlotsAvailable + slot.TotalReserveAvailable) -
+                                                     slot.NumberSignedUp;
+                        }
+                        // if (slot.NumberSignedUp < slot.TotalSlotsAvailable)
+                        // {
+                        //    inMain = true;
+                        // break;
+                        // inReserve &= true;
+                        // }
                     }
-                    else
-                    {
-                        totalReserveRemaining += (slot.TotalSlotsAvailable + slot.TotalReserveAvailable) - slot.NumberSignedUp;
-                    }
-                    // if (slot.NumberSignedUp < slot.TotalSlotsAvailable)
-                    // {
-                    //    inMain = true;
-                    // break;
-                    // inReserve &= true;
-                    // }
+                }
+                else
+                {
+                    totalMainRemaining = TotalSlotsAvailable;
+                    totalReserveRemaining = TotalReserveAvailable;
                 }
 
                 if (totalMainRemaining > 0)
@@ -77,6 +89,12 @@ namespace eMotive.Models.Objects.Signups
 
                    // totalMainRemaining = SignupNumbers.Sum(n => n.TotalSlotsAvailable - n.NumberSignedUp);
                    // totalReserveRemaining = SignupNumbers.Sum(n => n.TotalReserveAvailable);
+                    if (TotalInterestedAvaiable == 0 && TotalReserveAvailable == 0)
+                    {
+                        return string.Format("{1} {0} Available",
+                            "PLACE".SingularOrPlural(TotalSlotsAvailable - NumberSignedUp),
+                            TotalSlotsAvailable - NumberSignedUp);
+                    }
 
                     return string.Format("{1} {0} Available ({2} Main, {3} Reserve)",
                         "PLACE".SingularOrPlural(TotalSlotsAvailable + TotalReserveAvailable - NumberSignedUp),

@@ -69,12 +69,11 @@
             <td>@Html.ActionLink("Download Report", "InterviewersAndObserversNotSignedUp", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
         </tr>
         <!-- <tr>
-             <td>SCEs not signed up to a session</td>
-             <td>Html.ActionLink("Download Report", "NotSignedUp", "Reports", new { area = "admin" }, new { class = "btn btn-default" })</td>
-         </tr>-->
+                 <td>SCEs not signed up to a session</td>
+                 <td>Html.ActionLink("Download Report", "NotSignedUp", "Reports", new { area = "admin" }, new { class = "btn btn-default" })</td>
+             </tr>-->
     </tbody>
 </table>
-
 
 <h4>Full Session Report</h4>
 <table class="table table-striped table-hover table-bordered">
@@ -88,6 +87,10 @@
         <tr>
             <td>Full Session Report</td>
             <td>@Html.ActionLink("Download Report", "FullInterviewReport", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
+        </tr>
+        <tr>
+            <td>Sessions With Space Report</td>
+            <td>@Html.ActionLink("Download Report", "SignupsWithEmptySpaces", "Reports", new { area = "admin" }, new { @class = "btn btn-default" })</td>
         </tr>
     </tbody>
 </table>

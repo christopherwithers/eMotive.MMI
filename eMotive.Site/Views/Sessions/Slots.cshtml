@@ -15,14 +15,14 @@
     <tbody>
         @foreach (var slot in Model.Signup.Slots)
         {
-            <tr id="slot_class_@slot.id" class="@Html.Raw(Model.StatusStyle(slot.id, false))" >
+            <tr id="slot_class_@slot.id" class="@Html.Raw(Model.StatusStyle(slot.id))" >
                 <td id="badges_@slot.id" style="width: 60px;">
                     @Html.Raw(Model.HomeViewRowBadge(slot.id))
                 </td>
                 <td>@slot.Description</td>
                 <td id="slot_value_@slot.id">@slot.SlotsAvailableString</td>
                 <td>
-                    <button id="slot_button_@slot.id" onclick="@Html.Raw(Model.AssignStatusFunctionality(slot.id))" class="btn btn-@Html.Raw(Model.StatusStyle(slot.id, true))">@Model.SlotStatusName(slot.id)</button>
+                    <button id="slot_button_@slot.id" onclick="@Html.Raw(Model.AssignStatusFunctionality(slot.id))" class="btn btn-@Html.Raw(Model.StatusStyle(slot.id))">@Model.SlotStatusName(slot.id)</button>
                 </td>
             </tr>
         }

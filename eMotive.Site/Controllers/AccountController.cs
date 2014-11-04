@@ -14,7 +14,10 @@ using eMotive.Services.Interfaces;
 using Extensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using ServiceStack;
 using ServiceStack.Mvc;
+using ServiceStack.ServiceInterface.Auth;
+using ServiceStack.WebHost.Endpoints;
 
 namespace eMotive.MMI.Controllers
 {
@@ -129,6 +132,19 @@ namespace eMotive.MMI.Controllers
                         IsPersistent = true
                     }, identity);
 
+
+                    using (var authService = AppHostBase.Instance.TryResolve<AuthService>())
+                    {
+                        authService.RequestContext = System.Web.HttpContext.Current.ToRequestContext();
+
+                        var response = authService.Authenticate(new Auth
+                        {
+                            UserName = user.Username,
+                            Password = login.Password,
+                            RememberMe = login.RememberMe
+                        });
+
+                    }
                     
                    // var auth = new AuthService();
 

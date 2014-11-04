@@ -155,9 +155,16 @@ namespace eMotive.MMI.Controllers
                         new MenuItem
                         {
                             ID = 2,
-                            Name = "Sessions",
+                            Name = "Interview Dates",
                             URL = Url.Action("Signups", "Interviews"), //"/SCE/Interviews/Signups",
-                            Title = "View Session Slots"
+                            Title = "View Interview Dates"
+                        },
+                        new MenuItem
+                        {
+                            ID = 2,
+                            Name = "Disability Dates",
+                            URL = Url.Action("Disability", "Interviews"), //"/SCE/Interviews/Signups",
+                            Title = "View Disability Interview Dates"
                         },
                         /*new MenuItem
                                     {

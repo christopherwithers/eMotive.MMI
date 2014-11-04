@@ -573,8 +573,9 @@ namespace eMotive.Managers.Objects
                 return null;
             }
 
-            var userSignUp = FetchuserSignups(user.ID, profile.Groups.Select(n => n.ID));
-            var signups = FetchSignupsByGroup(profile.Groups.Select(n => n.ID));
+          //  var userSignUp = FetchuserSignups(user.ID, profile.Groups.Select(n => n.ID));
+            var userSignUp = FetchuserSignups(user.ID, new[] {_idGroup});
+            var signups = FetchSignupsByGroup(new[] {_idGroup});
 
             bool signedup = false;
             int signupId = 0;

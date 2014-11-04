@@ -8,6 +8,7 @@ namespace eMotive.Services.Interfaces
         IEnumerable<SCEReportItem> FetchAllSCEs();
         IEnumerable<SCEReportItem> FetchUsersNotSignedUp();
         IEnumerable<SCEReportItem> FetchSCEData(IEnumerable<int> _userIds);
+        IEnumerable<SCEReportItem> FetchApplicantData(IEnumerable<int> _userIds);
 
         IEnumerable<InterviewerReportItem> FetchAllInterviewers();
         IEnumerable<InterviewerReportItem> FetchInterviewersNotSignedUp();

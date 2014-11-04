@@ -315,17 +315,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 return new FineUploaderResult(false, error: ex.Message);
             }
 
-            documentManager.SaveDocumentInformation(new UploadedDocument
-            {
-                Name = filename,
-                DateUploaded = DateTime.Now,
-                Extension = Path.GetExtension(upload.Filename),
-                Location = path,
-                ModifiedName = modifiedFilename,
-                Reference = UploadReference.A100Applicants,
-                UploadedByUsername = User.Identity.Name
 
-            });
 
             var workBook = new FileInfo(filePath);
 
@@ -352,10 +342,27 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 }
 
                 if (!applicants.HasContent())
-                    return new FineUploaderResult(true, error: "An error occurred. The applicant data could not be saved.");
+                    return new FineUploaderResult(false, error: "An error occurred. The applicant data could not be saved.");
 
-                var success = userManager.CreateApplicantAccounts(applicants, new[] { 1, 2 });
 
+
+
+                var success = userManager.CreateApplicantAccounts(applicants, new[] { 3, 5 });
+
+                if (success)
+                {
+                    documentManager.SaveDocumentInformation(new UploadedDocument
+                    {
+                        Name = filename,
+                        DateUploaded = DateTime.Now,
+                        Extension = Path.GetExtension(upload.Filename),
+                        Location = path,
+                        ModifiedName = modifiedFilename,
+                        Reference = UploadReference.A100Applicants,
+                        UploadedByUsername = User.Identity.Name
+
+                    });
+                }
 
                 //  userManager.SaveApplicantData(applicants);
 
@@ -404,18 +411,6 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 return new FineUploaderResult(false, error: ex.Message);
             }
 
-            documentManager.SaveDocumentInformation(new UploadedDocument
-            {
-                Name = filename,
-                DateUploaded = DateTime.Now,
-                Extension = Path.GetExtension(upload.Filename),
-                Location = path,
-                ModifiedName = modifiedFilename,
-                Reference = UploadReference.A101Applicants,
-                UploadedByUsername = User.Identity.Name
-
-            });
-
             var workBook = new FileInfo(filePath);
 
             using (var xlPackage = new ExcelPackage(workBook))
@@ -441,10 +436,25 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 }
 
                 if (!applicants.HasContent())
-                    return new FineUploaderResult(true, error: "An error occurred. The applicant data could not be saved.");
+                    return new FineUploaderResult(false, error: "An error occurred. The applicant data could not be saved.");
 
-                var success = userManager.CreateApplicantAccounts(applicants, new[] { 2, 3 });
+                var success = userManager.CreateApplicantAccounts(applicants, new[] { 4, 5 });
 
+
+                if (success)
+                {
+                    documentManager.SaveDocumentInformation(new UploadedDocument
+                    {
+                        Name = filename,
+                        DateUploaded = DateTime.Now,
+                        Extension = Path.GetExtension(upload.Filename),
+                        Location = path,
+                        ModifiedName = modifiedFilename,
+                        Reference = UploadReference.A101Applicants,
+                        UploadedByUsername = User.Identity.Name
+
+                    });
+                }
 
                 //  userManager.SaveApplicantData(applicants);
 
