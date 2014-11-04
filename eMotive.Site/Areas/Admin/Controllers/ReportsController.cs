@@ -213,7 +213,8 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
 
                     var j = 0;
-
+                    worksheet.Cells[x, ++j].Value = "Signup Date";
+                    worksheet.Cells[x, ++j].Value = "Description";
                     worksheet.Cells[x, ++j].Value = "Slot";
                     worksheet.Cells[x, ++j].Value = "Place";
                     worksheet.Cells[x, ++j].Value = "Date Signed Up";
@@ -297,6 +298,9 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                                     j = 0;
                                     var sceData = userDict[users[slotCount].User.Username];
+
+                                    worksheet.Cells[x, ++j].Value = signup.Date.ToString("D");
+                                    worksheet.Cells[x, ++j].Value = signup.Description;
                                     worksheet.Cells[x, ++j].Value = slot.Description;
                                     worksheet.Cells[x, ++j].Value = slotType;
                                     worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
