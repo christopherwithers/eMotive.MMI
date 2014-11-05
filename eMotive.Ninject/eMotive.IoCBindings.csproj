@@ -69,13 +69,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Funq\FunqBindings.cs" />
-    <Compile Include="Ninject\eMotiveModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eMotive.Managers\eMotive.Managers.csproj">
       <Project>{D0F5F6DA-7B19-4DC7-968C-B386E7602708}</Project>
       <Name>eMotive.Managers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eMotive.Reports\eMotive.Reports.csproj">
+      <Project>{a229d477-846a-48da-a070-aca91d3cda83}</Project>
+      <Name>eMotive.Reports</Name>
     </ProjectReference>
     <ProjectReference Include="..\eMotive.Repository\eMotive.Repository.csproj">
       <Project>{3E476FBE-3562-499E-982C-868BF23414EA}</Project>

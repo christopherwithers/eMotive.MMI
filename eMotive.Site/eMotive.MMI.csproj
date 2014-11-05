@@ -1260,6 +1260,7 @@
     <Content Include="Views\Applicant\Error.cshtml" />
     <Content Include="Views\Applicant\Index.cshtml" />
     <Content Include="Views\Applicant\Success.cshtml" />
+    <Content Include="Views\Test\DBTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AngularJs\Modules\" />
@@ -1297,6 +1298,10 @@
     <ProjectReference Include="..\eMotive.Ninject\eMotive.IoCBindings.csproj">
       <Project>{0A01CAC6-B8AC-4957-8E91-DF8B0B8BFAE7}</Project>
       <Name>eMotive.IoCBindings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eMotive.Reports\eMotive.Reports.csproj">
+      <Project>{a229d477-846a-48da-a070-aca91d3cda83}</Project>
+      <Name>eMotive.Reports</Name>
     </ProjectReference>
     <ProjectReference Include="..\eMotive.Repository\eMotive.Repository.csproj">
       <Project>{3E476FBE-3562-499E-982C-868BF23414EA}</Project>

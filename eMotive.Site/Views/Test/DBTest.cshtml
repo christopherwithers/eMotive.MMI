@@ -1,0 +1,25 @@
+﻿@using eMotive.Reports.Objects.Database;
+@model Database
+@{
+    ViewBag.Title = "DBTest";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model != null)
+{
+    <h2>@Model.Name</h2>
+    
+    foreach (var table in Model.Tables)
+     {
+         <ul>
+             <li><strong>@table.Name</strong><br/>
+                 <ul>
+                     @foreach (var column in table.Columns)
+                     {
+                         <li>&nbsp;&nbsp;&nbsp;@column.Field (@column.Type)</li>
+                     }
+                 </ul><br/>
+             </li>
+         </ul>  
+     }
+}

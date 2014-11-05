@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMotive.Api", "aMotive.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMotive.Hubs", "eMotive.Hubs\eMotive.Hubs.csproj", "{425BD374-8441-45D4-99B2-D567B4FF0A64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMotive.Reports", "eMotive.Reports\eMotive.Reports.csproj", "{A229D477-846A-48DA-A070-ACA91D3CDA83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{425BD374-8441-45D4-99B2-D567B4FF0A64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{425BD374-8441-45D4-99B2-D567B4FF0A64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{425BD374-8441-45D4-99B2-D567B4FF0A64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A229D477-846A-48DA-A070-ACA91D3CDA83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A229D477-846A-48DA-A070-ACA91D3CDA83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A229D477-846A-48DA-A070-ACA91D3CDA83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A229D477-846A-48DA-A070-ACA91D3CDA83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

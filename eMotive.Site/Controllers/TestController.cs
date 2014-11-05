@@ -9,6 +9,7 @@ using eMotive.MMI.Common.Providers;
 using eMotive.Models.Objects.Certificates;
 using eMotive.Models.Objects.Uploads;
 using eMotive.Models.Objects.Users;
+using eMotive.Reports.Interfaces;
 using eMotive.SCE.Infrastructure;
 using eMotive.Services.Interfaces;
 using Extensions;
@@ -27,10 +28,11 @@ namespace eMotive.MMI.Controllers
         private readonly IGroupManager groupManager;
         private readonly IDocumentManagerService documentManager;
         private readonly INotificationService notificationManager;
+        private readonly IDatabaseManager databaseManager;
         
         //
         // GET: /Test/
-        public TestController(IUserManager _userManager, IRoleManager _rolemanager, IAccountManager _accountManager, IDocumentManagerService _documentManager, IGroupManager _groupManager, INotificationService _notificationManager)
+        public TestController(IUserManager _userManager, IRoleManager _rolemanager, IAccountManager _accountManager, IDocumentManagerService _documentManager, IGroupManager _groupManager, INotificationService _notificationManager, IDatabaseManager _databaseManager)
         {
             userManager = _userManager;
             documentManager = _documentManager;
@@ -38,6 +40,7 @@ namespace eMotive.MMI.Controllers
             notificationManager = _notificationManager;
             rolemanager = _rolemanager;
             accountManager = _accountManager;
+            databaseManager = _databaseManager;
         }
 
         public ActionResult Index()
@@ -76,6 +79,11 @@ namespace eMotive.MMI.Controllers
         public ActionResult UploadTest()
         {
             return View();
+        }
+
+        public ActionResult DBTest()
+        {
+            return View(databaseManager.GetDatabase("saasdsa"));
         }
 
         public ActionResult SignalRTest()

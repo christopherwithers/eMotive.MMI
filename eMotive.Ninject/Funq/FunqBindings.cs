@@ -3,6 +3,7 @@ using Cache.Interfaces;
 using Cache.Objects;
 using eMotive.Managers.Interfaces;
 using eMotive.Managers.Objects;
+using eMotive.Reports.Objects.Managers;
 using eMotive.Repository.Interfaces;
 using eMotive.Repository.Objects;
 using eMotive.Search.Interfaces;
@@ -10,6 +11,7 @@ using eMotive.Search.Objects;
 using eMotive.Services;
 using eMotive.Services.Interfaces;
 using eMotive.Services.Objects;
+using eMotive.Reports.Interfaces;
 using Funq;
 
 namespace eMotive.IoCBindings.Funq
@@ -30,6 +32,8 @@ namespace eMotive.IoCBindings.Funq
             container.Register<INewsRepository>(c => new MySqlNewsRepository(connectionString)).ReusedWithin(ReuseScope.Request);
             container.Register<IPageRepository>(c => new MySqlPageRepository(connectionString)).ReusedWithin(ReuseScope.Request);
             container.Register<ISessionRepository>(c => new MySqlSessionRepository(connectionString)).ReusedWithin(ReuseScope.Request);
+
+            container.Register<IDatabaseManager>(c => new MySqlDatabaseManager(connectionString)).ReusedWithin(ReuseScope.Request);
 
 
             container.Register<IUserManager>(c => new UserManager(c.Resolve<IUserRepository>(), c.Resolve<IAccountManager>(), c.Resolve<ISearchManager>(), c.Resolve<IGroupManager>())
