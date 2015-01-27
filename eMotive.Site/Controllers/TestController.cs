@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
 using Rotativa;
 using ServiceStack.Mvc;
+using ServiceStack.ServiceHost;
 
 namespace eMotive.MMI.Controllers
 {

@@ -31,7 +31,8 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
-
+    @Html.HiddenFor(model => model.ExaminationNumber)
+    
     <fieldset>
         @Html.HiddenFor(model => model.ID)
 
@@ -39,13 +40,6 @@
             <label class="control-label" for="Username">Username</label>
             <div class="controls">
                 @Html.TextBoxFor(model => model.Username, new { placeholder = "Username"})
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <label class="control-label" for="ExaminationNumber">Examination Number</label>
-            <div class="controls">
-                @Html.TextBoxFor(model => model.ExaminationNumber, new { placeholder = "Examination Number" })
             </div>
         </div>
 

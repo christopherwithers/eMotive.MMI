@@ -7,6 +7,7 @@
         public string Forename { get; set; }
         public string Surname { get; set; }
         public string GMCNumber { get; set; }
+        public string ExaminationNumber { get; set; }
         public int MainSpecialty { get; set; }
         public string Email { get; set; }
         public string SecretaryEmail { get; set; }

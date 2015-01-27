@@ -47,13 +47,34 @@ namespace eMotive.Services.Objects
 
                 return connection.Query<SCEReportItem>(sql, new {ids = _userIds});
             }
-        }
+        }/*        public string Username { get; set; }
+        public string Title { get; set; }
+        public string Forename { get; set; }
+        public string Surname { get; set; }
+        public string GMCNumber { get; set; }
+        public int MainSpecialty { get; set; }
+        public string Email { get; set; }
+        public string SecretaryEmail { get; set; }
+        public string OtherEmail { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Postcode { get; set; }
+        public string PhoneWork { get; set; }
+        public string PhoneMobile { get; set; }
+        public string PhoneOther { get; set; }
+        public string Trust { get; set; }
+        public string Grade { get; set; }
+        public bool Trained { get; set; }
+        public bool Enabled { get; set; }
+        public string Notes { get; set; }*/
 
         public IEnumerable<SCEReportItem> FetchApplicantData(IEnumerable<int> _userIds)
         {
             using (var connection = new MySqlConnection(connectionString))
             {
-                const string sql = "SELECT * FROM `Users` a INNER JOIN `applicantreference` b ON a.`username`=b.`PersonalID` WHERE a.`ID` IN @ids GROUP BY Username;";
+                const string sql = "SELECT a.`username`, a.`forename`, a.`surname`, a.`email`, `applicantprefix` as 'Title', `CorrespondenceAddr1` AS 'Address1', `CorrespondenceAddr2` AS 'Address2', `CorrespondenceCity` AS 'City', `CorrespondencePostcode` AS 'Postcode', `PreviousSchoolDesc` AS 'Trust', `SchoolAddressCity` AS 'Grade'  FROM `Users` a INNER JOIN `applicantreference` b ON a.`username`=b.`PersonalID` WHERE a.`ID` IN @ids GROUP BY Username;";
 
                 return connection.Query<SCEReportItem>(sql, new { ids = _userIds });
             }

@@ -118,7 +118,7 @@ else
                                 {
                                     <li><a href="#" onclick="UserActions.FetchNotes('@user.Username')">Notes</a></li>
                                 }
-                                @if (user.Roles.Any(n => n.Name == "Interviewer"))
+                                @if (user.Roles.Any(n => n.Name == "Interviewer" || n.Name == "Applicant"))
                                 {
                                     <!-- <li>Html.ActionLink("Create Applicant Letter", "GenerateApplicantLetter", "Users", new {area = "admin", username = user.Username}, null)</li> -->
                                     <li>@Html.ActionLink("Third Party Signup", "UserSessions", "Signups", new { area = "admin", username = user.Username }, null)</li>

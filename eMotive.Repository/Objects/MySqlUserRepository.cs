@@ -495,13 +495,19 @@ namespace eMotive.Repository.Objects
         {
             using (var connection = new MySqlConnection(connectionString))
             {
+                using (var transactionScope = new TransactionScope())
+                {
                     connection.Open();
-                    var sql = "INSERT INTO `scereference` (`idUser`, `ExaminationNumber`, `Title`, `SecretaryEmail`, `OtherEmail`, `MainSpecialty`, `Trust`, `Grade`, `Address1`, `Address2`, `City`, `Region`, `PostCode`, `PhoneWork`, `PhoneMobile`, `PhoneOther`, `Trained`,`GMCNumber`) VALUES (@idUser, @ExaminationNumber, @Title, @SecretaryEmail, @OtherEmail, @MainSpecialty, @Trust, @Grade, @Address1, @Address2, @City, @Region, @PostCode, @PhoneWork, @PhoneMobile, @PhoneOther, @Trained, @GMCNumber);";
+                    var sql = "SELECT CAST(MAX(`ExaminationNumber`)AS UNSIGNED INTEGER) FROM `scereference`;";
+
+                    var maxExamNum = Convert.ToInt32(connection.Query<ulong>(sql).SingleOrDefault());
+                    sql =
+                        "INSERT INTO `scereference` (`idUser`, `ExaminationNumber`, `Title`, `SecretaryEmail`, `OtherEmail`, `MainSpecialty`, `Trust`, `Grade`, `Address1`, `Address2`, `City`, `Region`, `PostCode`, `PhoneWork`, `PhoneMobile`, `PhoneOther`, `Trained`,`GMCNumber`) VALUES (@idUser, @ExaminationNumber, @Title, @SecretaryEmail, @OtherEmail, @MainSpecialty, @Trust, @Grade, @Address1, @Address2, @City, @Region, @PostCode, @PhoneWork, @PhoneMobile, @PhoneOther, @Trained, @GMCNumber);";
 
                     var success = connection.Execute(sql, new
                     {
                         idUser = _sce.IdUser,
-                        ExaminationNumber = _sce.ExaminationNumber,
+                        ExaminationNumber = ++maxExamNum,
                         GMCNumber = _sce.GMCNumber,
                         Title = _sce.Title,
                         SecretaryEmail = _sce.SecretaryEmail,
@@ -520,8 +526,10 @@ namespace eMotive.Repository.Objects
                         Trained = _sce.Trained
                     }) > 0;
 
+                    transactionScope.Complete();
                     return success;
-                
+                }
+
             }
         }
 

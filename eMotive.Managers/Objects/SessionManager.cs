@@ -463,97 +463,6 @@ namespace eMotive.Managers.Objects
 
         }
 
-
-
-        /*
-        public UserSignupView FetchSignupInformation(string _username)
-        {
-            var signupCollection = new Collection<SignupState>();
-            var user = userManager.Fetch(_username);
-
-            if (user == null)
-            {//TODO: ERROR MESSAGE HERE!!
-                return null;
-            }
-
-            var profile = userManager.FetchProfile(_username);
-            var userSignUp = FetchuserSignups(user.ID, profile.Groups.Select(n => n.ID));
-            var signups = FetchSignupsByGroup(profile.Groups.Select(n => n.ID));
-
-            bool signedup = false;
-            int signupId = 0;
-            if (signups.HasContent())
-            {
-                //signupCollection
-                foreach (var item in signups)
-                {//TODO: NEED TO CHECK IF SLOT IS NULL! I>E ANY SLOTS ASSIGNED TO SIGNUP
-                    //Logic to deal with applicants and closed signups
-                    //if a signup is closed, we hide it from applicants UNLESS they are signed up to a slot in that signup
-                    if (!item.Closed || userSignUp != null && userSignUp.Any(n => n.IdSignUp == item.id))
-                    {
-                        var signup = new SignupState
-                        {
-                            ID = item.id,
-                            Date = item.Date,
-                            SignedUp =
-                                item.Slots.Any(
-                                    n =>
-                                    n.UsersSignedUp.HasContent() &&
-                                    n.UsersSignedUp.Any(m => m != null && m.IdUser == user.ID)),
-                            TotalSlotsAvailable = item.Slots.Sum(n => n.PlacesAvailable),
-                            TotalReserveAvailable = item.Slots.Sum(n => n.ReservePlaces),
-                            TotalInterestedAvaiable = item.Slots.Sum(n => n.InterestedPlaces),
-                            NumberSignedUp = item.Slots.Sum(n => n.UsersSignedUp.HasContent() ? n.UsersSignedUp.Count() : 0),
-                            MergeReserve = item.MergeReserve,
-                            OverrideClose = item.OverrideClose,
-                            DisabilitySignup = item.Group.DisabilitySignups,
-                            Closed = item.Closed || item.CloseDate < DateTime.Now,
-                            Description = item.Description,
-                     //       SignupType = item.
-                            Group = new Group { AllowMultipleSignups = item.Group.AllowMultipleSignups, Description = item.Group.Description, ID = item.Group.ID, Name = item.Group.Name}
-                        };
-
-                        if (signup.SignedUp)
-                        {
-                            signup.SignupTypes = new Collection<SlotType>();
-                            signedup = true;
-                            signupId = signup.ID;
-                           // var usersSlots = item.Slots.Where(n => n.UsersSignedUp.HasContent()).Select(m => m.UsersSignedUp.Where(o => o.IdUser == user.ID));
-
-                            foreach (var userSignup in item.Slots)
-                            {
-                                if (userSignup.UsersSignedUp.HasContent() && userSignup.UsersSignedUp.Any(n => n.IdUser == user.ID))
-                                {
-                                 //   var usersIndex = userSignup.UsersSignedUp.FindIndex(n => n.IdUser == user.ID);
-
-                                    // if (usersIndex != null)
-                                    // {
-
-
-
-
-                                    signup.SignupTypes.Add(GenerateHomeViewSlotStatus(userSignup, user.ID));//usersIndex.ToString());
-                                    // }
-                                }
-                            }
-                        }
-
-                        signupCollection.Add(signup);
-                    }
-                }
-            }
-
-            var signupView = new UserSignupView
-            {
-                SignupInformation = signupCollection,
-                SignupID = signupId,
-                SignedUp = signedup,
-            };
-
-            return signupView;
-
-        }
-*/
         public UserSignupView FetchSignupInformation(string _username, int _idGroup)
         {
             var signupCollection = new Collection<SignupState>();
@@ -695,6 +604,7 @@ namespace eMotive.Managers.Objects
         public UserSlotView FetchSlotInformation(int _signup, string _username)
         {
             var user = userManager.Fetch(_username);
+            var loggedInUser = userManager.Fetch(configurationService.GetLoggedInUsername());
 
             //TODO need id of slot!
             var signup = Fetch(_signup);
@@ -748,7 +658,7 @@ namespace eMotive.Managers.Objects
             var userSignUp = signupRepository.FetchUserSignups(user.ID, userProfile.Groups.Select(n => n.ID));
 
             var slotView = new UserSlotView(signup);
-
+            var isAdmin = loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin");
             foreach (var item in signup.Slots)
             {
                 var slot = new SlotState
@@ -760,7 +670,7 @@ namespace eMotive.Managers.Objects
                     TotalPlacesAvailable = item.TotalPlacesAvailable,
                     Status = GenerateSlotStatus(item, new GenerateSlotStatusDTO
                     {
-                        Closed = signup.Closed || signup.CloseDate < DateTime.Now,
+                        Closed = isAdmin ? false : signup.Closed || signup.CloseDate < DateTime.Now,
                         MergeReserve = signup.MergeReserve,
                         MultipleSignupsPerSignup = signup.AllowMultipleSignups,
                         MultipleSignupsPerGroup = signupGroup.AllowMultipleSignups,
@@ -772,7 +682,7 @@ namespace eMotive.Managers.Objects
                         SignupDate = signup.Date
                     }),
                     SignupType = GenerateUserSignupType(item, user.ID),
-                    Closed = signup.Closed || signup.CloseDate < DateTime.Now,
+                    Closed = isAdmin ? false : signup.Closed || signup.CloseDate < DateTime.Now,//signup.Closed || signup.CloseDate < DateTime.Now,
                     OverrideClose = signup.OverrideClose,
                     MergeReserve = signup.MergeReserve,
                     TotalInterestedAvaiable = item.InterestedPlaces,
@@ -806,8 +716,9 @@ namespace eMotive.Managers.Objects
 
             //TODO: Check for null here?
             var user = userManager.Fetch(_username);
-            var profile = userManager.FetchProfile(_username);
-
+            var loggedInUser = userManager.Fetch(configurationService.GetLoggedInUsername());
+           // var profile = userManager.FetchProfile(_username);
+            var isAdmin = loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin");
 
             object bodyLock;
             lock (dictionaryLock)
@@ -820,14 +731,14 @@ namespace eMotive.Managers.Objects
                 }
             }
 
-            if (signup.Closed)
+            if (!isAdmin && signup.Closed)
             {
                 notificationService.AddIssue("You cannot sign up to this slot. The sign up is closed.");
 
                 return false;
             }
 
-            if (DateTime.Now > signup.CloseDate)
+            if (!isAdmin && (DateTime.Now > signup.CloseDate))
             {
                 notificationService.AddIssue(string.Format("You cannot sign up to this slot. The sign up closed on {0}.", signup.CloseDate.ToString("dddd d MMMM yyyy")));
 

@@ -50,147 +50,11 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
             return View(signupAdminView);
         }
-        /*
-        public FileStreamResult SignupsWithEmptySpaces()
-        {
-            var loggedInUser = userManager.Fetch(User.Identity.Name);
-            var signups = signupManager.FetchAll();
-            var sceFormData = new SCEFormData();
 
-            if (signups != null)
-            {// var userIDs = signups.Where(o => o.Slots != null).SelectMany(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).SelectMany(m => m.ApplicantsSignedUp).Select(o => o.User.ID));
-                //    signups = signups.Select(n => n).Where(o => o.Slots != null).Where(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).Where(p => p.ApplicantsSignedUp.Count() < (p.TotalPlacesAvailable + p.InterestedPlaces + p.ReservePlaces)));
-                var filtered = signups.Where(o => o.Slots != null && o.Slots.Any(m => m.ApplicantsSignedUp != null && m.ApplicantsSignedUp.Count() < (m.TotalPlacesAvailable + m.InterestedPlaces + m.ReservePlaces)));
-                signups = filtered;
-                using (var xlPackage = new ExcelPackage())
-                {
-                    string REPORT_NAME = "Sessions With Space Report";
-                    var worksheet = xlPackage.Workbook.Worksheets.Add(REPORT_NAME);
-
-                    int x = 1;
-                    using (var r = worksheet.Cells["A1:U1"])
-                    {
-                        r.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
-                        r.Style.Font.Bold = true;
-                        r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    }
-                    worksheet.Cells[x, 1].Value = "Date";
-                    worksheet.Cells[x, 2].Value = "Specialty";
-                    worksheet.Cells[x, 3].Value = "Location";
-                    worksheet.Cells[x, 4].Value = "Slot";
-                    worksheet.Cells[x, 5].Value = "Place";
-                    worksheet.Cells[x, 6].Value = "Date Signed Up";
-                    worksheet.Cells[x, 7].Value = "Username";
-                    worksheet.Cells[x, 8].Value = "Title";
-                    worksheet.Cells[x, 9].Value = "Forename";
-                    worksheet.Cells[x, 10].Value = "Surname";
-                    worksheet.Cells[x, 11].Value = "GMCNumber";
-                    worksheet.Cells[x, 12].Value = "Home Trust";
-                    worksheet.Cells[x, 13].Value = "Email";
-                    worksheet.Cells[x, 14].Value = "SecretaryEmail";
-                    worksheet.Cells[x, 15].Value = "OtherEmail";
-                    worksheet.Cells[x, 16].Value = "PhoneWork";
-                    worksheet.Cells[x, 17].Value = "PhoneMobile";
-                    worksheet.Cells[x, 18].Value = "PhoneOther";
-                    worksheet.Cells[x, 19].Value = "Trained";
-                    worksheet.Cells[x, 20].Value = "Enabled";
-
-                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
-                    {
-                        worksheet.Cells[x, 21].Value = "Notes";
-                    }
-
-                    x++;
-
-                    var userIDs = signups.Where(o => o.Slots != null).SelectMany(n => n.Slots.Where(m => m.ApplicantsSignedUp != null).SelectMany(m => m.ApplicantsSignedUp).Select(o => o.User.ID));
-
-                    IDictionary<string, SCEReportItem> userDict;
-
-                    if (!userIDs.HasContent())
-                        userDict = new Dictionary<string, SCEReportItem>();
-                    else
-                        userDict = reportService.FetchSCEData(userIDs).ToDictionary(k => k.Username, v => v);
-
-                    foreach (var signup in signups)
-                    {
-                        foreach (var slot in signup.Slots.OrderBy(n => n.Time))
-                        {
-                            var users = slot.ApplicantsSignedUp.HasContent() ? slot.ApplicantsSignedUp.OrderBy(n => n.SignupDate).ToArray() : new UserSignup[] { };
-                            var slotCount = 0;
-                            for (int i = 1; i <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces; i++)
-                            {
-                                string slotType = "Error";
-
-                                if (slotCount + 1 <= slot.TotalPlacesAvailable) slotType = "Main";
-                                if (slotCount + 1 > slot.TotalPlacesAvailable && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces) slotType = "Reserve";
-                                if (slotCount + 1 > slot.TotalPlacesAvailable + slot.ReservePlaces && slotCount + 1 <= slot.TotalPlacesAvailable + slot.ReservePlaces + slot.InterestedPlaces) slotType = "Interested";
-
-                                if (users.Length > slotCount)
-                                {
-                                    var sceData = userDict[users[slotCount].User.Username];
-
-                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
-                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
-                                    worksheet.Cells[x, 3].Value = signup.Description;
-                                    worksheet.Cells[x, 4].Value = slot.Description;
-                                    worksheet.Cells[x, 5].Value = slotType;
-                                    worksheet.Cells[x, 6].Value = users[slotCount].SignupDate.ToString("f");
-                                    worksheet.Cells[x, 7].Value = sceData.Username;
-                                    worksheet.Cells[x, 8].Value = sceData.Title;
-                                    worksheet.Cells[x, 9].Value = sceData.Forename;
-                                    worksheet.Cells[x, 10].Value = sceData.Surname;
-                                    worksheet.Cells[x, 11].Value = sceData.GMCNumber;
-
-
-                                    string trust;
-
-                                    worksheet.Cells[x, 13].Value = sceData.Email;
-                                    worksheet.Cells[x, 14].Value = sceData.SecretaryEmail;
-                                    worksheet.Cells[x, 15].Value = sceData.OtherEmail;
-                                    worksheet.Cells[x, 16].Value = sceData.PhoneWork;
-                                    worksheet.Cells[x, 17].Value = sceData.PhoneMobile;
-                                    worksheet.Cells[x, 18].Value = sceData.PhoneOther;
-                                    worksheet.Cells[x, 19].Value = sceData.Trained ? "Yes" : "No";
-                                    worksheet.Cells[x, 20].Value = sceData.Enabled ? "Yes" : "No";
-
-                                    if (loggedInUser != null && loggedInUser.Roles.Any(n => n.Name == "Admin" || n.Name == "Super Admin"))
-                                    {
-                                        worksheet.Cells[x, 21].Value = sceData.Notes;
-                                    }
-
-                                }
-                                else
-                                {
-                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
-                                    worksheet.Cells[x, 2].Value = signup.Group.Name;
-                                    worksheet.Cells[x, 3].Value = signup.Description;
-                                    worksheet.Cells[x, 4].Value = slot.Description;
-                                    worksheet.Cells[x, 5].Value = slotType;
-                                }
-                                slotCount++;
-                                x++;
-                            }
-                        }
-
-                    }
-
-                    worksheet.Cells.AutoFitColumns();
-
-                    return new FileStreamResult(new MemoryStream(xlPackage.GetAsByteArray()), CONTENT_TYPE)
-                    {
-                        FileDownloadName = string.Format("{0}.xlsx", REPORT_NAME)
-                    };
-                }
-            }
-
-            throw new HttpException(404, "File not found.");
-        }
-        */
 
         public FileStreamResult SignupsWithEmptySpaces()
         {
-            var loggedInUser = userManager.Fetch(User.Identity.Name);
+           // var loggedInUser = userManager.Fetch(User.Identity.Name);
             var signups = signupManager.FetchAll();
             var groups = groupManager.FetchGroups();
 
@@ -219,6 +83,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     worksheet.Cells[x, ++j].Value = "Place";
                     worksheet.Cells[x, ++j].Value = "Date Signed Up";
                     worksheet.Cells[x, ++j].Value = "Username";
+                    worksheet.Cells[x, ++j].Value = "Examination Number";
                     worksheet.Cells[x, ++j].Value = "Title";
                     worksheet.Cells[x, ++j].Value = "Forename";
                     worksheet.Cells[x, ++j].Value = "Surname";
@@ -305,6 +170,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                     worksheet.Cells[x, ++j].Value = slotType;
                                     worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
                                     worksheet.Cells[x, ++j].Value = sceData.Username;
+                                    worksheet.Cells[x, ++j].Value = sceData.ExaminationNumber;
                                     worksheet.Cells[x, ++j].Value = sceData.Title;
                                     worksheet.Cells[x, ++j].Value = sceData.Forename;
                                     worksheet.Cells[x, ++j].Value = sceData.Surname;
@@ -370,12 +236,13 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                         r.Style.Fill.PatternType = ExcelFillStyle.Solid;
                         r.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(171, 205, 250));
                         r.Style.Font.Bold = true;
-                        r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        r.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     }
                     //18
                     int i = 0;
 
                     worksheet.Cells[x, ++i].Value = "Username";
+                    worksheet.Cells[x, ++i].Value = "Examination Number";
                     worksheet.Cells[x, ++i].Value = "Title";
                     worksheet.Cells[x, ++i].Value = "Forename";
                     worksheet.Cells[x, ++i].Value = "Surname";
@@ -408,6 +275,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                         i = 0;
                         worksheet.Cells[x, ++i].Value = user.Username;
+                        worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                         worksheet.Cells[x, ++i].Value = user.Title;
                         worksheet.Cells[x, ++i].Value = user.Forename;
                         worksheet.Cells[x, ++i].Value = user.Surname;
@@ -461,6 +329,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     int i = 0;
 
                     worksheet.Cells[x, ++i].Value = "Username";
+                    worksheet.Cells[x, ++i].Value = "Examination Number";
                     worksheet.Cells[x, ++i].Value = "Title";
                     worksheet.Cells[x, ++i].Value = "Forename";
                     worksheet.Cells[x, ++i].Value = "Surname";
@@ -496,6 +365,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                         i = 0;
                         worksheet.Cells[x, ++i].Value = user.Username;
+                        worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                         worksheet.Cells[x, ++i].Value = user.Title;
                         worksheet.Cells[x, ++i].Value = user.Forename;
                         worksheet.Cells[x, ++i].Value = user.Surname;
@@ -549,6 +419,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     var i = 0;
 
                     worksheet.Cells[x, ++i].Value = "Username";
+                    worksheet.Cells[x, ++i].Value = "Examination Number";
                     worksheet.Cells[x, ++i].Value = "Groups";
                     worksheet.Cells[x, ++i].Value = "Title";
                     worksheet.Cells[x, ++i].Value = "Forename";
@@ -585,6 +456,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                         i = 0;
                         worksheet.Cells[x, ++i].Value = user.Username;
+                        worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                         worksheet.Cells[x, ++i].Value = user.Groups;
                         worksheet.Cells[x, ++i].Value = user.Title;
                         worksheet.Cells[x, ++i].Value = user.Forename;
@@ -639,6 +511,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 var i = 0;
 
                 worksheet.Cells[x, ++i].Value = "Username";
+                worksheet.Cells[x, ++i].Value = "Examination Number";
                 worksheet.Cells[x, ++i].Value = "Title";
                 worksheet.Cells[x, ++i].Value = "Forename";
                 worksheet.Cells[x, ++i].Value = "Surname";
@@ -671,6 +544,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                     i = 0;
                     worksheet.Cells[x, ++i].Value = user.Username;
+                    worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                     worksheet.Cells[x, ++i].Value = user.Title;
                     worksheet.Cells[x, ++i].Value = user.Forename;
                     worksheet.Cells[x, ++i].Value = user.Surname;
@@ -720,6 +594,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 var i = 0;
 
                 worksheet.Cells[x, ++i].Value = "Username";
+                worksheet.Cells[x, ++i].Value = "Examination Number";
                 worksheet.Cells[x, ++i].Value = "Title";
                 worksheet.Cells[x, ++i].Value = "Forename";
                 worksheet.Cells[x, ++i].Value = "Surname";
@@ -752,6 +627,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                     i = 0;
                     worksheet.Cells[x, ++i].Value = user.Username;
+                    worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                     worksheet.Cells[x, ++i].Value = user.Title;
                     worksheet.Cells[x, ++i].Value = user.Forename;
                     worksheet.Cells[x, ++i].Value = user.Surname;
@@ -801,6 +677,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                 var i = 0;
 
                 worksheet.Cells[x, ++i].Value = "Username";
+                worksheet.Cells[x, ++i].Value = "Examination Number";
                 worksheet.Cells[x, ++i].Value = "Groups";
                 worksheet.Cells[x, ++i].Value = "Title";
                 worksheet.Cells[x, ++i].Value = "Forename";
@@ -834,6 +711,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                     i = 0;
                     worksheet.Cells[x, ++i].Value = user.Username;
+                    worksheet.Cells[x, ++i].Value = user.ExaminationNumber;
                     worksheet.Cells[x, ++i].Value = user.Groups;
                     worksheet.Cells[x, ++i].Value = user.Title;
                     worksheet.Cells[x, ++i].Value = user.Forename;
@@ -965,17 +843,19 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     var worksheet = xlPackage.Workbook.Worksheets.Add(group.Name);
                     int x = 1;
                     ExcelRange r;
-                    
-                    
 
-                    
+
+
+
 
                     var j = 0;
-
+                    worksheet.Cells[x, ++j].Value = "Signup Date";
+                    worksheet.Cells[x, ++j].Value = "Description";
                     worksheet.Cells[x, ++j].Value = "Slot";
                     worksheet.Cells[x, ++j].Value = "Place";
                     worksheet.Cells[x, ++j].Value = "Date Signed Up";
                     worksheet.Cells[x, ++j].Value = "Username";
+                    worksheet.Cells[x, ++j].Value = "Examination Number";
                     worksheet.Cells[x, ++j].Value = "Title";
                     worksheet.Cells[x, ++j].Value = "Forename";
                     worksheet.Cells[x, ++j].Value = "Surname";
@@ -995,7 +875,9 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                             r = worksheet.Cells["A1:O1"];
                             break;
                         default:
-                            r = worksheet.Cells["A1:H1"];
+                            worksheet.Cells[x, ++j].Value = "Previous Address Desc";
+                            worksheet.Cells[x, ++j].Value = "School Address City";
+                            r = worksheet.Cells["A1:L1"];
                             break;
                     }
 
@@ -1010,7 +892,7 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                         var userIDs =
                                         signup.Slots.Where(o => o.ApplicantsSignedUp != null)
                                             .SelectMany(n => n.ApplicantsSignedUp.Select(m => m.User.ID));
-                                                            var isApplicant = false;
+                        var isApplicant = false;
                         IDictionary<string, SCEReportItem> userDict;
 
                         if (!userIDs.HasContent())
@@ -1055,10 +937,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
 
                                     j = 0;
                                     var sceData = userDict[users[slotCount].User.Username];
+
+                                    worksheet.Cells[x, ++j].Value = signup.Date.ToString("D");
+                                    worksheet.Cells[x, ++j].Value = signup.Description;
                                     worksheet.Cells[x, ++j].Value = slot.Description;
                                     worksheet.Cells[x, ++j].Value = slotType;
                                     worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
                                     worksheet.Cells[x, ++j].Value = sceData.Username;
+                                    worksheet.Cells[x, ++j].Value = sceData.ExaminationNumber;
                                     worksheet.Cells[x, ++j].Value = sceData.Title;
                                     worksheet.Cells[x, ++j].Value = sceData.Forename;
                                     worksheet.Cells[x, ++j].Value = sceData.Surname;
@@ -1076,12 +962,18 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                             worksheet.Cells[x, ++j].Value = sceData.Trained ? "Yes" : "No";
                                             worksheet.Cells[x, ++j].Value = sceData.Enabled ? "Yes" : "No";
                                             break;
+                                        default:
+                                            worksheet.Cells[x, ++j].Value = sceData.Trust;
+                                            worksheet.Cells[x, ++j].Value = sceData.Grade;
+                                            break;
                                     }
                                 }
                                 else
                                 {
-                                    worksheet.Cells[x, 1].Value = slot.Description;
-                                    worksheet.Cells[x, 2].Value = slotType;
+                                    worksheet.Cells[x, 1].Value = signup.Date.ToString("D");
+                                    worksheet.Cells[x, 2].Value = signup.Description;
+                                    worksheet.Cells[x, 3].Value = slot.Description;
+                                    worksheet.Cells[x, 4].Value = slotType;
                                 }
                                 slotCount++;
                                 x++;
@@ -1155,12 +1047,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                     worksheet.Cells[x, ++j].Value = "Place";
                     worksheet.Cells[x, ++j].Value = "Date Signed Up";
                     worksheet.Cells[x, ++j].Value = "Username";
+                    worksheet.Cells[x, ++j].Value = "Examination Number";
                     worksheet.Cells[x, ++j].Value = "Title";
                     worksheet.Cells[x, ++j].Value = "Forename";
                     worksheet.Cells[x, ++j].Value = "Surname";
                     worksheet.Cells[x, ++j].Value = "Email";
                     if (!isApplicant)
                     {
+                        worksheet.Cells[x, ++j].Value = "Examination Number";
                         worksheet.Cells[x, ++j].Value = "SecretaryEmail";
                         worksheet.Cells[x, ++j].Value = "OtherEmail";
                         worksheet.Cells[x, ++j].Value = "PhoneWork";
@@ -1174,6 +1068,11 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                         {
                             worksheet.Cells[x, 18].Value = "Notes";
                         }
+                    }
+                    else
+                    {
+                        worksheet.Cells[x, ++j].Value = "Previous School Desc";
+                        worksheet.Cells[x, ++j].Value = "School Address City";
                     }
 
                     x++;
@@ -1209,12 +1108,14 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                 worksheet.Cells[x, ++j].Value = slotType;
                                 worksheet.Cells[x, ++j].Value = users[slotCount].SignupDate.ToString("f");
                                 worksheet.Cells[x, ++j].Value = sceData.Username;
+                                worksheet.Cells[x, ++j].Value = sceData.ExaminationNumber;
                                 worksheet.Cells[x, ++j].Value = sceData.Title;
                                 worksheet.Cells[x, ++j].Value = sceData.Forename;
                                 worksheet.Cells[x, ++j].Value = sceData.Surname;
                                 worksheet.Cells[x, ++j].Value = sceData.Email;
                                 if (!isApplicant)
                                 {
+                                    worksheet.Cells[x, ++j].Value = sceData.ExaminationNumber;
                                     worksheet.Cells[x, ++j].Value = sceData.SecretaryEmail;
                                     worksheet.Cells[x, ++j].Value = sceData.OtherEmail;
                                     worksheet.Cells[x, ++j].Value = sceData.PhoneWork;
@@ -1228,6 +1129,11 @@ namespace eMotive.MMI.Areas.Admin.Controllers
                                     {
                                         worksheet.Cells[x, 18].Value = sceData.Notes;
                                     }
+                                }
+                                else
+                                {
+                                    worksheet.Cells[x, ++j].Value = sceData.Trust;
+                                    worksheet.Cells[x, ++j].Value = sceData.Grade;
                                 }
 
                             }

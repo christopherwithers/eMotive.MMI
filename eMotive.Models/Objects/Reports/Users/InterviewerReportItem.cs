@@ -3,6 +3,7 @@
     public class InterviewerReportItem
     {
         public string Username { get; set; }
+        public string ExaminationNumber { get; set; }
         public string Title { get; set; }
         public string Forename { get; set; }
         public string Surname { get; set; }
